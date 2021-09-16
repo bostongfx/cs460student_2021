@@ -18,43 +18,75 @@
     </style>
     <script type="text/javascript" src="https://get.goXTK.com/xtk_edge.js"></script>
     <script type='text/javascript'>
-      window.onload = function() {
+      'use strict';
+      (m => document.readyState === 'complete' ? m() : window.addEventListener('load', m))(() => {
         // create a 3D renderer
-        const r = new X.renderer3D();
-        r.init();
+        const r = new X.renderer3D()
+        r.init()
 
-        const gridDimension = 9;
-        const defaultLength = 20;
-        const gap = 5;
+        // adding default dimensions and lengths here so its easier to change later
+        // I always use const as much as possible in JS because it helps reduce errors later
+        const gridDimension = 9
+        const sideLength = 5
+        const gap = 1
 
-        const black = [0,0,0];
-        const green = [0,1,0];
-        
-        const pixelMap = [
-          [black, black, black, black, green, black, black, black, black],
-          [black, black, black, green, green, green, black, black, black],
-          [black, black, black, green, green, green, black, black, black],
-          [black, green, green, green, green, green, green, green, black],
-          [black, green, green, green, green, green, green, green, black],
-          [green, green, green, green, green, green, green, green, green],
-          [green, green, green, green, green, green, green, green, green],
-          [black, black, black, green, green, green, black, black, black],
-          [black, black, black, green, green, green, black, black, black],
-      ]
-
-        for (let i = 0; i < gridDimension; i++) {
-          for (let j = 0; j < gridDimension; j++) {
-            const c = new X.cube();
-            const xCor = i * (defaultLength + gap);
-            const yCor = j * (defaultLength + gap);
-            c.center = [xCor, yCor, 0];
-            c.color = pixelMap[i][j];
-            r.add(c);
-          }
+        const colors = {
+          black: [0,0,0],
+          green: [0,1,0],
+          red: [1,0,0],
+          yellow: [1,1,0],
+          cyan: [0,1,1]
         }
-       
-        r.render(); // ..and render it
-      };
+        // this is the least tedious way I could think to do this, but it works pretty well
+        let pixelBlueprint = [
+          [colors.black, colors.black, colors.black, colors.black, colors.green, colors.black, colors.black, colors.black, colors.black],
+          [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
+          [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
+          [colors.black, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.black],
+          [colors.black, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.black],
+          [colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green],
+          [colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green],
+          [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
+          [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
+        ]
+
+        const addCubes = () => {
+          for (let i = 0; i < gridDimension; i++) {
+            for (let j = 0; j < gridDimension; j++) {
+              const c = new X.cube()
+              c.lengthX = c.lengthY = c.lengthZ = sideLength
+
+              // generate coordinates
+              const xCor = j * (sideLength + gap)
+              const yCor = 0
+              const zCor = -(i * (sideLength + gap)) // have to flip this around to make the tree start out on the right side
+              
+              c.center = [xCor, yCor, zCor]
+              c.color = pixelBlueprint[i][j]
+              r.add(c)
+            }
+          }
+          r.render()
+        }
+
+        const changeTreeLights = () => {
+          const getRandomLight = () => {
+            const christmasLights = [colors.red, colors.yellow, colors.cyan]
+            return christmasLights[Math.floor(Math.random() * christmasLights.length)]
+          }
+          // updates the pixel map with random christmas lights color
+          const randomChristmasLights = (() => {
+            pixelBlueprint[4] = [colors.black, colors.green, getRandomLight(), colors.green, colors.green, colors.green, getRandomLight(), colors.green, colors.black]
+            pixelBlueprint[5] = [colors.green, getRandomLight(), colors.green, getRandomLight(), colors.green, getRandomLight(), colors.green, getRandomLight(), colors.green]
+            pixelBlueprint[6] = [getRandomLight(), colors.green, colors.green, colors.green, getRandomLight(), colors.green, colors.green, colors.green, getRandomLight()]
+          })();
+          
+          transposeBlueprint(pixelBlueprint)
+          addCubes()
+        }
+
+        setInterval(changeTreeLights, 1000 )
+      })
     </script>
   </head>
   <body>
