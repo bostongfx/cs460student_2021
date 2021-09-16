@@ -76,9 +76,15 @@
           }
           // updates the pixel map with random christmas lights color
           const randomChristmasLights = (() => {
-            pixelBlueprint[4] = [colors.black, colors.green, getRandomLight(), colors.green, colors.green, colors.green, getRandomLight(), colors.green, colors.black]
-            pixelBlueprint[5] = [colors.green, getRandomLight(), colors.green, getRandomLight(), colors.green, getRandomLight(), colors.green, getRandomLight(), colors.green]
-            pixelBlueprint[6] = [getRandomLight(), colors.green, colors.green, colors.green, getRandomLight(), colors.green, colors.green, colors.green, getRandomLight()]
+            pixelBlueprint[4][2] = getRandomLight()
+            pixelBlueprint[4][6] = getRandomLight()
+            pixelBlueprint[5][1] = getRandomLight()
+            pixelBlueprint[5][3] = getRandomLight()
+            pixelBlueprint[5][5] = getRandomLight()
+            pixelBlueprint[5][7] = getRandomLight()
+            pixelBlueprint[6][0] = getRandomLight()
+            pixelBlueprint[6][4] = getRandomLight()
+            pixelBlueprint[6][9] = getRandomLight()
           })();
           
           addCubes()
