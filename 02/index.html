@@ -79,45 +79,51 @@
         [0,0,0,0,0,1,4,6,4,4,1,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0],
         [0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
 
+        // an array to store the cubes that change to the Super Saiyan
+        let superSaiyan = [], count=0;
+
+
         // this one to see the image with the gap between cubes.pixels
         for (var i=0;i<46;i++){
           for (var j=0;j<30;j++){
-            c1=new X.cube();
-            c1.center=[-300+30*i,-1000+30*j,0];
+            c=new X.cube();
+            c.center=[30*i,30*j,0];
+            // this one to see the image without the gap between cubes.pixels: c.center=[20*i,20*j,0];
             switch (goku[i][j]){
             case 0: continue;
-            case 1: c1.color = [0, 0, 0]; break;
-            case 2: c1.color = [255, 160/255, 122/255]; break;
-            case 3: c1.color = [255, 128/255, 0]; break;
-            case 4: c1.color = [22/255, 34/255, 202/255]; break;
-            case 5: c1.color = [204, 204, 0]; break;
-            case 6: c1.color = [204, 0, 0]; break;
-            case 7: c1.color = [255, 255, 255]; break;
+            case 1: c.color = [0, 0, 0]; 
+                    superSaiyan[count++]=c; break;
+            case 2: c.color = [255, 160/255, 122/255]; break;
+            case 3: c.color = [255, 128/255, 0]; break;
+            case 4: c.color = [22/255, 34/255, 202/255]; break;
+            case 5: c.color = [204, 204, 0]; break;
+            case 6: c.color = [204, 0, 0]; break;
+            case 7: c.color = [255, 255, 255]; break;
             }
-            r.add(c1);
+            r.add(c);
           }
         }
-        // // this one to see the image without the gap between cubes.pixels
-        // for (var i=0;i<46;i++){
-        //   for (var j=0;j<30;j++){
-        //     c2=new X.cube();
-        //     c2.center=[20*i,20*j,0];
-        //     switch (goku[i][j]){
-        //     case 0: continue;
-        //     case 1: c2.color = [0, 0, 0]; break;
-        //     case 2: c2.color = [255, 160/255, 122/255]; break;
-        //     case 3: c2.color = [255, 128/255, 0]; break;
-        //     case 4: c2.color = [22/255, 34/255, 202/255]; break;
-        //     case 5: c2.color = [204, 204, 0]; break;
-        //     case 6: c2.color = [204, 0, 0]; break;
-        //     case 7: c2.color = [255, 255, 255]; break;
-        //     }
-        //     r.add(c2);
-        //   }
-        // }
-        
-        r.render();
+
+        // rotate animation
+        r.onRender = function() {
+          r.camera.rotate([3, 0]); //by x-axis and/or y-axis
+        };
+
+        // set the art further
+        r.camera.position = [1, 1, 3000]; //x,y,z axis
+
+        // effect by changing the color 
+        setInterval(function() {
+          // your code
+          let active = superSaiyan[0].color[0] == 255 ? 0 : 255
+          for (let i=0; i<=count;i++)
+
+          superSaiyan[i].color = [active, active, 0];
+        }, 1000);
+
+        r.render();        
       };
+
     </script>
   </head>
   <body>    
