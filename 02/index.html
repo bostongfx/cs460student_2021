@@ -1,0 +1,77 @@
+<html>
+    <head>   
+        <title>CS460 Assignment 2</title>  
+        <style>
+            body {
+                margin: 0px;
+                background-color: black;
+            }
+            #header {
+                color: white;
+                font-family: sans-serif;
+                position: absolute;
+            }
+            #logo {
+                height: 60px;
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+        </style>
+        <script type="text/javascript" src="https://get.goXTK.com/xtk_edge.js">
+        </script>
+        <script type='text/javascript'>
+            // javascript code here
+            /*console.log("Hello CS460!");
+
+            var mynum = 8;
+            var myfloat = 3.1415;
+            var mytext = "hello world";
+            var mybool = true;
+            console.log(mynum, myfloat, mytext, mybool);*/
+
+            // gets executed when the page is fully loaded
+            window.onload = function() {
+                // create a 3D renderer             
+                r = new X.renderer3D();
+                r.init();
+
+                // create a cube and change its color
+                c = new X.cube();
+                c.color = [1, .7, .7];
+
+                //create a second cube and readjust position
+                c2 = new X.cube();
+                c2.center = [30, 0, 0];
+
+                // create a third cube!!
+                c3 = new X.cube();
+                c3.center = [0, 30, 0];
+
+                // create 5 subes
+                for (var i = 0; i < 5; i++) {
+                    c4 = new X.cube();
+                    c4.center = [0, 30 + (i*30), 0];
+                    r.add(c4);
+                }
+
+                // add the cubes to the renderer
+                r.add(c);
+                r.add(c2);
+                r.add(c3);
+
+                // start the render call
+                r.render();
+
+            }
+
+        </script>
+    </head>
+    <body>
+        <h1 id="header">CS460 Assignment 2</h1>
+        <div id = "logo"><img style="height:60px;" src ="gfx/cs460.png">
+        </div> 
+    </body>
+
+
+</html>
