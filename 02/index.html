@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <title>CS460 Assignment 2</title>
+        <style>
+            body {
+                margin: 0px;
+                background-color: black;
+                color: white;
+                font-family: sans-serif;
+            }
+
+            #logo {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+        </style>
+        <script type="text/javascript" src="https://get.goXTK.com/xtk_edge.js"></script>
+        <script type="text/javascript">
+        window.onload = function(){
+
+                // create a 3D renderer
+                r = new X.renderer3D();
+                r.init(); // Initialize
+
+                // create a cube
+                c = new X.cube();
+                c.color = [1, .7, .7]; // make it pink-ish
+
+                // .. add another cube
+                c2 = new X.cube();
+                c2.center = [30, 0 ,0] // move 20 in X-direction
+
+                // .. one more
+                c3 = new X.cube();
+                c3.center = [0, 30, 0]; // move 20 in Y
+
+           // create 5 cubes
+                for(var i = 0; i < 5; i++){
+                
+                c4 = new X.cube();
+                c4.center = [0, 30 + (i*30), 0];
+
+                r.add( c4 );
+
+            }
+
+            
+                // .. add the cube to the renderer
+                r.add( c );
+
+                r.add( c2 );
+
+                r.add( c3 );
+
+                // start the rendering
+                r.render();
+
+                // don't need c.modier since we don't adjust any detail after render
+
+
+        }
+        </script>
+    </head>
+    <body>
+        <h1 id="header">CS460 Assignment 2</h1>
+        <div id="logo"><img style="height: 60px;" src="gfx/cs460.png"</div>
+    </body>
+</html>
