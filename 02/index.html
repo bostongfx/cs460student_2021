@@ -20,7 +20,7 @@
     <script type='text/javascript'>
       window.onload = function() {
         // create a 3D renderer
-        var r = new X.renderer3D()
+        const r = new X.renderer3D()
         r.init()
         // adding default dimensions and lengths here so its easier to change later
         // I always use const as much as possible in JS because it helps reduce errors later
@@ -51,7 +51,7 @@
         const addCubes = () => {
           for (let i = 0; i < gridDimension; i++) {
             for (let j = 0; j < gridDimension; j++) {
-              var c = new X.cube()
+              const c = new X.cube()
               c.lengthX = c.lengthY = c.lengthZ = sideLength
 
               // generate coordinates
@@ -64,8 +64,6 @@
               r.add(c)
             }
           }
-          r.render()
-          console.log(r)
         }
 
         const changeTreeLights = () => {
@@ -84,11 +82,12 @@
             pixelBlueprint[6][0] = getRandomLight()
             pixelBlueprint[6][4] = getRandomLight()
             pixelBlueprint[6][8] = getRandomLight()
-          })();
+          })()
           
           addCubes()
         }
-        
+
+        r.render()
         setInterval(changeTreeLights, 1000)
       }
     </script>
