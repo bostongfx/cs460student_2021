@@ -18,15 +18,10 @@
     </style>
     <script type="text/javascript" src="https://get.goXTK.com/xtk_edge.js"></script>
     <script type='text/javascript'>
-      'use strict';
-      
-      // a way a friend/mentor of mine showed me how to load scripts that ive been using for a while
-      // https://github.com/alexchandel/
-      (m => document.readyState === 'complete' ? m() : window.addEventListener('load', m))(() => {
+      window.onload = function() {
         // create a 3D renderer
-        const r = new X.renderer3D()
+        var r = new X.renderer3D()
         r.init()
-
         // adding default dimensions and lengths here so its easier to change later
         // I always use const as much as possible in JS because it helps reduce errors later
         const gridDimension = 9
@@ -56,7 +51,7 @@
         const addCubes = () => {
           for (let i = 0; i < gridDimension; i++) {
             for (let j = 0; j < gridDimension; j++) {
-              const c = new X.cube()
+              var c = new X.cube()
               c.lengthX = c.lengthY = c.lengthZ = sideLength
 
               // generate coordinates
@@ -70,6 +65,7 @@
             }
           }
           r.render()
+          console.log(r)
         }
 
         const changeTreeLights = () => {
@@ -92,9 +88,9 @@
           
           addCubes()
         }
-
-        setInterval(changeTreeLights, 1000 )
-      })
+        
+        setInterval(changeTreeLights, 1000)
+      }
     </script>
   </head>
   <body>
