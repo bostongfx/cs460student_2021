@@ -22,13 +22,6 @@
         </script>
         <script type='text/javascript'>
             // javascript code here
-            /*console.log("Hello CS460!");
-
-            var mynum = 8;
-            var myfloat = 3.1415;
-            var mytext = "hello world";
-            var mybool = true;
-            console.log(mynum, myfloat, mytext, mybool);*/
 
             // gets executed when the page is fully loaded
             window.onload = function() {
@@ -36,33 +29,55 @@
                 r = new X.renderer3D();
                 r.init();
 
-                // create a cube and change its color
-                c = new X.cube();
-                c.color = [1, .7, .7];
-
-                //create a second cube and readjust position
-                c2 = new X.cube();
-                c2.center = [30, 0, 0];
-
-                // create a third cube!!
-                c3 = new X.cube();
-                c3.center = [0, 30, 0];
-
-                // create 5 subes
-                for (var i = 0; i < 5; i++) {
-                    c4 = new X.cube();
-                    c4.center = [0, 30 + (i*30), 0];
-                    r.add(c4);
+                // CREDIT: Tung Duong, a fellow classmate, helped come up with 
+                // this more efficient approach, as opposed to my original plan 
+                // of using nested for loops! I also drew inspiration from how
+                // LaTeX sets labels to different colors.
+                var tree = [[0,0,0,0,2,0,0,0,0],
+                            [0,0,0,1,1,1,0,0,0],
+                            [0,0,0,2,1,1,0,0,0],
+                            [0,1,1,1,1,2,1,1,0],
+                            [0,1,1,2,1,1,1,1,0],
+                            [1,1,1,1,1,1,1,2,1],
+                            [2,1,1,1,1,2,1,1,1],
+                            [0,0,0,1,1,1,0,0,0],
+                            [0,0,0,1,1,1,0,0,0]];
+                
+                var effect = [], c = 0;
+                for (var i = 0; i < 9; i++) {
+                    for (var j = 0; j < 9; j++) {
+                        pix = new X.cube();
+                        pix.center = [30 + (i*30), 30*j,0];
+                        if (tree[i][j] == 0) {
+                            pix.color = [0,0,0];
+                        }
+                        if (tree[i][j] == 1) {
+                            pix.color = [0,1,0];                         
+                        }
+                        if (tree[i][j] == 2) {
+                            pix.color = [1,0,1];                                            
+                            effect[c++] = pix;       
+                        }
+                        r.add(pix);
+                    }
                 }
-
-                // add the cubes to the renderer
-                r.add(c);
-                r.add(c2);
-                r.add(c3);
 
                 // start the render call
                 r.render();
+                r.camera.position = [1, 1, 1000];
+                var pink = true;
+                setInterval(function() {
+                    if (effect[0].color == [1,0,1]) {
+                        pink = true;
+                    }
+                    for(var i = 0; i < c; i++){
+                        effect[i].color=[1,1,0];
+                    }
+                    pink = true;
 
+                }, 1000);
+
+                //r.render();
             }
 
         </script>
@@ -72,6 +87,5 @@
         <div id = "logo"><img style="height:60px;" src ="gfx/cs460.png">
         </div> 
     </body>
-
 
 </html>
