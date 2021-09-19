@@ -87,9 +87,9 @@
       // eye animation
       setInterval(function() {
           // your code
-          let animate = powerOn[0].color[0] == 1 ? 0 : 1
-          for (let i = 0; i <= count; i++){
-            powerOn[i].color = [animate, animate, 0];
+          var eye_open = powerOn[0].color[0] == 1 ? 0 : 1;
+          for (i = 0; i <= count; i++){
+            powerOn[i].color = [eye_open, eye_open, 0];
           }
         }, 1000);
 
