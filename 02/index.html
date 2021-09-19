@@ -57,6 +57,10 @@
       [0,0,1,1,1,1,0,0,0,0,3,3,3,0,0,0,0,1,1,1,1,0,0],
       [0,0,0,1,1,0,0,0,0,0,3,3,3,0,0,0,0,0,1,1,0,0,0]];
 
+      // set camera further away!
+      r.camera.position = [5,1,1000];
+
+
       // array for eye animation
       var powerOn = []; 
       var count = 0;
@@ -78,11 +82,6 @@
             r.add(c);
           }
         }
-
-
-      // set camera further away!
-      r.camera.position = [5,1,1000];
-
 
       // eye animation
       setInterval(function() {
