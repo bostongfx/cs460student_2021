@@ -29,7 +29,7 @@
                 r = new X.renderer3D();
                 r.init();
 
-                // CREDIT: Tung Duong, a fellow classmate, helped come up with 
+                // CREDITS: Tung Duong, a fellow classmate, helped come up with 
                 // this more efficient approach, as opposed to my original plan 
                 // of using nested for loops! I also drew inspiration from how
                 // LaTeX sets labels to different colors.
@@ -67,16 +67,17 @@
                 r.camera.position = [1, 1, 1000];
                 var pink = true;
                 setInterval(function() {
-                    if (effect[0].color == [1,0,1]) {
+                    if (effect[0].color[2] == 1) {
                         pink = true;
                     }
+                    else pink = false;
                     for(var i = 0; i < c; i++){
-                        effect[i].color=[1,1,0];
-                    }
-                    pink = true;
-
+                        if (pink)
+                            effect[i].color=[1,1,0];
+                        else
+                            effect[i].color=[1,0,1];
+                     }
                 }, 1000);
-
                 //r.render();
             }
 
