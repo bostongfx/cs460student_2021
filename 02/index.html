@@ -61,8 +61,8 @@
       var powerOn = [], count=0;
 
       // pixel arts
-      for (var j=0;j<23;j++){
-        for (var i=0;i<22;i++){
+      for (var i=0;i<22;i++){
+        for (var j=0;j<23;j++){
           c=new X.cube();
           c.center=[25*i,25*j,0];
 
@@ -80,13 +80,13 @@
 
 
       // set camera further away!
-      r.camera.position = [1,1,1000];
+      r.camera.position = [100,0,1000];
 
 
       // eye animation
       setInterval(function() {
           // your code
-          let animate = powerOn[0].color[0] == 5 ? 0 : 5
+          let animate = powerOn[0].color[0] == 1 ? 0 : 1
           for (let i = 0; i <= count; i++){
             powerOn[i].color = [animate, animate, 0];
           }
