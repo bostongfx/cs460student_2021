@@ -1,0 +1,91 @@
+// Assignment 2 Finished!
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <title>CS460 Assignment 2 (Finished)</title>
+    <style>
+      body {
+        background-color: black;
+        color: white; /* font color */
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden !important;
+      }
+
+      #logo {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+      }
+    </style>
+    
+    <script type="text/javascript" src="http://get.goXTK.com/xtk_edge.js"></script>
+
+    <script type="text/javascript">
+
+    window.onload = function() {
+
+      // this gets called when the site is ready
+
+      // create a new scene and renderer
+      r = new X.renderer3D();
+      r.init();
+      var fox = [[1,2,1,1,1,1,1,2,1],
+                  [1,2,2,1,1,1,2,2,1],
+                  [1,2,2,2,2,2,2,2,1],
+                  [1,2,3,3,2,3,3,2,1],
+                  [1,2,2,3,2,3,2,2,1],
+                  [1,2,2,2,2,2,2,2,1],
+                  [1,1,2,2,4,2,2,1,1],
+                  [1,1,1,2,2,2,1,1,1]];
+                
+ var gap = 30;     
+ for (var i = 0; i < fox.length; i++){        
+    var rx = fox[i];          
+    for (var j = 0; j < rx.length; j++){           
+      var sq = rx[j];            
+      if(sq == 2){             
+        c = new X.cube();               
+        c.color = [.45, .45, 0.35];   
+        c.center = [j * (-gap), 0 , i * (-gap)];             
+        r.add(c); }
+        if(sq == 3){             
+        c2 = new X.cube();               
+        c2.color = [1.0, 1.0, 1.0];   
+        c2.center = [j * (-gap), 0 , i * (-gap)];             
+        r.add(c2); }
+        if(sq == 4){             
+        c3 = new X.cube();               
+        c3.color = [2., .2, .212];   
+        c3.center = [j * (-gap), 0 , i * (-gap)];             
+        r.add(c3); 
+       } }
+       
+
+      // set camera further away!
+      r.camera.position = [0, 500, 0];
+      
+            // render everything!
+      r.render(); 
+      var eyes = false;
+      setInterval(function() {
+        if (eyes == true) {
+          if (sq == 3) {
+          c2.color = [1, 1, 1];
+        } else {
+          c2.color = [.45, .45, 0.35]
+        } }
+      }, 1000); }
+
+      };
+
+    </script>
+  </head>
+  <body>
+    <h1>CS460 Assignment 2</h1>
+    <div id="logo"><img style="height:60px" src="gfx/cs460.png"></div>
+  </body>
+</html>
