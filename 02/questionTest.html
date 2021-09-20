@@ -22,21 +22,42 @@
       window.onload = function() {
         r = new X.renderer3D();
         r.init();
-        c1 = new X.cube();
-        c1.lengthX=100;
+        r.camera.position = [0, 300, 0];
 
-        c1.lengthZ=100;
+        c1 = new X.cube();
+        c1.lengthX=140;
+        c1.lengthZ=40;
         r.add(c1);
 
         c2 = new X.cube();
         c2.color = [0,1,1];
-        c2.center = [-25,0,15];
+        c2.center = [30,0,30];
+        c2.lengthX=40;
         r.add(c2);
 
         c3 = new X.cube();
         c3.color = [0,1,1];
-        c3.center = [25,0,15];
+        c3.center = [-30,0,30];
+        c3.lengthX=40;
         r.add(c3);
+
+        c4 = new X.cube();
+        c4.center = [60,0,30];
+        r.add(c4);
+
+        c5 = new X.cube();
+        c5.center = [0,0,30];
+        r.add(c5);
+
+        c6 = new X.cube();
+        c6.center = [-60,0,30];
+        r.add(c6);
+
+        c7 = new X.cube();
+        c7.center = [0,0,50];
+        c7.lengthX=140;
+        c7.lengthZ=20;
+        r.add(c7);
 
         r.render();
     }
