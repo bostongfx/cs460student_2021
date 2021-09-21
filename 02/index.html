@@ -37,26 +37,68 @@
             // inititalise it
             r.init();
 
-            // x y cordinate
+
+            var fox = [
+                [1, 2, 1, 1, 1, 1, 1, 2, 1],
+                [1, 2, 2, 1, 1, 1, 2, 2, 1],
+                [1, 2, 2, 1, 1, 1, 2, 2, 1],
+                [1, 2, 2, 2, 2, 2, 2, 2, 1],
+                [1, 2, 0, 0, 2, 0, 0, 2, 1],
+                [1, 2, 2, 2, 2, 2, 2, 2, 1],
+                [1, 2, 2, 2, 2, 2, 2, 2, 1],
+                [1, 1, 2, 2, 0, 2, 2, 1, 1],
+                [1, 1, 1, 2, 2, 2, 1, 1, 1]
+            ];
+            // x z cordinate
             var x = 0;
             var z1 = 0;
-
+            blinking = 0;
+            blink = []
             // creating the cubes 9x9 cube
             for (var i = 0; i < 9; i++) {
                 for (var j = 0; j < 9; j++) {
                     C = new X.cube();
                     C.center = [x, 0, z1];
                     x += 20;
-                    //C.color = [0+(.2*j),1, 0+(i*.1)]
+
+                    switch (fox[i][j]) {
+                        case 0: C.color = [1, 1, 1];
+                            blink[blinking++] = C; break
+                        case 1: C.color = [0, 0, 1]; break;
+                        case 2: C.color = [1, 0.64, 0]; break;
+                    }
+
                     r.add(C);
                 }
                 x = 0;
-                z1 += 20;
+                z1 -= 20;
             }
+
 
             // star render call
             r.render();
 
+            r.camera.position = [0, 2000, 1000];
+            var isWhite = false;
+            setInterval(function () {
+                if (blink[0].color[1] == 1) {
+                    isWhite = true;
+                }
+                else {
+                    isWhite = false;
+                }
+                for (var i = 0; i < blinking; i++) {
+                    if (isWhite) {
+                        blink[i].color = [0, 0, 0];
+                    }
+                    else {
+                        blink[i].color = [1, 1, 1];
+                    }
+                }
+
+
+
+            }, 1000);
 
         }
     </script>
