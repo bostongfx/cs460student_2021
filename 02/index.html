@@ -33,15 +33,16 @@ c
       // create a new scene and renderer
       r = new X.renderer3D();
       r.init();
- 
+      
+      // create a new array of size 8x7
       const m = 8;
       const n = 7; 
       let arr = new Array(m);
       for (var i = 0; i < m; i++) {
         arr[i] = new Array(n);
       }
-      console.log(arr);
 
+      // loop through empty array and populate it with X.cube() objects
       for (var i = 0; i < 7; i++) {
         for (var j = 0; j < 8; j++) {
           arr[i][j] = new X.cube();
