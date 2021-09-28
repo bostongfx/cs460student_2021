@@ -58,6 +58,8 @@
  
         animate();
 
+        let numberOfShapes = 0
+
         renderer.domElement.onmousemove = event => {
           if (!event.shiftKey) {
             event.preventDefault();
@@ -97,6 +99,7 @@
           const newShape = new THREE.Mesh(geometry, material)
           newShape.position.set(threed_point.x, threed_point.y, threed_point.z)
           scene.add(newShape)
+          console.log(`Number Of Shapes: ${++numberOfShapes}`)
         }
 
         function animate() {
