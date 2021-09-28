@@ -43,10 +43,8 @@
         scene.add(light);
  
         // now we add the cube
-        let geometry = new THREE.BoxBufferGeometry( 20, 20, 20);
-        let material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-        // cube = new THREE.Mesh( geometry, material);
-        // scene.add(cube);
+        geometry = new THREE.BoxBufferGeometry( 20, 20, 20);
+        material = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
         // create invisible plane
         geometry = new THREE.PlaneBufferGeometry(10000, 10000)
@@ -80,20 +78,31 @@
           const intersects = raycaster.intersectObject(invisible_plane)
           const threed_point = intersects[0].point; // 3D point
 
-          geometry = new THREE.BoxBufferGeometry( 20, 20, 20);
-          material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-          cube = new THREE.Mesh( geometry, material);
 
-          cube.position.set(threed_point.x, threed_point.y, threed_point.z)
-          scene.add(cube)
+          const numberOfGeometries = 6
+          const randomGeometryNumber = Math.floor(Math.random() * numberOfGeometries)
+
+          switch (randomGeometryNumber) {
+            case 0: geometry = new THREE.BoxBufferGeometry(20, 20, 20); break;
+            case 1: geometry = new THREE.TorusKnotBufferGeometry(10, 3, 100, 16); break;
+            case 2: geometry = new THREE.SphereBufferGeometry(15, 32, 16); break;
+            case 3: geometry = new THREE.OctahedronBufferGeometry(20, 0); break;
+            case 4: geometry = new THREE.ConeBufferGeometry(5, 20, 32); break;
+            case 5: geometry = new THREE.RingBufferGeometry(1, 5, 32); break;
+          }
+          const material = new THREE.MeshStandardMaterial({ 
+            color: new THREE.Color(Math.random(), Math.random(), Math.random())
+          })
+
+          const newShape = new THREE.Mesh(geometry, material)
+          newShape.position.set(threed_point.x, threed_point.y, threed_point.z)
+          scene.add(newShape)
         }
 
+
         function animate() {
- 
           requestAnimationFrame(animate);
-  
           controls.update();
-  
           renderer.render(scene, camera);
   
         };
@@ -101,3 +110,11 @@
   </script>
 </body>
 </html>
+
+<!-- 
+ // credit: https://stackoverflow.com/questions/58325771/how-to-generate-random-hex-string-in-javascript
+          // user: zer00ne
+          const material = new THREE.MeshStandardMaterial({ 
+            // color: Number([...Array(6)].map(() => Math.floor(Math.random() * 16).toString(16)).join(''))
+            color: 0xffffff
+          }) -->
