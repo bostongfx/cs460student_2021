@@ -21,42 +21,42 @@
   <script>
    // 'use strict';
       (m => document.readyState === 'complete' ? m() : window.addEventListener('load', m))(() => {
-        scene = new THREE.Scene();
+        const scene = new THREE.Scene();
   
-        fov = 75;
-        ratio = window.innerWidth / window.innerHeight;
-        zNear = 1;
-        zFar = 10000;
-        // console.log(ratio);
-        camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+        const fov = 75;
+        const ratio = window.innerWidth / window.innerHeight;
+        const zNear = 1;
+        const zFar = 10000;
+
+        const camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
         camera.position.set( 0, 0, 100);
 
-        renderer = new THREE.WebGLRenderer();
+        const renderer = new THREE.WebGLRenderer();
         renderer.setSize( window.innerWidth, window.innerHeight );
         document.body.appendChild(renderer.domElement ); 
 
-        ambientLight = new THREE.AmbientLight( 0x404040 );
+        const ambientLight = new THREE.AmbientLight( 0x404040 );
         scene.add( ambientLight );
  
-        light = new THREE.DirectionalLight( 0xffffff, 5.0);
+        const light = new THREE.DirectionalLight( 0xffffff, 5.0);
         light.position.set( 10, 100, 10 );
         scene.add(light);
  
         // now we add the cube
-        geometry = new THREE.BoxBufferGeometry( 20, 20, 20);
-        material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-        cube = new THREE.Mesh( geometry, material);
-        scene.add(cube);
+        let geometry = new THREE.BoxBufferGeometry( 20, 20, 20);
+        let material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        // cube = new THREE.Mesh( geometry, material);
+        // scene.add(cube);
 
         // create invisible plane
         geometry = new THREE.PlaneBufferGeometry(10000, 10000)
         material = new THREE.MeshBasicMaterial ({ visible: false })
 
-        invisible_plane = new THREE.Mesh(geometry, material)
+        let invisible_plane = new THREE.Mesh(geometry, material)
 
         scene.add(invisible_plane)
  
-        controls = new THREE.TrackballControls( camera, renderer.domElement );
+        const controls = new THREE.TrackballControls( camera, renderer.domElement );
  
         animate();
 
@@ -65,20 +65,20 @@
             event.preventDefault();
             return;
           }
-          pixel_coords = new THREE.Vector2(event.clientX, event.clientY)
+          const pixel_coords = new THREE.Vector2(event.clientX, event.clientY)
 
-          vp_coords = new THREE.Vector2( 
+          const vp_coords = new THREE.Vector2( 
                         (pixel_coords.x / window.innerWidth) * 2 - 1,  //X
                        -(pixel_coords.y / window.innerHeight) * 2 + 1) // Y
 
-          vp_coords_3d_near = new THREE.Vector3(vp_coords.x, vp_coords.y, 0)
+          const vp_coords_3d_near = new THREE.Vector3(vp_coords.x, vp_coords.y, 0)
 
-          raycaster = new THREE.Raycaster()
+          const raycaster = new THREE.Raycaster()
           raycaster.setFromCamera(vp_coords_3d_near, camera)
 
           // calculate intersection of the ray with our invisible plane
-          intersects = raycaster.intersectObject(invisible_plane)
-          threed_point = intersects[0].point;
+          const intersects = raycaster.intersectObject(invisible_plane)
+          const threed_point = intersects[0].point; // 3D point
 
           geometry = new THREE.BoxBufferGeometry( 20, 20, 20);
           material = new THREE.MeshStandardMaterial({ color: 0xffffff });
@@ -90,11 +90,11 @@
 
         function animate() {
  
-          requestAnimationFrame( animate );
+          requestAnimationFrame(animate);
   
           controls.update();
   
-          renderer.render( scene, camera);
+          renderer.render(scene, camera);
   
         };
       })
