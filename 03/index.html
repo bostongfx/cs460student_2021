@@ -19,7 +19,7 @@
   <script src="https://threejs.org/build/three.min.js" type="text/javascript"></script>
   <script src="https://threejs.org/examples/js/controls/TrackballControls.js" type="text/javascript"></script>
   <script>
-   // 'use strict';
+      // alternate onload using IFFE from my friend Alex Chandel: https://github.com/alexchandel
       (m => document.readyState === 'complete' ? m() : window.addEventListener('load', m))(() => {
         const scene = new THREE.Scene();
   
@@ -81,7 +81,7 @@
 
           const numberOfGeometries = 6
           const randomGeometryNumber = Math.floor(Math.random() * numberOfGeometries)
-
+          // every one of these default values is directly copied from the three.js docs
           switch (randomGeometryNumber) {
             case 0: geometry = new THREE.BoxBufferGeometry(20, 20, 20); break;
             case 1: geometry = new THREE.TorusKnotBufferGeometry(10, 3, 100, 16); break;
@@ -99,22 +99,12 @@
           scene.add(newShape)
         }
 
-
         function animate() {
           requestAnimationFrame(animate);
           controls.update();
           renderer.render(scene, camera);
-  
         };
       })
   </script>
 </body>
 </html>
-
-<!-- 
- // credit: https://stackoverflow.com/questions/58325771/how-to-generate-random-hex-string-in-javascript
-          // user: zer00ne
-          const material = new THREE.MeshStandardMaterial({ 
-            // color: Number([...Array(6)].map(() => Math.floor(Math.random() * 16).toString(16)).join(''))
-            color: 0xffffff
-          }) -->
