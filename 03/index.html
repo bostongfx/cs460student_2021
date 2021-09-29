@@ -14,6 +14,7 @@
     <script src="https://threejs.org/examples/js/controls/TrackballControls.js" type="text/javascript"></script>
     <script>
       window.onload = function() {
+       let count = 1;
 
         scene = new THREE.Scene();
 
@@ -67,12 +68,16 @@
 
         renderer.domElement.onclick = function(e) {
 
+          ++count;
+        
+          // countString = count.toString();
+
           if (!e.shiftKey) {
             e.preventDefault();
             return false;
           }
 
-          console.log('yes! you clicked!');
+          console.log('yes! you clicked!' + count);
 
           pixel_coords = new THREE.Vector2( e.clientX, e.clientY );
 
@@ -108,7 +113,7 @@
 
     // Storing all the shape inside the array
      shapes = [drawTorus, drawCube, drawSphere, drawOctahed, drawCone, drawRing];
-    // Create random shape everytime user click
+    // Create random shape everytime user
      shapes[Math.floor(Math.random() * 6)]();
 
       
