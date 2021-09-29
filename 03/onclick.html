@@ -1,0 +1,245 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>CS460 Assignment 3</title>
+    <style>
+      html, body { 
+        background-color: #000;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden !important;  
+      }
+    </style>
+    <script src="https://threejs.org/build/three.min.js" type="text/javascript"></script>
+    <script src="https://threejs.org/examples/js/controls/TrackballControls.js" type="text/javascript"></script>
+    <script>   
+      // adding all objects/geometries to meshes array
+      var meshes = [];    
+
+      // adding rotation effect for the meshes
+      function rotation_effect() {
+        for (var i = 0; i < meshes.length; i++) {
+            meshes[i].rotation.x += 0.01
+            meshes[i].rotation.y += 0.01
+            meshes[i].rotation.z += 0.01
+            // meshes[i].material.color = new THREE.Color(0xffffff * Math.random());
+          }
+      } 
+
+      window.onload = function() {
+
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color('gray');
+
+        fov = 75;
+        ratio = window.innerWidth / window.innerHeight;
+        zNear = 1;
+        zFar = 10000;
+        // console.log(ratio);
+        camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+        camera.position.set( 0, 0, 100);
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+        
+        ambientLight = new THREE.AmbientLight( 0x404040 );
+        scene.add( ambientLight );
+
+        light = new THREE.DirectionalLight( 0xffffff, 5.0 );
+        light.position.set( 10, 100, 10 );
+        scene.add( light );
+
+
+        // Resources: https://threejs.org/docs/#api/en/renderers/WebGLRenderer
+        // All of these make the objects look much more pretty
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.gammaOutput = true;
+        renderer.gammaFactor = 2.2;
+        renderer.physicallyCorrectLights = true;
+        
+
+        // randomFunc function will random with input c
+        // Math.floor use to round a number downward to its nearest integer    
+        // Math.random() will return between 0 (inclusive) and 1 (exclusive)    
+        const randomFunc = function(c) {
+            return Math.floor(Math.random() * c);
+        }
+
+
+        // create function to return a mesh with random color
+        const box_mesh = function() {
+            const geometry = new THREE.BoxBufferGeometry( 20, 20, 20);
+            const material = new THREE.MeshStandardMaterial({color: randomFunc(0xffffff)});
+            return new THREE.Mesh( geometry, material);
+        }
+        const torusKnot_mesh = function() {
+            const geometry = new THREE.TorusKnotBufferGeometry(12, 3, 150, 35);
+            const material = new THREE.MeshStandardMaterial({color: randomFunc(0xffffff)});
+            return new THREE.Mesh(geometry, material);
+        }
+        const sphere_mesh = function() {
+            const geometry = new THREE.SphereBufferGeometry(20, 64, 32);
+            const material = new THREE.MeshStandardMaterial({color: randomFunc(0xffffff)});
+            return new THREE.Mesh(geometry, material);
+        }
+        const octahedron_mesh = function() {
+            const geometry = new THREE.OctahedronBufferGeometry(20);
+            const material = new THREE.MeshStandardMaterial({color: randomFunc(0xffffff)});
+            return new THREE.Mesh(geometry, material);
+        }
+        const cone_mesh = function() {
+            const geometry = new THREE.ConeBufferGeometry(20, 32, 32);
+            const material = new THREE.MeshStandardMaterial({color: randomFunc(0xffffff)});
+            return new THREE.Mesh(geometry, material);
+        }
+        const ring_mesh = function() {
+            const geometry = new THREE.RingBufferGeometry(5, 20, 32);
+            const material = new THREE.MeshStandardMaterial({color: randomFunc(0xffffff)});
+            return new THREE.Mesh(geometry, material);
+        }
+
+        // store all of mesh above to the mesh store
+        const mesh_store = [box_mesh, torusKnot_mesh, sphere_mesh, octahedron_mesh, cone_mesh, ring_mesh];
+
+        //
+        // The invisible plane
+        //
+        geometry = new THREE.PlaneBufferGeometry( 10000, 10000 );
+        material = new THREE.MeshBasicMaterial( {
+          visible: false
+        });
+
+        invisible_plane = new THREE.Mesh( geometry, material );
+
+        scene.add( invisible_plane );
+        //
+        //
+        //
+
+
+
+        controls = new THREE.TrackballControls( camera, renderer.domElement );
+
+
+        // Adjust camera and render to resize content of canvas
+        // credit: https://stackoverflow.com/questions/20290402/three-js-resizing-canvas
+        window.addEventListener( 'resize', onWindowResize, false );
+
+        function onWindowResize(){
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize( window.innerWidth, window.innerHeight );
+
+        }
+        animate();
+
+        //if (count_geometries == 0){
+            
+        //}
+        
+
+
+        //
+        // ACTION!
+        //
+
+        renderer.domElement.onclick = function(e) {
+
+          if (!e.shiftKey) {
+            e.preventDefault();
+            return false;
+          }
+
+          // remove the instruction after create first object
+          var a = document.getElementById('instruction');
+          if (a!= null) a.remove();
+
+          console.log('yes! you clicked!');
+
+          // Screen Space Coordinates (0,0) on the top left corner
+          // (x, y) -> (width, height)
+          pixel_coords = new THREE.Vector2( e.clientX, e.clientY );
+
+          console.log('Pixel coordinates', pixel_coords);
+
+          // Viewport Coordinates
+          // 4 corner -> (-1,-1),(-1,1),(1,-1),(1,1)
+          vp_coords = new THREE.Vector2( ( pixel_coords.x / window.innerWidth ) * 2 - 1,
+                                        -( pixel_coords.y / window.innerHeight ) * 2 + 1);
+
+          console.log('Viewport coordinates', vp_coords);
+
+          // Viewport Coordinates 3D in computer (zNear)
+          vp_coords_near = new THREE.Vector3( vp_coords.x, vp_coords.y, 0);
+
+          // zNear use Ray to map to the points in zFar
+          raycaster = new THREE.Raycaster();
+          raycaster.setFromCamera(vp_coords_near, camera);
+
+          // intersects will provide the coordinates (x,y,z) in the zFar
+          intersects = raycaster.intersectObject(invisible_plane);
+
+          // get a random mesh from mesh store
+          const mesh = mesh_store[randomFunc(mesh_store.length)]();
+          scene.add(mesh);
+          meshes.push(mesh);
+
+
+          console.log('Ray to Invisible Plane', intersects[0].point);
+
+          // update cube position
+          // cube.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
+
+          // update mesh position
+          mesh.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
+
+          
+
+          // get information about the objects and triangles
+          console.log("Geometries: " + renderer.info.memory.geometries)
+          var count_geometries = renderer.info.memory.geometries;
+
+          document.getElementById('info_objects').innerHTML = 
+          `Objects &#8594 ${count_geometries} `;
+
+          // call to update, then get  info of the triangles correctly
+          controls.update();
+          renderer.render( scene, camera );
+
+          console.log("Triangles: " + renderer.info.render.triangles);
+          var count_triangles = renderer.info.render.triangles;
+          document.getElementById('info_triangles').innerHTML = 
+          `${count_triangles} &#8592 Triangles`;
+
+        }; 
+
+      };
+
+      function animate() {
+        requestAnimationFrame( animate );
+
+        controls.update();
+        renderer.render( scene, camera );
+
+        rotation_effect();
+
+      };
+
+    </script>
+  </head>
+  <body>
+    <div id='instruction'>
+      <h1 style="background-color:BurlyWood; font-size:200%;text-align: center; text-transform: uppercase;">Instruction</h1>
+      <p style=" font-size:150%; color: white; text-align: center;">Use "Shift + LeftClick" to create an object.</p>
+    </div>
+    <div id='info_triangles' style="position: absolute; right: 0%; color: white;background-color: MediumSeaGreen; font-size:200%; border-bottom-left-radius: 8px;"></div>
+    <div id='info_objects' style="position: absolute; color: white;background-color:BurlyWood; font-size:200%; border-bottom-right-radius: 8px;"></div>
+    
+    
+  </body>
+</html>
