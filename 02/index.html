@@ -8,6 +8,10 @@
         background-color: black;
         color: white; /* font color */
         font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden !important;
       }
  
       #logo {
@@ -18,15 +22,10 @@
     </style>
     <script type="text/javascript" src="https://get.goXTK.com/xtk_edge.js"></script>
     <script type='text/javascript'>
-      'use strict';
-      
-      // a way a friend/mentor of mine showed me how to load scripts that ive been using for a while
-      // https://github.com/alexchandel/
-      (m => document.readyState === 'complete' ? m() : window.addEventListener('load', m))(() => {
+      window.onload = function() {
         // create a 3D renderer
         const r = new X.renderer3D()
         r.init()
-
         // adding default dimensions and lengths here so its easier to change later
         // I always use const as much as possible in JS because it helps reduce errors later
         const gridDimension = 9
@@ -69,7 +68,6 @@
               r.add(c)
             }
           }
-          r.render()
         }
 
         const changeTreeLights = () => {
@@ -88,13 +86,14 @@
             pixelBlueprint[6][0] = getRandomLight()
             pixelBlueprint[6][4] = getRandomLight()
             pixelBlueprint[6][8] = getRandomLight()
-          })();
+          })()
           
           addCubes()
         }
 
-        setInterval(changeTreeLights, 1000 )
-      })
+        r.render()
+        setInterval(changeTreeLights, 1000)
+      }
     </script>
   </head>
   <body>
