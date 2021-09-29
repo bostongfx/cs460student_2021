@@ -29,9 +29,12 @@
     }
 
     // functions
-    function light() {
-      
-    }
+    function light(x, y, h, a) {
+        c = new X.cube();
+        c.center = [x*23, y*23, h*23];
+        r.add(c);
+      }
+
     
     
     </script>
