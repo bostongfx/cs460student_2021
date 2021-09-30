@@ -164,10 +164,12 @@
                 scene.add(cube);
 
                 count++;
-                console.log(cout);
+                console.log(count);
 
 
                 // update cube position to REAL 3D POSITION
+                // this line of code inspired by https://stackoverflow.com/questions/40274612/is-there-a-way-to-get-the-number-of-polygons-in-a-scene
+                console.log("number of triangles " + renderer.info.render.triangles);
 
                 //Torus.position.set(threed_point.x, threed_point.y, threed_point.z);
 
