@@ -1,0 +1,151 @@
+<html>
+
+<head>
+    <style>
+        html,
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden !important;
+        }
+    </style>
+    <script src="https://threejs.org/build/three.min.js" type="text/javascript"></script>
+    <script src="https://threejs.org/examples/js/controls/TrackballControls.js" type="text/javascript"></script>
+    <script>
+        window.onload = function () {
+
+
+            // Three.js code goes here
+            //create scene
+            scene = new THREE.Scene();
+
+            //camera set up
+            var fov = 75; //side way angle
+            var ratio = window.innerWidth / window.innerHeight;
+            var zNear = 1;
+            var zFar = 1000;
+            camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+            camera.position.set(0, 0, 100);
+
+
+
+            //add renderer and canvas
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement); // add the canvas to the body
+
+            // configure lights
+            ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight); // bg light
+            light = new THREE.DirectionalLight(0xffffff, 5.0);
+            light.position.set(10, 100, 10);
+            scene.add(light);
+
+            // //finally lets configure objects
+            // geometry = new THREE.BoxBufferGeometry(20, 20, 20);
+            // geometry = new THREE.TorusGeometry(1, 100, 16, 100);
+            // geometry = new THREE.TorusKnotBufferGeometry(15, 5, 100, 10);
+            // geometry = new THREE.SphereBufferGeometry(15, 10, 15);
+            // geometry = new THREE.OctahedronBufferGeometry(25)
+            // geometry = new THREE.ConeBufferGeometry(10, 20)
+            // geometry = new THREE.RingBufferGeometry(1, 40, 10)
+            // material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+            // cube = new THREE.Mesh(geometry, material);
+            // scene.add(cube);
+
+            //invisible plan
+            geometry = new THREE.PlaneBufferGeometry(10000, 10000);
+            material = new THREE.MeshBasicMaterial({
+                visible: false
+            });
+            invisible_plane = new THREE.Mesh(geometry, material);
+            scene.add(invisible_plane);
+            // count  
+            count = 0;
+
+            // set up interaction
+            controls = new THREE.TrackballControls(camera, renderer.domElement);
+            animate();
+
+            // on click call back for canvas
+            renderer.domElement.onmousemove = function (e) {
+
+                if (!e.shiftKey) {
+                    e.preventDefault();
+                    return false;
+                }
+                pixel_coords = new THREE.Vector2(e.clientX, e.clientY);
+                vp_coords = new THREE.Vector2(
+                    (pixel_coords.x / window.innerWidth) * 2 - 1, -(pixel_coords.y / window.innerHeight) * 2 + 1
+                )
+                console.log(pixel_coords);
+                console.log(vp_coords);
+
+                vp_coords_3d_near = new THREE.Vector3(vp_coords.x, vp_coords.y, 0);
+
+
+                // raycasting
+                raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(vp_coords_3d_near, camera);
+                intersects = raycaster.intersectObject(invisible_plane);
+                console.log(intersects);
+
+                threed_point = intersects[0].point;
+                // update position
+                // cube.position.set(threed_point.x, threed_point.y, threed_point.z);
+
+                // the geometry shape array
+                geometry_Arr =
+                    [
+                        new THREE.BoxBufferGeometry(20, 20, 20), // 1
+                        new THREE.TorusKnotBufferGeometry(15, 5, 100, 10), //2 
+                        new THREE.SphereBufferGeometry(15, 10, 15), //3
+                        new THREE.OctahedronBufferGeometry(25), //4 
+                        new THREE.ConeBufferGeometry(10, 20), //5
+                        new THREE.RingBufferGeometry(1, 40, 10) //6
+                    ];
+                // credit to how to call stuff randomly in array
+                // https://stackoverflow.com/questions/5915096/get-a-random-item-from-a-javascript-array
+                geometry = geometry_Arr[Math.floor(Math.random() * geometry_Arr.length)];
+                // credit on how to call colors randomly 
+                // '#'+Math.floor(Math.random()*16777215).toString(16);
+                colors = '#' + Math.floor(Math.random() * 16777215).toString(16);
+                material = new THREE.MeshStandardMaterial({ color: colors });
+                shapes = new THREE.Mesh(geometry, material);
+                scene.add(shapes);
+
+
+                // update posiition
+                shapes.position.set(threed_point.x, threed_point.y, threed_point.z);
+
+                console.log("the amount of shape " + count++);
+                // credit to number of triangles
+                // https://stackoverflow.com/questions/40274612/is-there-a-way-to-get-the-number-of-polygons-in-a-scene
+                console.log("number of triangles " + renderer.info.render.triangles);
+
+            };
+
+        };
+
+        function animate() {
+
+            requestAnimationFrame(animate); // call the function again to optimize for software
+
+            // and here...   
+
+            // and here we trigger the rendering
+
+            controls.update();
+            renderer.render(scene, camera);
+
+        };
+
+
+    </script>
+</head>
+
+<body></body>
+
+</html>
