@@ -41,6 +41,7 @@
       final_position.x += u_offset.x;
       final_position.y += u_offset.y;
       final_position.z += u_offset.z;
+      gl_PointSize = 35.0;
     
       gl_Position = vec4( final_position, 1.);
     
@@ -140,16 +141,11 @@
  
     function createAirplane() {
 
-      const scale = 10 // larger scale = smaller plane
+      const scale = 20 // larger scale = smaller plane
  
       //
       // Part 1 Starts
       //
-
-
-   
-
-          
       var vertices = new Float32Array ([
              // main body
             -0.5,  0.5, 0.0, // V0
@@ -174,11 +170,7 @@
               0.5, 0.5, 0.0,
               1.0, 0.0, 0.0
             // makes it easier to scale the ship so I dont have to change each point...
-          ].map(point => point / scale))
-
-
-
-       
+          ].map(vertex => vertex / scale))
 
       var v_buffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, v_buffer);
@@ -226,7 +218,11 @@
       //
       // Part 2 Starts
       //
-      var offset = [0., 0., 0.];
+      // copied from https://stackoverflow.com/questions/13455042/random-number-between-negative-and-positive-value
+      var xOffset = Math.random() * (Math.round(Math.random()) ? 1 : -1); 
+      var yOffset = Math.random() * (Math.round(Math.random()) ? 1 : -1); 
+      
+      var offset = [xOffset, yOffset, 0.];
  
       
  
