@@ -73,6 +73,8 @@
     var direction_x = 0;
 
     var obstacleDirection = -0.5
+
+    var obstacleSpeed = 100
  
  
     window.onload = function() {
@@ -125,6 +127,17 @@
       // create multiple objects
       objects = [];
       objects.push( createAirplane());
+      objects.push( createObstacle());
+      objects.push( createObstacle());
+      objects.push( createObstacle());
+      objects.push( createObstacle());
+      objects.push( createObstacle());
+      objects.push( createObstacle());
+      objects.push( createObstacle());
+      objects.push( createObstacle());
+      objects.push( createObstacle());
+      objects.push( createObstacle());
+      objects.push( createObstacle());
       objects.push( createObstacle());
       objects.push( createObstacle());
       objects.push( createObstacle());
@@ -354,6 +367,10 @@
         //
         // Bonus Part 2!
         //
+        // avoid division by 0
+        if (obstacleSpeed > 0)
+          obstacleSpeed -= 5
+        
  
  
         framecounter = 0;
@@ -409,16 +426,9 @@
           //
           // Bonus Part 1!
           //
-          const speedFactor = 100 // lower factor = higher speed
-          current_offset[0] += obstacleDirection / speedFactor
+          current_offset[0] += obstacleDirection / obstacleSpeed
           if (current_offset[0] <= -1.10 ) {
             current_offset[0] = 1.10
-            //objects.pop()
-            //objects.pop()
-            // console.log(current_objecttype)
-            // const index = objects.indexOf(current_objecttype)
-            // console.log(index)
-            // objects.push(createObstacle())
           } 
           
  
