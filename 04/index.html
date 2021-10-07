@@ -10,8 +10,8 @@
         padding: 0;
         height: 100%;
         overflow: hidden !important;  
-        background-image: url(https://cs460.org/gfx/bg.gif);
-        /*background-image: url(https://tenor.com/view/aesthetic-pink-cute-anime-gif-19126102);*/
+        /*background-image: url(https://cs460.org/gfx/bg.gif);*/
+        background-image: url(pink.gif);
         background-repeat: no-repeat;
         background-size: 100% 100%;
       }
@@ -43,6 +43,7 @@
       final_position.z += u_offset.z;
     
       gl_Position = vec4( final_position, 1.);
+      gl_PointSize = 15.0;
     
     }
   </script>
@@ -177,7 +178,7 @@
       //
 
       var offset = [0.,0.,0.];
-      var color = [0.,0.,0.,1.];
+      var color = [128.,0.,128.,1.];
 
       //
       // Bonus Part 3!
@@ -205,17 +206,15 @@
       offset[0] = Math.random();
       offset[1] = Math.random();
 
-      offset[0] -= .1;
-      if (offset[0] < -1) { offset[0] = 1 };
-
-      
-      /*if (offset[0] || offset[1] <= .5) {
-        offset[0] *= -1;
-      }
-
-      if (offset[0] || offset[1] <= .5) {
+      // disperse obstacles throughout viewport
+      if (Math.random() > 0.5) {
         offset[1] *= -1;
+      }
+    
+      /*if (Math.random() > 0.5) {
+        offset[0] *= -1;
       }*/
+
 
 
       //
@@ -395,6 +394,8 @@
           //
           // Bonus Part 1!
           //
+
+          current_offset[0] -= 0.005;
 
 
           // collision detection using the bounding box of this airplane
