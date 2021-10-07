@@ -71,6 +71,8 @@
     var obstacle_factor = 3; // Hint for the bonus!
     var direction_y = 0;
     var direction_x = 0;
+
+    var obstacleDirection = -0.5
  
  
     window.onload = function() {
@@ -306,18 +308,14 @@
         // player pressed up
         direction_y = defaultDirectionValue
         step_y = defaultStepValue
- 
       } else if (e.keyCode == 40 ) {
         // player pressed down
         direction_y = -defaultDirectionValue
         step_y = defaultStepValue
- 
       } else if (e.keyCode == 37 ) {
         // player pressed left
         direction_x = -defaultDirectionValue
         step_x = defaultStepValue
-
- 
       } else if (e.keyCode == 39 ) {
         // player pressed right
         direction_x = defaultDirectionValue
@@ -411,6 +409,18 @@
           //
           // Bonus Part 1!
           //
+          const speedFactor = 100 // lower factor = higher speed
+          current_offset[0] += obstacleDirection / speedFactor
+          if (current_offset[0] <= -1.10 ) {
+            current_offset[0] = 1.10
+            //objects.pop()
+            //objects.pop()
+            // console.log(current_objecttype)
+            // const index = objects.indexOf(current_objecttype)
+            // console.log(index)
+            // objects.push(createObstacle())
+          } 
+          
  
  
           // collision detection using the bounding box of this airplane
