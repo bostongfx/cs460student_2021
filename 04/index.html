@@ -1,0 +1,1182 @@
+<html>
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+  <title>Vanilla WebGL!</title>
+  <style>
+  html, body { 
+    background-color:#000;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden !important;  
+    background-image: url(https://cs460.org/gfx/bg.gif);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+
+  #c {
+    width: 100%;
+    height: 100%;
+  }
+
+  #scoreboard {
+    position: absolute;
+    top: 0%; 
+    right: 0%; 
+    color: white;
+    background-color: MediumAquamarine; 
+    font-size:150%; 
+    border-bottom-left-radius: 8px
+  }
+
+  #weaponpower {
+    position: absolute;
+    top: 0%; 
+    left: 0%; 
+    color: white;
+    background-color: BurlyWood; 
+    font-size:150%; 
+    border-bottom-right-radius: 8px
+  }
+
+  #alert {
+    position: absolute;
+    right: 5%;
+    top:  30%;
+    background-image: url(gfx/alert.gif);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    padding: 4%;
+    display: none;
+  }
+
+  #countdown {
+    position: absolute;
+    left: 35%;
+    top:  7%;
+    background-image: url(gfx/countdown.gif);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    padding: 15%;
+    display: none;
+  }
+
+  #instruction_help {
+    position: absolute;
+    left: 10%;
+    top:  10%;
+    background-image: url(gfx/instruction_help.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    padding: 40%;
+  }
+
+  /*#gameover {
+    position: absolute;
+    left: 25%;
+    top:  10%;
+    background-image: url(gfx/gameover.gif);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    padding: 25%;
+
+  }*/
+
+  #playagain {
+    position: absolute;
+    left: 42%;
+    top:  5%;
+    background-color: black;
+    color: white;
+    font-size: 30px;
+    font-weight: 1000;
+    position: absolute;
+    width: 250px;
+    height: 100px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    display: none;
+
+  }
+  #playagain:hover {
+    background-color: grey;
+    color: black;
+  }
+  
+  #controller {
+    position: absolute;
+    bottom: 1%;
+    left: 1%;
+  }
+
+  #left{
+    position: relative;
+    /*bottom: 0px;
+    left: 0px;*/
+    background-image: url(gfx/leftwhite.png);
+    background-size: 100%;
+    border: none;
+    padding: 15px;
+    border-top-left-radius: 10%;
+    border-bottom-left-radius: 10%;
+  }
+  #right{
+    position: relative;
+    bottom: 0px;
+    left: 22px;
+    background-image: url(gfx/rightwhite.png);
+    background-size: 100%;
+    border: none;
+    padding: 15px;
+    border-top-right-radius: 10%;
+    border-bottom-right-radius: 10%;
+  }
+  #up{
+    position: relative;
+    bottom: 29px;
+    left: -40px;
+    background-image: url(gfx/upwhite.png);
+    background-size: 100%;
+    border: none;
+    padding: 15px;
+    border-top-left-radius: 10%;
+    border-top-right-radius: 10%;
+  }
+  #down{
+    position: relative;
+    bottom: 0px;
+    left: -74px;
+    background-image: url(gfx/downwhite.png);
+    background-size: 100%;
+    border: none;
+    padding: 15px;
+  }
+
+  #space{
+    position: absolute;
+    bottom: 1%;
+    right: 1%;
+    height: 30px;
+  }
+
+</style>
+</head>
+<script type="text/javascript" src="https://cs460.org/js/glmatrix.js"></script>
+
+<script id="vertexshader" type="glsl">
+  attribute vec3 a_position;
+
+  uniform vec3 u_offset;
+  uniform mat3 transform; 
+
+  void main(void) {
+
+    vec3 final_position = transform * a_position;
+    final_position.x += u_offset.x;
+    final_position.y += u_offset.y;
+    final_position.z += u_offset.z;
+    
+    gl_PointSize = 15.0;
+    gl_Position = vec4( final_position, 1.);
+    
+  }
+</script>
+
+<script id="fragmentshader" type="glsl">
+  precision mediump float;
+
+  uniform vec4 u_color;
+
+  void main(void) {
+
+    gl_FragColor = u_color;
+
+  }
+</script>
+
+<script>
+
+  var c, gl;
+  var v_shader, f_shader, shaderprogram;
+  var vertices, indices, v_buffer, i_buffer;
+
+  var step_x = 0.0;
+  var step_y = 0.0;
+  var obstacle_factor = 3; // Hint for the bonus!
+  var direction_y = 0;
+  var direction_x = 0;
+
+  var bullet = 0;
+
+
+  window.onload = function() {
+
+    //************************************************************//
+    //
+    // INITIALIZE WEBGL
+    //
+    c = document.getElementById( 'c' ); // setup canvas
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+
+    gl = c.getContext( 'webgl' ); // setup GL context
+    gl.viewport(0, 0, c.width, c.height );
+
+
+    //************************************************************//
+    //
+    // SHADERS
+    //
+    v_shader = gl.createShader( gl.VERTEX_SHADER );
+    f_shader = gl.createShader( gl.FRAGMENT_SHADER );
+    
+    // compile vertex shader
+    gl.shaderSource( v_shader, document.getElementById( 'vertexshader' ).innerText );
+    gl.compileShader( v_shader );
+
+    if (!gl.getShaderParameter( v_shader, gl.COMPILE_STATUS)) {
+      console.log(gl.getShaderInfoLog( v_shader ));
+    }
+
+    // compile fragment shader
+    gl.shaderSource( f_shader, document.getElementById( 'fragmentshader' ).innerText );
+    gl.compileShader( f_shader );
+
+    if (!gl.getShaderParameter( f_shader, gl.COMPILE_STATUS)) {
+      console.log(gl.getShaderInfoLog( f_shader ));
+    }
+
+    // attach and link the shaders
+    shaderprogram = gl.createProgram();
+    gl.attachShader( shaderprogram, v_shader );
+    gl.attachShader( shaderprogram, f_shader );
+
+    gl.linkProgram( shaderprogram );
+
+    gl.useProgram( shaderprogram );
+
+
+    // create multiple objects
+    objects = [];
+    objects.push( createAirplane());
+    objects.push( createObstacle());
+    objects.push( createObstacle());
+    objects.push( createObstacle());
+    objects.push( createObstacle());
+    objects.push( createObstacle());
+    objects.push( createObstacle());
+    objects.push( createObstacle());
+    objects.push( createObstacle());
+    objects.push( createObstacle());
+    objects.push( createSupplybox());
+    objects.push( createWeapon());
+    objects.push( createExplosion());
+
+
+    animate();
+
+
+  };
+
+
+  function createAirplane() {
+
+    //
+    // Part 1 Starts
+    //
+    var vertices = new Float32Array( [
+                                   -0.5, 0.5, 0.0,      // V0
+                                   -0.5, -0.65, 0.0,    // V1
+                                   -0.15, 0.2, 0.0,     // V2
+
+                                    0.55, 0.2, 0.0,     // V3
+                                    0.55, -0.25, 0.0,    // V4
+                                    1.0, -0.25, 0.0       // V5
+
+                                   // -0.5, -0.25, 0.0,    // V6=V1
+                                   // -0.15, 0.2, 0.0,     // V7=V2
+                                   // 0.55, 0.2, 0.0,      // V8=V3
+
+                                   // -0.5, -0.25, 0.0,    // V9=V1
+                                   // 0.55, 0.2, 0.0,      // V10=V3
+                                   // 0.55,  0.0, 0.0,     // V11=V4
+                                   ] );
+    // resize the airplane
+    for (var i = 0; i < vertices.length; i++) {
+      vertices[i] /= 10;
+    }
+
+    var v_buffer = gl.createBuffer(); // CREATE
+    gl.bindBuffer( gl.ARRAY_BUFFER, v_buffer ); // BIND
+    gl.bufferData( gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW ); // PUT DATA IN
+    gl.bindBuffer( gl.ARRAY_BUFFER, null ); // UNBIND
+
+    var indices = new Uint8Array( [ 0, 1, 2,     // Triangle 1 
+                                    2, 1, 3,     // Triangle 2
+                                    1, 3, 4,     // Triangle 3
+                                    3, 4, 5,     // Triangle 4
+                                    ] ); 
+
+    var i_buffer = gl.createBuffer(); // create
+    gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, i_buffer ); // bind
+    gl.bufferData( gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW ); // put data in
+    gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, null ); // unbind
+
+
+    
+
+    //
+    // Part 1 Ends
+    //
+
+    var offset = [0.,0.,0.];
+    var color = [0.,0.,0.,1.];
+
+    //
+    // Bonus Part 3!
+    //
+    return ['airplane', v_buffer, vertices, offset, color, gl.TRIANGLES, i_buffer, indices];
+
+  }
+
+
+
+  function createObstacle() {
+
+    var vertices = new Float32Array( [ 0.0, 0.0, 0.0 ]);
+
+    var v_buffer = gl.createBuffer(); // create
+    gl.bindBuffer( gl.ARRAY_BUFFER, v_buffer ); // bind
+    gl.bufferData( gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW ); // put data in
+    gl.bindBuffer( gl.ARRAY_BUFFER, null ); // unbind
+
+    //
+    // Part 2 Starts
+    //
+    // Math.random() * 2 --> [0,2)
+    // [0,2) - 1 = [-1,1) (included -1, excluded 1)
+    // we do not actually need 1 in this case.
+    var offset = [Math.random() * 2 - 1,Math.random() * 2 - 1, 0.];
+
+    //
+    // Part 2 Ends
+    //
+
+    var color = [Math.random(),Math.random(),Math.random(),1.];
+    gl.drawArrays(gl.POINTS, 0, 9, 0)
+
+    return ['obstacle', v_buffer, vertices, offset, color, gl.POINTS];
+
+  }
+
+  function createSupplybox() {
+
+    var vertices = new Float32Array( [
+                                   -0.5, 0.2, 0.0,      // V0
+                                    0.5, 0.2, 0.0,    // V1
+                                    0.0, -0.2, 0.0,     // V2
+                                    0.0, 0.6, 0.0,     // V3
+                                   -0.3, -0.5, 0.0,    // V4
+                                    0.3, -0.5, 0.0,    // V5
+                                    ] );
+    // resize the supply box
+    for (var i = 0; i < vertices.length; i++) {
+      vertices[i] /= 15;
+    }
+
+    var v_buffer = gl.createBuffer(); // CREATE
+    gl.bindBuffer( gl.ARRAY_BUFFER, v_buffer ); // BIND
+    gl.bufferData( gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW ); // PUT DATA IN
+    gl.bindBuffer( gl.ARRAY_BUFFER, null ); // UNBIND
+
+    var indices = new Uint8Array( [ 0, 1, 2,     // Triangle 1 
+                                    3, 2, 4,     // Triangle 2
+                                    3, 2, 5,     // Triangle 3
+                                    ] ); 
+
+    var i_buffer = gl.createBuffer(); // create
+    gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, i_buffer ); // bind
+    gl.bufferData( gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW ); // put data in
+    gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, null ); // unbind
+
+    var offset = [3 + Math.random() * 5, Math.random() * 2 - 1, 0.];
+    var color = [1.,1.,0.,1.];
+
+    return ['supplybox', v_buffer, vertices, offset, color, gl.TRIANGLES, i_buffer, indices];
+
+  }
+
+  function createWeapon(bullet) {
+
+    var vertices = new Float32Array( [
+                                   -0.1,  0.005 * bullet, 0.0,      // V0
+                                   -0.1, -0.005 * bullet, 0.0,      // V1
+                                    0.1,  0.005 * bullet, 0.0,      // V2
+                                    0.1, -0.005 * bullet, 0.0,      // V3
+                                    ] );
+    // // resize the bullet
+    // for (var i = 0; i < vertices.length; i++) {
+    //   vertices[i] /= 7;
+    // }
+
+    var v_buffer = gl.createBuffer(); // CREATE
+    gl.bindBuffer( gl.ARRAY_BUFFER, v_buffer ); // BIND
+    gl.bufferData( gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW ); // PUT DATA IN
+    gl.bindBuffer( gl.ARRAY_BUFFER, null ); // UNBIND
+
+    var indices = new Uint8Array( [ 0, 1, 2,     // Triangle 1 
+                                    3, 1, 2,     // Triangle 2
+                                    ] ); 
+
+    var i_buffer = gl.createBuffer(); // create
+    gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, i_buffer ); // bind
+    gl.bufferData( gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW ); // put data in
+    gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, null ); // unbind
+
+    // get offset of airplane + some for x-axis
+    var offset = [objects[0][3][0] + 0.1, objects[0][3][1] - 0.025, 0];
+    var color = [1., 1., 102/255, 1.];
+
+    return ['weapon', v_buffer, vertices, offset, color, gl.TRIANGLES, i_buffer, indices];
+
+  }
+
+  function createExplosion(offset1) {
+
+    var vertices = new Float32Array( [
+                                   -0.5,  0.3, 0.0,      // V0
+                                    0.4,  0.0, 0.0,      // V1
+                                    0.4, -0.2, 0.0,      // V2
+                                   -0.2, -0.2, 0.0,      // V3
+                                   -0.2,  0.0, 0.0,      // V4
+                                    0.6,  0.4, 0.0,      // V5
+                                    0.3, -0.5, 0.0,      // V6
+                                   -0.8, -0.3, 0.0,      // V7
+                                    0.8, -0.3, 0.0,      // V8
+                                   -0.1,  0.35, 0.0,      // V9
+                                   -0.15, -0.6, 0.0,      // V10
+                                    ] );
+    // // resize the explosion
+    for (var i = 0; i < vertices.length; i++) {
+      vertices[i] /= 10;
+    }
+
+    var v_buffer = gl.createBuffer(); // CREATE
+    gl.bindBuffer( gl.ARRAY_BUFFER, v_buffer ); // BIND
+    gl.bufferData( gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW ); // PUT DATA IN
+    gl.bindBuffer( gl.ARRAY_BUFFER, null ); // UNBIND
+
+    var indices = new Uint8Array( [ 0, 1, 3,     // Triangle 1 
+                                    5, 4, 2,     // Triangle 2
+                                    6, 1, 3,     // Triangle 3 
+                                    7, 4, 2,     // Triangle 4
+                                    0, 1, 3,     // Triangle 5 
+                                    5, 4, 2,     // Triangle 6
+                                    8, 1, 3,     // Triangle 7
+                                    9, 1, 3,     // Triangle 8
+                                    10, 4, 2,     // Triangle 9
+                                    ] ); 
+
+    var i_buffer = gl.createBuffer(); // create
+    gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, i_buffer ); // bind
+    gl.bufferData( gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW ); // put data in
+    gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, null ); // unbind
+    if (offset1 == null)
+      var offset = [2., 2., 0.];
+    else
+      var offset = offset1;
+    var color = [Math.random()* 1., Math.random()* 1., Math.random()* 1., 1.];
+
+    return ['explosion', v_buffer, vertices, offset, color, gl.TRIANGLES, i_buffer, indices];
+
+  }
+
+
+  //
+  // Part 3 Starts (no coding required, just explanations in PDF)
+  //
+  function calculateBoundingBox(vertices, offset) {
+
+    var minx = 1000;
+    var maxx = -1000;
+    var miny = 1000;
+    var maxy = -1000;
+    var minz = 1000;
+    var maxz = -1000;
+
+    for (var v=0; v<vertices.length; v+=3) {
+
+      var currentx = vertices[v] + offset[0];
+      var currenty = vertices[v+1] + offset[1];
+      var currentz = vertices[v+2] + offset[2];
+
+      minx = Math.min( minx, currentx );
+      miny = Math.min( miny, currenty );
+      minz = Math.min( minz, currentz );
+
+      maxx = Math.max( maxx, currentx );
+      maxy = Math.max( maxy, currenty );
+      maxz = Math.max( maxz, currentz );
+
+    }
+
+    return [minx, maxx, miny, maxy, minz, maxz];
+
+  }
+
+  function detectCollision(bbox, point) {
+
+    var collision = false;
+
+    if (point[0] >= bbox[0] && point[0] <= bbox[1]) {
+      if (point[1] >= bbox[2] && point[1] <= bbox[3]) {
+        if (point[2] >= bbox[4] && point[2] <= bbox[5]) {
+
+          collision = true;
+
+        }
+      }
+    }
+
+    return collision;
+
+  }
+  //
+  // Part 3 Ends
+  //
+
+  // detect collision between 2 BoundingBoxs
+  // this case for the plane and the supplybox
+  function detectCollision2(bbox, other_bbox) {
+
+    var collision = false;
+
+    if (other_bbox[1] >= bbox[0] && other_bbox[0] <= bbox[1]) {
+      if (other_bbox[3] >= bbox[2] && other_bbox[2] <= bbox[3]) {
+        if (other_bbox[5] >= bbox[4] && other_bbox[4] <= bbox[5]) {
+
+          collision = true;
+
+        }
+      }
+    }
+
+    return collision;
+
+  }
+
+  var check_start = true;
+
+  //
+  // Part 4 Starts
+  //
+  window.onkeyup = function(e) {
+
+    if ( e.keyCode == 38 ) {
+      // player pressed up
+      step_y = .0;
+      document.getElementById('up').style.backgroundImage = "url('gfx/upwhite.png')";
+
+    } else if (e.keyCode == 40 ) {
+      // player pressed down
+      step_y = .0;
+      document.getElementById('down').style.backgroundImage = "url('gfx/downwhite.png')";
+
+    } else if (e.keyCode == 37 ) {
+      // player pressed left
+      step_x = .0;
+      document.getElementById('left').style.backgroundImage = "url('gfx/leftwhite.png')";
+
+    } else if (e.keyCode == 39 ) {
+      // player pressed right
+      step_x = .0;
+      document.getElementById('right').style.backgroundImage = "url('gfx/rightwhite.png')";
+
+    } else if (e.keyCode == 32){
+      // player pressed space
+      document.getElementById('space').src = "gfx/spacewhite.png";      
+    }
+
+  };
+  window.onkeydown = function(e) {
+
+    if ( e.keyCode == 38 ) {
+      // player pressed up
+      step_y = .01;
+      direction_y = 1;
+      document.getElementById('up').style.backgroundImage = "url('gfx/upblack.png')";
+
+    } else if (e.keyCode == 40 ) {
+      // player pressed down
+      step_y = .01;
+      direction_y = -1;
+      document.getElementById('down').style.backgroundImage = "url('gfx/downblack.png')";
+
+    } else if (e.keyCode == 37 ) {
+      // player pressed left
+      step_x = .01;
+      direction_x = -1;
+      document.getElementById('left').style.backgroundImage = "url('gfx/leftblack.png')";
+
+    } else if (e.keyCode == 39 ) {
+      // player pressed right
+      step_x = .01;
+      direction_x = 1;
+      document.getElementById('right').style.backgroundImage = "url('gfx/rightblack.png')";
+
+    }  else if (e.keyCode == 32){
+      // player pressed space
+      objects[11] = createWeapon(1.5 + bullet);
+      document.getElementById('space').src = "gfx/spaceblack.png";
+      // sound effect
+      if (changeDirection == 0){
+        var laser1 = document.getElementById('laser1');
+        laser1.currentTime = 0;
+        laser1.volume = 0.1;
+        laser1.play();
+      } else {
+        var laser2 = document.getElementById('laser2');
+        laser2.currentTime = 0;
+        laser2.volume = 0.1;
+        laser2.play();
+      }
+
+    } else if (e.keyCode == 13){
+      // background music when game start
+      if (check_start) {
+        background_music1.play();
+        check_start = false;        
+      }
+      // player pressed enter         
+      document.getElementById('instruction_help').style.padding = '40%';
+      pause = !pause;
+      if (!pause) {
+        document.getElementById('instruction_help').style.padding = '0%';
+        animate();
+      }
+      if (check_gameover) {
+        window.location.reload();
+        check_gameover = false;
+      }
+    }
+
+  };
+  //
+  // Part 4 Ends
+  //  
+
+
+  var framecounter = 0;
+  var level = 0;
+  var changeDirection = 0;
+  var pause = true;
+  var check_gameover = false;
+
+
+  function animate() {
+
+
+    // get element of background music and sound effect
+    var background_music0 = document.getElementById('background_music0');
+    var background_music1 = document.getElementById('background_music1');
+                            background_music1.volume = 0.3; 
+    var background_music2 = document.getElementById('background_music2');
+    var background_music3 = document.getElementById('background_music3');
+    var alert1 = document.getElementById('alert1'); alert1.volume = 0.3;
+    var levelup1 = document.getElementById('levelup1'); levelup1.volume = 0.3;
+    var countdown1 = document.getElementById('countdown1');
+
+
+    framecounter += 1;
+
+    if (framecounter > 150) {
+
+      // roughly every five seconds with 30 FPS
+
+      // update score
+      document.getElementById('scoreboard').innerHTML = parseInt(document.getElementById('scoreboard').innerHTML) + 100 + ' &#8592 SCORE';
+
+      //
+      // Bonus Part 2!
+      //       
+
+      framecounter = 0;
+
+    }
+
+    if (framecounter % 30 == 0) {      
+      level += 0.0001; 
+    }
+
+
+    // update power weapon
+      var power_weapon = (1 + Math.round(bullet)) * 100;
+      document.getElementById('weaponpower').innerHTML = 'Weapon Power &#8594 ' + power_weapon;
+
+    gl.clearColor( 0., 0., 0., 0.)
+    gl.clear( gl.COLOR_BUFFER_BIT );
+
+
+
+    for( var o = 0; o < objects.length; o++ ) {
+
+      var current_objecttype = objects[o][0];
+      var current_v_buffer = objects[o][1];
+      var current_vertices = objects[o][2];
+      var current_offset = objects[o][3];
+      var current_color = objects[o][4];
+      var current_drawtype = objects[o][5];
+
+      var current_v_count = current_vertices.length;
+      
+      if (current_objecttype == 'airplane') {
+        var current_i_buffer = objects[o][6];
+        var current_indices = objects[o][7];
+        var current_i_count = current_indices.length;
+
+        // update offsets
+        if ( current_offset[0] <= -1. ) {
+          // bumped into left end of screen
+          direction_x = 1;
+        } else if ( current_offset[0] >= 1. ) {
+          // bumped into right end of screen
+          direction_x = -1;
+        }
+        current_offset[0] += direction_x*step_x;
+
+        if ( current_offset[1] <= -1. ) {
+          // bumped into left end of screen
+          direction_y = 1;
+        } else if ( current_offset[1] >= 1. ) {
+          // bumped into right end of screen
+          direction_y = -1;
+        }
+        current_offset[1] += direction_y*step_y;
+
+
+        // get the bounding box of this airplane
+        var bbox_plane = calculateBoundingBox( current_vertices, current_offset);
+
+
+      } 
+
+      // ---------------------------------------------------------------
+
+      else if (current_objecttype == 'obstacle') {
+
+
+        //
+        // Bonus Part 1!
+        //
+
+        // ---time for gif--- 
+        // levelup: < 0.0008 <
+        // SciFi_Animation: <= 0.0013 < 
+        // AnimationSpace: <= 0.0004 < 
+
+        var a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13;   
+
+        a0 = 0.0004;        // time for the alert (warning)
+        a1 = 0.007;         // time for stage 1: begin
+        a2 = a1 + 0.0008;   // time for stage 1: levelup
+        a3 = a2 + 0.0013;   // time for stage 1: SciFi_Animation
+        a4 = a3 + 0.002;    // time for stage 1: straight left->right
+        a5 = a4 + 0.002;    // time for stage 1: bottom left -> top right
+        a6 = a5 + 0.002;    // time for stage 1: straight left -> right
+        a7 = a6 + 0.002;    // time for stage 1: top left -> bottom right
+        a8 = a7 + 0.0008;   // time for stage 2: level up
+        a9 = a8 + 0.0004;   // time for stage 2: AnimationSpace
+        a10 = a9 + 0.003;   // time for stage 2: straight left -> right
+        a11 = a10 + 0.003;  // time for stage 2: bottom left -> top right
+        a12 = a11 + 0.003;  // time for stage 2: straight left -> right
+        a13 = a12 + 0.003;  // time for stage 2: top left -> bottom right
+        
+
+        // ------------------------ Begin of the Game ----------------------
+        // straight left -> right 1        
+        if (level <= a1) {
+          current_offset[0] -= 0.007 + level*0.9;
+          changeDirection = 0;   
+          objects[0][4] = [0.,0.,0.,1.];
+          document.body.style.backgroundImage = "url('https://cs460.org/gfx/bg.gif')"; 
+
+        }
+        // ------------------------ Game level I ----------------------
+        // level up -> change stage 1
+        else if (a1 < level && level < a2) {
+          // update supply box
+          objects[10][3][0] = 6;
+          background_music1.pause();
+          // update obstacles
+          current_offset[0] = Math.random() * 2 + 1;
+          document.body.style.backgroundImage = "url('gfx/levelup.gif')";
+          document.getElementById('countdown').style.display = 'block';
+          countdown1.play();
+          levelup1.play();
+        } 
+        // changing stage 1
+        else if (a2 <= level && level < a3) {
+          document.getElementById('countdown').style.display = 'none';
+          document.body.style.backgroundImage = "url('gfx/SciFi_Animation.gif')";
+          var sciFi_Animation1 = document.getElementById('sciFi_Animation1');
+          sciFi_Animation1.play();
+        }
+        // direction straight left -> right
+        else if (a3 <= level && level < a4) {   
+          // background music          
+          background_music2.play();
+
+          current_offset[0] -= 0.011 + level*0.7;
+          // change color airplane
+          objects[0][4] = [1.,1.,1.,1.]
+          document.body.style.backgroundImage = "url('gfx/XzZg0.gif')";
+          // warning before change direction
+          if (a4 - a0 <= level) {
+            document.getElementById('alert').style.display = 'block';
+            alert1.play();
+          }
+        }
+        // ------------------------ Game level II ----------------------
+        // change direction effect 1
+        // bottom left -> top right 1
+        else if (a4 <= level && level < a5) {  
+          document.getElementById('alert').style.display = 'none';                  
+          current_offset[0] -= 0.011 + level*0.7;
+          current_offset[1] -= 0.001 + level*0.7;
+          changeDirection = 1;
+          document.body.style.backgroundImage = "url('gfx/XzZg1.gif')";
+          if (a5 - a0 <= level) {
+            document.getElementById('alert').style.display = 'block';
+            alert1.play();
+          }
+        }
+        // change direction effect 2
+        // straight left -> right 2
+        else if (a5 <= level && level < a6) {  
+          document.getElementById('alert').style.display = 'none';                  
+          current_offset[0] -= 0.011 + level*0.7;
+          changeDirection = 0;
+          document.body.style.backgroundImage = "url('gfx/XzZg0.gif')";
+          if (a6 - a0 <= level) {
+            document.getElementById('alert').style.display = 'block';
+            alert1.play();
+          }
+        }
+        // ------------------------ Game level III ----------------------
+        // change direction effect 2
+        // top left -> bottom right 1
+        else if (a6 <= level && level < a7) {  
+          document.getElementById('alert').style.display = 'none';                  
+          current_offset[0] -= 0.011 + level*0.7;
+          current_offset[1] += 0.001 + level*0.7;
+          changeDirection = 2;
+          document.body.style.backgroundImage = "url('gfx/XzZg2.gif')";
+        }
+        // level up -> change stage 2
+        else if (a7 < level && level < a8) {
+          // update supply box
+          objects[10][3][0] = 6;
+          // change color airplane
+          objects[0][4] = [0.,0.,0.,1.];
+          background_music2.pause();
+          document.getElementById('alert').style.display = 'none';
+          current_offset[0] = Math.random() * 2 + 1;
+          document.body.style.backgroundImage = "url('gfx/levelup.gif')";
+          document.getElementById('countdown').style.display = 'block';
+          countdown1.play();
+          levelup1.play();
+
+        } 
+        // changing stage 2
+        else if (a8 <= level && level < a9) {
+          document.getElementById('countdown').style.display = 'none';
+          document.body.style.backgroundImage = "url('gfx/AnimationSpace.gif')";
+          var animationSpace1 = document.getElementById('animationSpace1');
+          animationSpace1.play();
+
+        }
+        // ------------------------ Game level IV ----------------------
+        // straight left -> right 3
+        else if (a9 <= level && level < a10) {
+          // change color airplane
+          objects[0][4] = [1.,1.,1.,1.];
+          background_music3.play();
+          document.getElementById('alert').style.display = 'none'; 
+          current_offset[0] -= 0.007 + level*0.7;
+          changeDirection = 0;
+          document.body.style.backgroundImage = "url('gfx/Bbc_TwoSpace1.gif')";
+          if (a10 - a0 <= level) {
+            document.getElementById('alert').style.display = 'block';
+            alert1.play();
+          }      
+        }
+        // ------------------------ Game level V ----------------------
+        // change direction effect 3
+        // bottom left -> top right 2
+        else if (a10 <= level && level < a11) {  
+          document.getElementById('alert').style.display = 'none';                  
+          current_offset[0] -= 0.011 + level*0.6;
+          current_offset[1] -= 0.001 + level*0.6;
+          changeDirection = 1;
+          if (a11 - a0 <= level) {
+            document.getElementById('alert').style.display = 'block';
+            alert1.play();
+          }
+        }
+        // change direction effect 4
+        // straight left -> right 2
+        else if (a11 <= level && level < a12) {  
+          document.getElementById('alert').style.display = 'none';                  
+          current_offset[0] -= 0.011 + level*0.6;
+          changeDirection = 0;
+          if (a12 - a0 <= level) {
+            document.getElementById('alert').style.display = 'block';
+            alert1.play();
+          }
+        }
+        // ------------------------ Game level VI ----------------------
+        // change direction effect 4
+        // top left -> bottom right 2
+        else if (a12 <= level && level < a13) {  
+          document.getElementById('alert').style.display = 'none';                  
+          current_offset[0] -= 0.011 + level*0.6;
+          current_offset[1] += 0.001 + level*0.6;
+          changeDirection = 2;
+          if (a13 - a0 <= level) {
+            document.getElementById('alert').style.display = 'block';
+            alert1.play();
+          }
+        }
+        // ------------------------ Game level VII ----------------------
+        // straight left -> right 3
+        else if (a13 <= level) {
+          document.getElementById('alert').style.display = 'none'; 
+          current_offset[0] -= 0.007 + level*0.6;
+          changeDirection = 0;      
+        }
+        // --------------------------------------------------------------
+
+
+        // order the obstacles
+        if (current_offset[0] <= -1.0) {
+          // change color airplane to make game harder
+          objects[0][4] = [1.,1.,1.,1.]
+          current_offset[0] = 1;
+          current_offset[1] = Math.random() * 2 - 1;
+          objects[12] = createExplosion([2., 2., 0.]);
+        }
+
+
+        // collision detection using the bounding box of this airplane
+        if (detectCollision(bbox_plane, current_offset)) {
+          // document.getElementById('scoreboard').innerHTML += ' AND...GAME OVER!'
+          // document.getElementById('gameover').style.padding = '25%';
+          // clear all objects before update the background
+          gl.getExtension('WEBGL_lose_context').loseContext();
+          document.body.style.backgroundImage = "url('gfx/gameover.gif')";
+          document.getElementById('playagain').style.display = 'block';
+          document.getElementById('alert').style.display = 'none'; 
+          check_gameover = true;
+          var explosion2 = document.getElementById('explosion2');
+          explosion2.currentTime = 0;
+          explosion2.play();
+          background_music1.pause();
+          background_music2.pause();
+          background_music3.pause();
+          background_music0.play();
+
+          return;
+
+        }
+
+        // get the bounding box of this weapon
+        var bbox_weapon = calculateBoundingBox( objects[11][2], objects[11][3]);
+
+        // collision detection using the bounding box of this weapon
+        if (detectCollision(bbox_weapon, current_offset)) {          
+          objects[12] = createExplosion([bbox_weapon[1], bbox_weapon[3], 0.]);
+          // Adding points when the bullets hit an obstacle (meteorite)
+          document.getElementById('scoreboard').innerHTML = parseInt(document.getElementById('scoreboard').innerHTML) + 20 + ' &#8592 SCORE'
+          current_offset[0] = 1;
+          current_offset[1] = Math.random() * 2 - 1;
+          var explosion1 = document.getElementById('explosion1');
+          explosion1.currentTime = 0;
+          explosion1.volume = 0.1;
+          explosion1.play();
+        }
+
+
+      } 
+
+      // ---------------------------------------------------------------
+
+      else if (current_objecttype == 'supplybox') {
+        var current_i_buffer = objects[o][6];
+        var current_indices = objects[o][7];
+        var current_i_count = current_indices.length;
+        current_offset[0] -= 0.010 + level;
+        if (current_offset[0] <= -1.0) {
+          current_offset[0] = 3 + Math.random() * 5;
+          current_offset[1] = Math.random() * 2 - 1;
+        }
+
+        // get the bounding box of this supplybox
+        var bbox_supplybox = calculateBoundingBox( current_vertices, current_offset);
+
+        // collision detection using the bounding box of this airplane
+        if (detectCollision2(bbox_plane, bbox_supplybox)) {
+          bullet++;
+          objects[o] = createSupplybox();
+          document.getElementById('scoreboard').innerHTML = parseInt(document.getElementById('scoreboard').innerHTML) + 50 + ' &#8592 SCORE'
+          var bonus1 = document.getElementById('bonus1');
+          // bonus1.currentTime = 0;
+          bonus1.volume = 0.3;
+          bonus1.play();
+        }
+      } 
+
+      // ---------------------------------------------------------------
+
+      else if (current_objecttype == 'weapon') {
+        var current_i_buffer = objects[o][6];
+        var current_indices = objects[o][7];
+        var current_i_count = current_indices.length;
+        current_offset[0] += .1; 
+        if (changeDirection == 1) { 
+          current_offset[1] += .07;
+          if (bullet < 10) bullet += 0.1;
+
+        } else if (changeDirection == 2) {
+          current_offset[1] -= .07;
+          if (bullet < 10) bullet += 0.1;
+
+        } else if (changeDirection == 0) {
+          if (bullet > 2) bullet -= 0.1;
+        }
+
+      } else if (current_objecttype == 'explosion') {
+        var current_i_buffer = objects[o][6];
+        var current_indices = objects[o][7];
+        var current_i_count = current_indices.length;
+
+      }
+
+
+      //************************************************************//
+      //
+      // CONNECT SHADER WITH GEOMETRY
+      //
+      
+      gl.bindBuffer( gl.ARRAY_BUFFER, current_v_buffer );
+
+      gl.bindBuffer( gl.ELEMENT_ARRAY_BUFFER, current_i_buffer );
+
+      // find the attribute in the shader source
+      var a_position = gl.getAttribLocation( shaderprogram, 'a_position' );
+
+      gl.vertexAttribPointer( a_position, 3, gl.FLOAT, false, 0, 0 );
+
+      gl.enableVertexAttribArray ( a_position );
+
+      // find the uniform in the shader source
+      var u_offset = gl.getUniformLocation( shaderprogram, 'u_offset' );
+
+      gl.uniform3fv( u_offset, current_offset)
+
+      var u_color = gl.getUniformLocation( shaderprogram, 'u_color' );
+      
+      gl.uniform4fv( u_color, new Float32Array(current_color) );
+
+      // rotate the airplane
+      var current_transform  = new Float32Array([
+        1.0, 0.0, 0.,
+        0.0, 1.0, 0.,
+        0.0, 0.0, 1.,
+        ])
+      if (current_objecttype == 'weapon' || current_objecttype == 'airplane') {
+        if (changeDirection == 0) var T = Math.PI * 2;
+        else if (changeDirection == 1) var T = -Math.PI / 5; 
+        else if (changeDirection == 2) var T = Math.PI / 5; 
+        var cosT = Math.cos(T);
+        var sinT = Math.sin(T);
+        current_transform [0] = cosT;
+        current_transform [1] = -sinT;
+        current_transform [3] = sinT;
+        current_transform [4] = cosT;
+
+      }
+
+      var u_transform = gl.getUniformLocation(shaderprogram, 'transform');
+      gl.uniformMatrix3fv(u_transform, false, current_transform);
+
+      //************************************************************//
+      //
+      // DRAW!
+      //
+
+      //
+      // Bonus Part 3!
+      //
+      if (current_objecttype == 'obstacle') {
+        gl.drawArrays( current_drawtype, 0, current_v_count/3, 0 );          
+      } else
+      gl.drawElements(current_drawtype, current_i_count, gl.UNSIGNED_BYTE, 0);
+
+
+    }
+
+    if (!pause)
+      requestAnimationFrame(animate);
+
+  };
+
+function playagain() {
+  window.location.reload();
+  document.getElementById('playagain').style.visibility = "hidden";
+
+}
+
+</script>
+<body>
+  <canvas id="c"></canvas>
+  <div id="scoreboard">0 &#8592 SCORE</div>
+  <div id=weaponpower>Weapon Power &#8594 1</div>
+  <div id="alert"></div>
+  <div id="countdown"></div>
+  <div id="instruction_help"></div>
+  <!-- <div id="gameover"></div> -->
+  <button id="playagain" onclick="playagain()">PLAY AGAIN</button>
+  <div id="controller">
+    <button id='left'></button>
+    <button id='right'></button>
+    <button id='up'></button>
+    <button id='down'></button>
+  </div>
+  <img src="gfx/spacewhite.png" id='space'>
+  <audio id="laser1"><source src="sound/laser1.mp3" /></audio> 
+  <audio id="laser2"><source src="sound/laser2.mp3" /></audio> 
+  <audio id="explosion1"><source src="sound/explosion1.mp3" /></audio> 
+  <audio id="explosion2"><source src="sound/explosion2.mp3" /></audio> <!-- gameover -->
+  <audio id="bonus1"><source src="sound/bonus1.wav" /></audio>
+  <audio id="sciFi_Animation1"><source src="sound/SciFi_Animation1.mp3" /></audio>
+  <audio id="animationSpace1"><source src="sound/AnimationSpace1.mp3" /></audio>
+  <audio id="countdown1"><source src="sound/countdown1.mp3" /></audio>
+  <audio id="levelup1"><source src="sound/levelup1.mp3" /></audio>
+  <audio id="alert1"><source src="sound/alert1.mp3" /></audio>
+  <audio id="background_music0">
+    <source src="sound/background0_Komiku_Intro.mp3" />
+  </audio>
+  <audio id="background_music1">
+    <source src="sound/background1_LoyaltyFreakMusic_CantStopMyFeet.mp3" />
+  </audio>
+  <audio id="background_music2">
+    <source src="sound/background2_LoyaltyFreakMusic_HighTechnologicBeatExplosion.mp3" />
+  </audio>
+  <audio id="background_music3">
+    <source src="sound/background3_Corona.mp3" />
+  </audio>
+
+</body>
+</html>
