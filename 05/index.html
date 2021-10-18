@@ -58,7 +58,7 @@
         renderer.setSize( r2.clientWidth, r2.clientHeight ); // again use the container
         r2.appendChild( renderer.domElement ); // and append the domElement to the container
         
-        ambientLight = new THREE.AmbientLight( 0x404040);
+        ambientLight = new THREE.AmbientLight( 0x505050);
         scene.add( ambientLight );
 
         light = new THREE.DirectionalLight( 0xffffff, 5.0 );
@@ -109,14 +109,14 @@
           'add new': function() {
             // add new cube
             var cube2 = new X.cube();
-            cube2.center = [50.,50.,50.];
+            cube2.center = [50,50,50];
             r.add(cube2);
             r.render();
             // add new three.js cube
             geometry = new THREE.BoxBufferGeometry(20,20,20);
             material = new THREE.MeshStandardMaterial({ color: (0xffffff)});
             tcube2 = new THREE.Mesh(geometry,material);
-            tcube2.position.set(50.,50.,50.);
+            tcube2.position.set(50,50,50);
             scene.add(tcube2);
           }
         };
