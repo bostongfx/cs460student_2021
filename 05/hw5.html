@@ -118,7 +118,7 @@
                     material = new THREE.MeshStandardMaterial({ color: 0xffffff });
                     cube2 = new THREE.Mesh(geometry, material);
                     cube2.position.set(50, 50, 50);
-                    scene.add(cube);
+                    scene.add(cube2);
                 }
 
             };
@@ -149,6 +149,7 @@
             both.add(controller, 'rotateX');
             both.add(controller, 'rotateY');
             both.add(controller, 'rotateZ');
+            both.add(controller, 'add new')
             both.open();
 
 
