@@ -61,10 +61,10 @@
 
 	        	// Part 3 Set up Ambient Light
 	        	var ambientLight = new THREE.AmbientLight(0xE5E5E5);
-	            scene.add(ambientLight);
+	            	scene.add(ambientLight);
 
-	            // Part 3 Set up Directional Light
-	            var light = new THREE.DirectionalLight(0xffffff, 5.0);
+	            	// Part 3 Set up Directional Light
+	            	var light = new THREE.DirectionalLight(0xffffff, 5.0);
 	        	light.position.set(10, 100, 10);
 	        	scene.add(light);
 
@@ -78,46 +78,46 @@
 	        	scene.add(cube);
 	        	animate();
 
-            	// Part 4
+            		// Part 4
 
      			var GUI = new dat.GUI();
-            	var xtkGUI = GUI.addFolder("XTK Cube");
-                xtkGUI.add(c, 'visible');
-                xtkGUI.add(c, 'opacity', 0, 1);
-                xtkGUI.addColor(c, 'color');
-                xtkGUI.open();
+            		var xtkGUI = GUI.addFolder("XTK Cube");
+                	xtkGUI.add(c, 'visible');
+                	xtkGUI.add(c, 'opacity', 0, 1);
+               	 	xtkGUI.addColor(c, 'color');
+               		xtkGUI.open();
 
-                // Part  5 & 7 & 8
+                	// Part  5 & 7 & 8
 
 	      		var controller = {
-	               	'threejs_color': 0xffffff,
+	        		'threejs_color': 0xffffff,
 
-	               	// Part 7
+	               		// Part 7
 
-	               	'rotateX': function() {
+	               		'rotateX': function() {
 	               		c.transform.rotateX(20);cube.rotateX(20);
-	               	},
-	               	'rotateY': function() {
-	               		c.transform.rotateY(20);cube.rotateY(20);
-	               	},
-	               	'rotateZ': function() {
-	               		c.transform.rotateZ(20);cube.rotateZ(20);
-	               	},
+	               		},
+	               		'rotateY': function() {
+	               			c.transform.rotateY(20);cube.rotateY(20);
+	               		},
+	               		'rotateZ': function() {
+	               			c.transform.rotateZ(20);cube.rotateZ(20);
+	               		},
 
-	               	// Part 8
+	               		// Part 8
 
-	               	'add new': function() {
-		                var nCubeX = new X.cube();
-		                nCubeX.center = [50, 50, 50];
-		                r.add(nCubeX);
+	               		'add new': function() {
+		               		var nCubeX = new X.cube();
+		                	nCubeX.center = [50, 50, 50];
+		                	r.add(nCubeX);
 
-		                var nCubeThree = new THREE.Mesh(geometry,material);
-		                nCubeThree.position.set(50,50,50);
+		                	var nCubeThree = new THREE.Mesh(geometry,material);
+		                	nCubeThree.position.set(50,50,50);
 
-		                r.add(nCubeX);
-		                scene.add(nCubeThree);
+		                	r.add(nCubeX);
+		                	scene.add(nCubeThree);
 	                    
-	                }
+	                	}
             	};
 
             	// Part 6
@@ -139,31 +139,27 @@
             	both.add(controller, 'add new');
                 both.open();
 
+	        function animate() {
 
+	        	requestAnimationFrame( animate );
+	        	controls.update();
+	        	renderer.render( scene, camera );
 
-
-
-	        	function animate() {
-
-	        		requestAnimationFrame( animate );
-	        		controls.update();
-	        		renderer.render( scene, camera );
-
-	      		};
+	      	};
             	
      		}
 
-
+		// This is for Spector JS ...
+		
      		var spector = new SPECTOR.Spector();
      		spector.displayUI();
      		spector.onCapture.add((capture) => {
-    		// Do something with capture.
     		var myEvent = new CustomEvent("SpectorOnCaptureEvent", { detail: { captureString: JSON.stringify(capture) } });
     			document.dispatchEvent(myEvent);
-			});
+		});
 
-			var canvas = document.getElementById("renderCanvas");
-			spector.captureCanvas(canvas);
+		var canvas = document.getElementById("renderCanvas");
+		spector.captureCanvas(canvas);
 
      	</script>
 
