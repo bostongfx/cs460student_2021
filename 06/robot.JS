@@ -1,4 +1,5 @@
 // part 2
+// part 3 4 5 6 7 9
 Robot = function(x, y ,z){
 		// head
 		this.head = new THREE.Bone();
@@ -92,18 +93,14 @@ Robot = function(x, y ,z){
 // part 8
 Robot.prototype.show = function(scene) {
 
-  // create group and point to the robot head
-  this.group = new THREE.Group();
-  this.group.add( this.head );
-  scene.add( this.group );
+  var rGroup = new THREE.Group();
+  rGroup.add( this.head );
 
-  // use the skeleton helper to visualize the skeleton
-  this.helper = new THREE.SkeletonHelper( this.group );
-  this.helper.material.linewidth = 3;
-  scene.add( this.helper );
+  var helper = new THREE.SkeletonHelper( rGroup );
+  helper.material.linewidth = 3; // make the skeleton thick
 
-  // no movement by default
-  this.movement = '';
+  scene.add(rGroup);
+  scene.add(helper);
 
 };
 
@@ -192,7 +189,7 @@ Robot.prototype.onAnimate = function() {
         		Math.sin(T/4) * z, 
         		Math.cos(T/4) ), 0.1 );
 		}
-		if (this.left_upper_arm.x < -0.98){
+		if (this.left_upper_arm.x < -0.85){
 			this.movement = 'lower left arm';
 		} else {
 			T = - Math.PI;
