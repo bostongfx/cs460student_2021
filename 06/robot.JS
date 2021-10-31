@@ -261,10 +261,3 @@ Robot.prototype.onAnimate = function() {
 					Math.cos(T/4) ), 0.1);
 		} 
 	};
-
-// bonus 1
-Robot.prototype.placeTo = function(x, y, z) {
-	this.head.position.x = x;
-	this.head.position.y = y + 75; // 75 is the total height of the robot
-	this.head.position.z = z;
-};

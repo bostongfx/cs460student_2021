@@ -97,9 +97,9 @@
         rendering.open();
 
         var moving = gui.addFolder( "Movement" );
-        moving.add( r.head.position, "x", -1000, 1000 );
-        moving.add( r.head.position, "y", -1000, 1000 );
-        moving.add( r.head.position, "z", -1000, 1000 );
+        moving.add( r.head.position, "x", -1000, 1000 ).listen();
+        moving.add( r.head.position, "y", -1000, 1000 ).listen();
+        moving.add( r.head.position, "z", -1000, 1000 ).listen();
 
         moving.add( controller, "raise left arm");
         moving.add( controller, "lower left arm");
@@ -121,14 +121,13 @@
             ( pixel_coords.x / window.innerWidth ) * 2 - 1, // X
             - ( pixel_coords.y / window.innerHeight ) * 2 + 1 ); // Y
           vp_coords_3d_near = new THREE.Vector3(vp_coords.x,
-            vp_coords.y,
-                                          0); // for zNear
+            vp_coords.y, 0); // for zNear
           raycaster = new THREE.Raycaster();
           raycaster.setFromCamera(vp_coords_3d_near, camera);
           intersects = raycaster.intersectObject( floor );
-          r.placeTo(intersects[0].point.x,
-            intersects[0].point.y,
-            intersects[0].point.z,);
+          r.head.position.x = intersects[0].point.x;
+          r.head.position.y = intersects[0].point.y + 75; // total height of robot
+          r.head.position.z = intersects[0].point.z;
           // update GUI
           gui.updateDisplay();
         }
