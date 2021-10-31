@@ -1,0 +1,196 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      html, body { 
+        background-color:#000000;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden !important;  
+      }
+    </style>
+    <script src="https://threejs.org/build/three.min.js" type="text/javascript"></script>
+    <script src="https://threejs.org/examples/js/controls/TrackballControls.js" type="text/javascript"></script>
+    <script>
+      window.onload = function() {
+
+        scene = new THREE.Scene();
+
+        fov = 75;
+        ratio = window.innerWidth / window.innerHeight;
+        zNear = 1;
+        zFar = 10000;
+        // console.log(ratio);
+        camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+        camera.position.set( 0, 0, 100);
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+        
+        ambientLight = new THREE.AmbientLight( 0x404040 );
+        scene.add( ambientLight );
+
+        light = new THREE.DirectionalLight( 0xffffff, 5.0 );
+        light.position.set( 10, 100, 10 );
+        scene.add( light );
+
+
+        
+        //
+        // The invisible plane
+        //
+        geometry = new THREE.PlaneBufferGeometry( 10000, 10000 );
+        material = new THREE.MeshBasicMaterial( {
+          visible: false
+        });
+
+        invisible_plane = new THREE.Mesh( geometry, material );
+
+        scene.add( invisible_plane );
+        //
+        //
+        //
+
+
+
+        controls = new THREE.TrackballControls( camera, renderer.domElement );
+
+        animate();
+
+
+        //
+        // ACTION!
+        //
+
+        renderer.domElement.onmousemove = function(e) {
+
+          if (!e.shiftKey) {
+            e.preventDefault();
+            return false;
+          }
+
+          console.log('yes! you clicked!');
+
+          pixel_coords = new THREE.Vector2( e.clientX, e.clientY );
+
+          console.log('Pixel coordinates', pixel_coords);
+
+          vp_coords = new THREE.Vector2( ( pixel_coords.x / window.innerWidth ) * 2 - 1,
+                                        -( pixel_coords.y / window.innerHeight ) * 2 + 1);
+
+          console.log('Viewport coordinates', vp_coords);
+
+          vp_coords_near = new THREE.Vector3( vp_coords.x, vp_coords.y, 0);
+
+          raycaster = new THREE.Raycaster();
+          raycaster.setFromCamera(vp_coords_near, camera);
+          intersects = raycaster.intersectObject(invisible_plane);
+
+          console.log('Ray to Invisible Plane', intersects[0].point);
+        // Shape Count
+        var numknot = 0;
+        var numcube = 0;
+        var numcone = 0;
+        var numocta = 0;
+        var numring = 0;
+        var numglobe = 0;
+        // Shape Switch
+        // https://www.w3schools.com/js/js_random.asp 
+        // https://www.w3schools.com/js/js_switch.asp
+        // https://www.w3schools.com/js/js_function_closures.asp
+        var shapes = Math.floor(Math.random() * 6);
+        var k = 0;
+        var cu = 1;
+        var co = 2;
+        var oct = 3;
+        var r = 4;
+        var sph = 5;
+        var c = Math.floor(Math.random() * 0xffffff);
+        material
+        var l = Math.floor(Math.random() * 100) + 1;
+        var w = Math.floor(Math.random() * 100) + 1;
+        var h = Math.floor(Math.random() * 100) + 1;
+        var k = Math.floor(Math.random() * 100) + 1;
+        switch(shapes) {
+        case k:
+        // Knot
+        knotgeo = new THREE.TorusKnotBufferGeometry(l, w, h, k);
+        material = new THREE.MeshBasicMaterial({color : c});
+        knot = new THREE.Mesh(knotgeo, material);
+        knot.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
+        scene.add(knot);
+        numknot++;
+        break;
+        case cu:
+        // Cube 
+        cubegeo = new THREE.BoxBufferGeometry(l, w, h);
+        material = new THREE.MeshBasicMaterial({color : c});
+        cube = new THREE.Mesh(cubegeo, material);
+        cube.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
+        scene.add(cube);
+        numcube++;
+        break;
+        case co:
+        // Cone
+        conegeo = new THREE.ConeBufferGeometry(l, w, h);
+        material = new THREE.MeshBasicMaterial({color : c});
+        cone = new THREE.Mesh(conegeo, material);
+        cone.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
+        scene.add(cone);
+        numcone++;
+        break;
+        case oct:
+        // Octahedron
+        octageo = new THREE.OctahedronBufferGeometry(1);
+        material = new THREE.MeshBasicMaterial({color : c});
+        octa = new THREE.Mesh(octageo, material);
+        octa.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
+        scene.add(octa);
+        numocta++;
+        break;
+        case r:
+        // Ring
+        ringgeo = new THREE.RingBufferGeometry(l, w, h);
+        material = new THREE.MeshBasicMaterial({color : c});
+        ring = new THREE.Mesh(ringgeo, material);
+        ring.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
+        scene.add(ring);
+        numring++;
+        break;
+        case sph:
+        // Sphere
+        globegeo = new THREE.SphereBufferGeometry(l, w, h);
+        material = new THREE.MeshBasicMaterial({color : c});
+        globe = new THREE.Mesh(globegeo, material);
+        globe.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
+        scene.add(globe);
+        numglobe++;
+        } 
+          console.log( "Cubes: " + numcube );
+          console.log( "Knots: " + numknot );
+          console.log( "Cones: " + numcone );
+          console.log( "Octahedrons: " + numocta );
+          console.log( "Rings: " + numring );
+          console.log( "Globes/Spheres: " + numglobe );
+        };    
+
+        
+
+
+      };
+
+      function animate() {
+
+        requestAnimationFrame( animate );
+
+        controls.update();
+        renderer.render( scene, camera );
+
+      };
+
+    </script>
+  </head>
+  <body></body>
+</html> 
