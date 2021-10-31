@@ -42,7 +42,7 @@
     renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
-    
+
     ambientLight = new THREE.AmbientLight();
     scene.add( ambientLight );
 
@@ -91,6 +91,24 @@
           
         };
 
+        var gui = new dat.GUI();
+        var rendering = gui.addFolder( "Rendering" );
+        rendering.add( controller, 'anaglyph' );
+        rendering.open();
+
+        var moving = gui.addFolder( "Movement" );
+        moving.add( r.head.position, "x", -1000, 1000 );
+        moving.add( r.head.position, "y", -1000, 1000 );
+        moving.add( r.head.position, "z", -1000, 1000 );
+
+        moving.add( controller, "raise left arm");
+        moving.add( controller, "lower left arm");
+        moving.add( controller, "kick right");
+        moving.add( controller, "kick left");
+        moving.add( controller, "dance");
+        moving.open();
+
+
         //Bonus 1
         renderer.domElement.onclick = function(e){
           if (!e.shiftKey) {
@@ -125,7 +143,7 @@
       function animate() {
 
         requestAnimationFrame( animate );
-        
+
         //TODO
         
         controls.update();
