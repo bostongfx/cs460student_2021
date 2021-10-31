@@ -130,6 +130,12 @@ Robot.prototype.raiseLeftArm = function() {
 Robot.prototype.lowerLeftArm = function() {
   this.movement = 'lower_left_arm'
 }
+Robot.prototype.raiseRightArm = function() {
+  this.movement = 'raise_right_arm'
+}
+Robot.prototype.lowerRightArm = function() {
+  this.movement = 'lower_right_arm'
+}
 
 Robot.prototype.kick = function() {
   this.movement = 'kick'
@@ -139,16 +145,36 @@ Robot.prototype.kick = function() {
 Robot.prototype.onAnimate = function() {
 
   if (this.movement === 'raise_left_arm'){
-    // raise of left arm
-    // rotation of 180 degrees around x
     var T = Math.PI;
     this.left_upper_arm.quaternion
-      .slerp(new THREE.Quaternion(Math.sin(T/2), 0, 0, Math.cos(T/2)), 0.1)
+      .slerp(
+        new THREE.Quaternion
+          (Math.sin(T/2), 0, 0, Math.cos(T/2)), 
+          0.1
+      )
 
   } else if (this.movement === 'lower_left_arm') {
     this.left_upper_arm.quaternion
-      .slerp(new THREE.Quaternion(0, 0, 0, 1), 0.1)
-
+      .slerp(
+        new THREE.Quaternion
+        (0, 0, 0, 1), 
+        0.1
+      )
+  } else if (this.movement === 'raise_right_arm'){
+    var T = Math.PI;
+    this.right_upper_arm.quaternion
+      .slerp(
+        new THREE.Quaternion
+        (Math.sin(T/2), 0, 0, Math.cos(T/2)), 
+        0.1
+      )
+  } else if (this.movement === 'lower_right_arm') {
+    this.right_upper_arm.quaternion
+      .slerp(
+        new THREE.Quaternion
+        (0, 0, 0, 1), 
+        0.1
+      )
   } else if (this.movement == 'kick') {
     // check if slerp reached almost the end
     if (this.right_upper_leg.quaternion.w < 0.72) {
@@ -157,13 +183,20 @@ Robot.prototype.onAnimate = function() {
     } else {
       var T = -Math.PI/2;
       this.right_upper_leg.quaternion
-        .slerp(new THREE.Quaternion(Math.sin(T/2), 0, 0, Math.cos(T/2) ), 0.1);                               
+        .slerp(
+          new THREE.Quaternion
+          (Math.sin(T/2), 0, 0, Math.cos(T/2) ), 
+          0.1
+        );                               
     }
  
   } else if (this.movement == 'kick done') {
     // reset leg back to identity
-    this.right_upper_leg.quaternion.slerp(new THREE.Quaternion(0, 0, 0, 1), 0.1);
- 
+    this.right_upper_leg.quaternion
+      .slerp(
+        new THREE.Quaternion
+        (0, 0, 0, 1), 
+        0.1
+      );
   }
-
 }
