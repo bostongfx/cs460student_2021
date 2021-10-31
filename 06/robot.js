@@ -147,6 +147,7 @@ Robot.prototype.onAnimate = function() {
   
     var q = this.left_upper_arm.quaternion
     q.slerp(q2, 0.1)
+    
   } else if (this.movement === 'lower_left_arm') {
     var T = Math.PI;
     var x = Math.sin(T/2) 
