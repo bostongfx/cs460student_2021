@@ -89,7 +89,7 @@ Robot = function(x, y ,z){
   this.right_foot.position.y = -5;
   this.right_foot.position.x = -5;
   this.right_lower_leg.add( this.right_foot );
- };
+};
 
 // part 8
 Robot.prototype.show = function(scene) {
@@ -113,10 +113,13 @@ Robot.prototype.lower_left_arm = function() {
 	this.movement = 'lower left arm';
 };
 
+Robot.prototype.kick_left = function() {
+	this.movement = 'kick left';
+};
+
 Robot.prototype.kick_right = function() {
 	this.movement = 'kick right';
 };
-
 
 Robot.prototype.dance = function() {
 	this.movement = 'dance';
@@ -173,51 +176,93 @@ Robot.prototype.onAnimate = function() {
 				Math.sin(T/4) * y, 
 				Math.sin(T/4) * z, 
 				Math.cos(T/4) ), 0.1 );
-	}  // bonus 2
-	else if (this.movement == 'dance'){
-		
-		if (this.right_upper_leg.quaternion.x < -0.70){
-			this.movement = 'kick back right';
+	} else if (this.movement == 'kick left') {
+		if (this.left_upper_leg.quaternion.x < -0.70){
+			this.movement = 'kick back left';
 		} else {
 			T = - Math.PI;
 			x = 1;
 			y = 0;
 			z = 0;
-			this.right_upper_leg.quaternion.slerp(
+			this.left_upper_leg.quaternion.slerp(
 				new THREE.Quaternion(
 					Math.sin(T/4) * x, 
 					Math.sin(T/4) * y, 
 					Math.sin(T/4) * z, 
 					Math.cos(T/4) ), 0.1 );
 		}
-		if (this.left_upper_arm.x < -0.85){
-			this.movement = 'lower left arm';
-		} else {
+	} else if (this.movement == 'kick back left'){
+		T = 0;
+		x = 0;
+		y = 0;
+		z = 0;
+		this.left_upper_leg.quaternion.slerp(
+			new THREE.Quaternion(
+				Math.sin(T/4) * x, 
+				Math.sin(T/4) * y, 
+				Math.sin(T/4) * z, 
+				Math.cos(T/4) ), 0.1 );
+		
+	} 
+		// bonus 2
+		else if (this.movement == 'dance'){
+			if (this.right_upper_leg.quaternion.x < -0.70){
+				this.movement = 'kick back right';
+			} else {
+				T = - Math.PI;
+				x = 1;
+				y = 0;
+				z = 0;
+				this.right_upper_leg.quaternion.slerp(
+					new THREE.Quaternion(
+						Math.sin(T/4) * x, 
+						Math.sin(T/4) * y, 
+						Math.sin(T/4) * z, 
+						Math.cos(T/4) ), 0.1 );
+			}
+			if (this.left_upper_leg.quaternion.x < -0.70){
+				this.movement = 'kick back left';
+			} else {
+				T = - Math.PI;
+				x = 1;
+				y = 0;
+				z = 0;
+				this.left_upper_leg.quaternion.slerp(
+					new THREE.Quaternion(
+						Math.sin(T/4) * x, 
+						Math.sin(T/4) * y, 
+						Math.sin(T/4) * z, 
+						Math.cos(T/4) ), 0.1 );
+			}
+			if (this.left_upper_arm.x < -0.98){
+				this.movement = 'lower left arm';
+			} else {
+				T = - Math.PI;
+				x = 1;
+				y = 0;
+				z = 0;
+				this.left_upper_arm.quaternion.slerp(
+					new THREE.Quaternion(
+						Math.sin(T/2) * x, 
+						Math.sin(T/2) * y,
+						Math.sin(T/2) * z,
+						Math.cos(T/2) ), 0.1);
+
+			}
 			T = - Math.PI;
 			x = 1;
 			y = 0;
 			z = 0;
-			this.left_upper_arm.quaternion.slerp(
+			this.neck.quaternion.slerp(
 				new THREE.Quaternion(
-					Math.sin(T/2) * x, 
+					Math.sin(T/4) * x, 
 					Math.sin(T/2) * y,
 					Math.sin(T/2) * z,
-					Math.cos(T/2) ), 0.1);
+					Math.cos(T/4) ), 0.1);
+		} 
+	};
 
-		}
-		T = - Math.PI;
-		x = 1;
-		y = 0;
-		z = 0;
-		this.neck.quaternion.slerp(
-			new THREE.Quaternion(
-				Math.sin(T/4) * x, 
-				Math.sin(T/2) * y,
-				Math.sin(T/2) * z,
-				Math.cos(T/4) ), 0.1);
-	} 
-};
-
+// bonus 1
 Robot.prototype.placeTo = function(x, y, z) {
 	this.head.position.x = x;
 	this.head.position.y = y + 75; // 75 is the total height of the robot
