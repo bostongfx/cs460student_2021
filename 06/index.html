@@ -61,21 +61,45 @@
         floor.rotateX(-30);
         scene.add( floor );
 
-        controls = new THREE.TrackballControls( camera, renderer.domElement );
-
-
+        
+        
         // ROBOT GOES HERE!
-        r1 = new Robot(0, 0, 0)
-        r1.show(scene)
-
+        my_robot = new Robot(0, 0, 0)
+        my_robot.show(scene)
+        
         var controller = {
           anaglyph: false
         }
-
+        
         var gui = new dat.GUI()
         var rendering = gui.addFolder("Rendering")
         rendering.add(controller, 'anaglyph')
-        rendering.open();
+        rendering.open()
+        
+        var moving = gui.addFolder("Movement")
+        moving.add(my_robot.head.position, "x", -1000, 1000)
+        moving.add(my_robot.head.position, "y", -1000, 1000)
+        moving.add(my_robot.head.position, "z", -1000, 1000)
+        moving.open()
+        
+        var robot_actions = gui.addFolder("Robot Actions")
+        robot_actions.add(my_robot, 'raiseLeftArm')
+        robot_actions.add(my_robot, 'lowerLeftArm')
+        robot_actions.add(my_robot, 'kick')
+
+        robot_actions.open()
+        controls = new THREE.TrackballControls( camera, renderer.domElement );
+
+
+
+
+
+
+
+
+
+
+
 
         animate();
 
@@ -87,7 +111,7 @@
   
           requestAnimationFrame( animate );
   
-          r1.onAnimate();
+          my_robot.onAnimate();
   
           controls.update();
           
