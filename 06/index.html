@@ -26,7 +26,6 @@
 
   var scene, camera, renderer, ambientLight, light, controls;
   var floor;
-  var r;
 
   window.onload = function() {
 
@@ -42,7 +41,7 @@
     renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
-    
+
     ambientLight = new THREE.AmbientLight();
     scene.add( ambientLight );
 
