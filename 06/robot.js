@@ -140,12 +140,13 @@ Robot.prototype.onAnimate = function() {
                                           0.5 );  
         console.log('left arm raised');
     } 
-    // lower left arm
-    else if (this.movement == 'lower left arm') {
-        var T = -Math.PI;
-        this.left_lower_arm.quaternion.slerp(new THREE.Quaternion(0,0,0, Math.cos(T/2)), 0.5);
-        console.log('left arm lowered');
-    }
+
+    else if ( this.movement == 'lower left arm') {
+        var T = -Math.PI
+        this.left_upper_arm.quaternion.slerp( new THREE.Quaternion(
+            0,0,0,
+            Math.cos(T/2) ), 0.5);
+        }
     
     else if (this.movement == 'kick') {
   

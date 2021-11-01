@@ -83,10 +83,10 @@
         rendering.open();
 
         var moving = gui.addFolder( "Movement" );
-        moving.add( r.head.position, "x", -1000, 1000 );
+        moving.add( r.head.position, "x", -1000, 1000 ).listen();
         // ... add y and z
-        moving.add( r.head.position, "y", -1000, 1000 );
-        moving.add( r.head.position, "z", -1000, 1000 );
+        moving.add( r.head.position, "y", -1000, 1000 ).listen();
+        moving.add( r.head.position, "z", -1000, 1000 ).listen();
         moving.open();
 
         var animation = gui.addFolder( "Animation" );
@@ -96,6 +96,38 @@
         animation.open();
 
         controls = new THREE.TrackballControls( camera, renderer.domElement );
+
+        renderer.domElement.onclick = function(e) {
+
+          // We will use the SHIFT­ key to distinguish between geometry placement and 
+          // regular camera movement.
+          if (!e.shiftKey) {
+            e.preventDefault();
+            return false;
+          }
+
+          console.log('yes! you clicked!');
+
+          pixel_coords = new THREE.Vector2( e.clientX, e.clientY );
+
+          console.log('Pixel coordinates', pixel_coords);
+
+          vp_coords = new THREE.Vector2( ( pixel_coords.x / window.innerWidth ) * 2 - 1,
+                                        -( pixel_coords.y / window.innerHeight ) * 2 + 1);
+
+          console.log('Viewport coordinates', vp_coords);
+
+          vp_coords_near = new THREE.Vector3( vp_coords.x, vp_coords.y, 0);
+
+          raycaster = new THREE.Raycaster();
+          raycaster.setFromCamera(vp_coords_near, camera);
+          intersects = raycaster.intersectObject(floor);
+
+          console.log('Ray to Invisible Plane', intersects[0].point);
+
+          r.head.position.set(intersects[0].point.x, intersects[0].point.y+100, intersects[0].point.z);
+        }
+
       };
 
       function animate() {
