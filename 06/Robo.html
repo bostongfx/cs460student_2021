@@ -1,0 +1,47 @@
+
+      console.log("load");
+      // Rendering the Robo
+      Robo = function(x, y, z) {
+        part = this;
+        console.log('new robo', part)
+          // Robo's Head
+        pahead = new THREE.Bone();
+        head.position.x = x;
+        head.position.y = y;
+        head.position.z = z;
+          // Robo's Neck
+        neck = new THREE.Bone();
+        neck.position.y = -7;
+        head.add(neck);
+          // Robo's Torso
+        torso = new THREE.Bone();
+        torso.position.y = -12;
+        neck.add(torso);
+          // Robo's Arms
+          // Robo's Right Arm
+        armup_right = new THREE.Bone();
+        armup_right.position.y = -5;
+        armup_right.position.x = -5;
+        torso.add(armup_right);
+        armlow_right = new THREE.Bone();
+        armlow_right.position.y = -15;
+        armlow_right.position.x = -5;
+        armup_right.add(armlow_right);
+        rhand = new THREE.Bone();
+        rhand.position.y = -5;
+        rhand.position.x = -5;
+        armlow_right.add(rhand);
+            // Robo's Left Arm
+        armup_left = new THREE.Bone();
+        armup_left.position.y = -5;
+        armup_left.position.x = 5;
+        torso.add(armup_left);
+        armlow_left = new THREE.Bone();
+        armlow_left.position.y = -15;
+        armlow_left.position.x = 5;
+        armup_left.add(armlow_left);
+        lhand = new THREE.Bone();
+        lhand.position.y = -5;
+        lhand.position.x = 5;
+        armlow_left.add(lhand);
+        }
