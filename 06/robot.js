@@ -77,6 +77,72 @@
           var helper = new THREE.SkeletonHelper(rGroup);helper.material.linewidth = 3;
           scene.add(rGroup);
           scene.add(helper);
-        };
-      
+          this.movement = '';
+          Robot.prototype.raiseLeftArm = function() {
+            this.movement = 'raise_left_arm' }
+          Robot.prototype.lowerLeftArm = function() {
+            this.movement = 'lower_left_arm' }
+          Robot.prototype.raiseRightArm = function() {
+            this.movement = 'raise_right_arm' }
+          Robot.prototype.lowerRightArm = function() {
+            this.movement = 'lower_right_arm' }
+          Robot.prototype.kick = function() {
+            this.movement = 'kick' }
+          
+          
+          Robot.prototype.onAnimate = function() {
+          
+            if (this.movement === 'raise_left_arm'){
+              var T = Math.PI;
+              this.armup_left.quaternion
+                .slerp(
+                  new THREE.Quaternion
+                    (Math.sin(T/2), 0, 0, Math.cos(T/2)), 
+                    0.1
+                )
+            } else if (this.movement === 'lower_left_arm') {
+              this.armup_left.quaternion
+                .slerp(
+                  new THREE.Quaternion
+                  (0, 0, 0, 1), 
+                  0.1
+                )
+            } else if (this.movement === 'raise_right_arm'){
+              var T = Math.PI;
+              this.armup_right.quaternion
+                .slerp(
+                  new THREE.Quaternion
+                  (Math.sin(T/2), 0, 0, Math.cos(T/2)), 
+                  0.1
+                )
+            } else if (this.movement === 'lower_right_arm') {
+              this.armup_right.quaternion
+                .slerp(
+                  new THREE.Quaternion
+                  (0, 0, 0, 1), 
+                  0.1
+                )
+            } else if (this.movement == 'kick') {
+              if (this.armup_right.quaternion.w < 0.72) {
+                this.movement = 'kick done';
+              } else {
+                var T = -Math.PI/2;
+                this.legup_right.quaternion
+                  .slerp(
+                    new THREE.Quaternion
+                    (Math.sin(T/2), 0, 0, Math.cos(T/2) ), 
+                    0.1
+                  );                               
+              }
+
+            } else if (this.movement == 'kick done') {
+              this.legup_right.quaternion
+                .slerp(
+                  new THREE.Quaternion
+                  (0, 0, 0, 1), 
+                  0.1
+                );
+                }
+              }
+            }
         }
