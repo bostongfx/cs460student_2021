@@ -83,7 +83,26 @@
                     c.modified(); // modify event of XTK's cube since
                     // we modify the vertices
                 }
+
             );
+            cubeGui.add(c, 'lengthY', 0, 100).onChange(
+                function () {
+
+                    c.modified(); // modify event of XTK's cube since
+                    // we modify the vertices
+                }
+
+            );
+            cubeGui.add(c, 'lengthZ', 0, 100).onChange(
+                function () {
+
+                    c.modified(); // modify event of XTK's cube since
+                    // we modify the vertices
+                }
+
+            );
+
+
             cubeGui.add(controller, 'rotateX');
             cubeGui.add(controller, 'rotateY');
             cubeGui.add(controller, 'rotateZ');

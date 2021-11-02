@@ -24,17 +24,18 @@
 
 <script id="vertexshader" type="glsl">
     attribute vec3 position;
-
-    uniform vec3 offset;
+    uniform mat4 transform;
+    //uniform vec3 offset;
 
     void main(void) {
     
-      vec3 final_position = position;
-      final_position.x += offset.x;
-      final_position.y += offset.y;
-      final_position.z += offset.z;
+        // matrix multiplication
+      vec4 final_position = transform * vec4(position, 1.);
+      //final_position.x += offset.x;
+      //final_position.y += offset.y;
+      //final_position.z += offset.z; 
 
-      gl_Position = vec4( final_position, 1.);
+      gl_Position = final_position;
       gl_PointSize = 10.;
     
     }
@@ -165,7 +166,7 @@
 
     function animate() {
 
-        //requestAnimationFrame(animate);
+        requestAnimationFrame(animate);
         gl.clearColor(0., 0., 0., 0.);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -198,13 +199,27 @@
 
             gl.uniform4fv(u_color, new Float32Array(color));
 
-            var u_offset = gl.getUniformLocation(shaderprogram, 'offset');
+            // var u_offset = gl.getUniformLocation(shaderprogram, 'offset');
+            var u_transform = gl.getUniformLocation(shaderprogram, 'transform');
 
             offset[0] -= .1;
+            offset[1] -= .1;
 
-            // //boundaries
-            // if (offset[0] < -1) offset[0] = 1;
+            //boundaries
+            if (offset[1] < -1) offset[1] = 1;
+
+            //boundaries
+            if (offset[0] < -1) offset[0] = 1;
+
+            // crare 4x4 matrix
+            // colom-major
+            current_transform = new Float32Array([
+                .2, 0, 0, 0,
+                0, .2, 0, 0,
+                0, 0, 0, 1,
+                offset[0], offset[1], offset[2], 1]);
             // gl.uniform3fv(u_offset, new Float32Array(offset));
+            gl.uniformMatrix4fv(u_transform, false, current_transform);
 
 
             //************************************************************//
