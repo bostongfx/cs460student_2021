@@ -72,7 +72,14 @@
     // https://threejs.org/docs/#api/en/textures/VideoTexture
     video = document.getElementById( 'video' );
     texture = new THREE.VideoTexture( video );
-
+    var planeGeo = new THREE.PlaneBufferGeometry(1000,1000); 
+    var planeMat = new THREE.MeshBasicMaterial( {
+      map: texture,
+    } );
+    plane = new THREE.Mesh(planeGeo, planeMat );
+    plane.position.y = 30
+    plane.position.z = -1000;
+    scene.add( plane );
 
     // ROBOT GOES HERE!
     robots = [];
@@ -97,6 +104,7 @@
       dance : function() {
         for(var r in robots)
           robots[r].dance();
+        video.play();
       }
           
     };
