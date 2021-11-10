@@ -66,6 +66,7 @@
     floor.rotateX(-30);
     scene.add( floor );
 
+    // bonus 2
     // video from:
     // https://www.youtube.com/watch?v=F5tSoaJ93ac&ab_channel=LeagueofLegends
     // reference from:
@@ -88,7 +89,6 @@
     r.show(scene);
     robots.push(r);
 
-    video.play();
 
     controller = {
       anaglyph: false,
@@ -104,9 +104,10 @@
         for(var r in robots)
           robots[r].kick();
       },
-      dance : function() {
+      dance_video : function() {
         for(var r in robots)
           robots[r].dance();
+        // play video when dance
         video.play();
       }
           
@@ -125,7 +126,7 @@
     moving.add( controller, "raise_left_arm");
     moving.add( controller, "lower_left_arm");
     moving.add( controller, "kick");
-    moving.add( controller, "dance");
+    moving.add( controller, "dance_video");
     moving.open();
 
     controls = new THREE.TrackballControls( camera, renderer.domElement );
