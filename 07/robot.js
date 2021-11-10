@@ -10,10 +10,10 @@ Robot = function(x, y ,z){
   var bones = fromhelper[2];
 
   // bonus 1
-  var geo = new THREE.SphereGeometry( 15, 15,  15);
-  var texture = new THREE.TextureLoader().load( "head.png" );
+  var geo = new THREE.SphereGeometry( 15, 64,  64);
+  var texture = new THREE.TextureLoader().load( "Face.png" );
   texture.offset.x = 0.25;
-  var mat = new THREE.MeshPhongMaterial( { map: texture } );
+  var mat = new THREE.MeshPhongMaterial( {map: texture} );
   mat.shininess = 5;
   var sphere = new THREE.Mesh( geo, mat );
 
@@ -28,7 +28,7 @@ Robot = function(x, y ,z){
   this.root.position.set(x, y, z);
 
   this.head = bones[ 1 ];
-  this.head.add(sphere);
+  this.head.add( sphere );
   this.head.position.y = 10;
 
   this.neck = bones[ 2 ];
