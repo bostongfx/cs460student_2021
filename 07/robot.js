@@ -9,7 +9,8 @@ Robot = function(x, y ,z){
   var material = fromhelper[1];
   var bones = fromhelper[2];
 
-  // bonus 1
+  // bonus 1, reference :
+  // https://threejs.org/docs/#api/en/loaders/TextureLoader
   var geo = new THREE.SphereGeometry( 15, 15,  15);
   var texture = new THREE.TextureLoader().load( "Face.png" );
   texture.offset.x = 0.30;
