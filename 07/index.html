@@ -72,7 +72,7 @@
     // https://threejs.org/docs/#api/en/textures/VideoTexture
     video = document.getElementById( 'video' );
     texture = new THREE.VideoTexture( video );
-    var planeGeo = new THREE.PlaneBufferGeometry(1000,1000); 
+    var planeGeo = new THREE.PlaneBufferGeometry(2000,600); 
     var planeMat = new THREE.MeshBasicMaterial( {
       map: texture,
     } );
@@ -87,6 +87,8 @@
     r = new Robot(0, -25, 0);
     r.show(scene);
     robots.push(r);
+
+    video.play();
 
     controller = {
       anaglyph: false,
