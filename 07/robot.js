@@ -12,6 +12,7 @@ Robot = function(x, y ,z){
   // bonus 1
   var geo = new THREE.SphereGeometry( 15, 50,  50);
   var texture = new THREE.TextureLoader().load( "Face.png" );
+  texture.offset.x = 0.30;
   var mat = new THREE.MeshPhongMaterial( {map: texture} );
   var sphere = new THREE.Mesh( geo, mat );
 
