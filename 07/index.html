@@ -77,6 +77,7 @@
       map: texture,
     } );
     plane = new THREE.Mesh(planeGeo, planeMat );
+    plane.rotateX(0);
     plane.position.y = 30
     plane.position.z = -1000;
     scene.add( plane );
