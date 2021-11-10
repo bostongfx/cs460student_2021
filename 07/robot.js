@@ -10,7 +10,7 @@ Robot = function(x, y ,z){
   var bones = fromhelper[2];
 
   // bonus 1
-  var geo = new THREE.SphereGeometry( 15, 50,  50);
+  var geo = new THREE.SphereGeometry( 15, 15,  15);
   var texture = new THREE.TextureLoader().load( "Face.png" );
   texture.offset.x = 0.30;
   var mat = new THREE.MeshPhongMaterial( {map: texture} );
