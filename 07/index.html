@@ -67,6 +67,11 @@
     scene.add( floor );
 
 
+    // reference from:
+    // https://threejs.org/docs/#api/en/textures/VideoTexture
+    video = document.getElementById( 'video' );
+    texture = new THREE.VideoTexture( video );
+
 
     // ROBOT GOES HERE!
     robots = [];
@@ -168,5 +173,8 @@
 
     </script>
   </head>
-  <body></body>
+  <body>
+    <video id="video" loop style="display:none" src="video.mp4">
+    </video>
+  </body>
   </html>
