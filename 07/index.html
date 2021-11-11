@@ -67,15 +67,26 @@
         floor.rotateX(-30);
         scene.add( floor );
 
-        r = new Robot(0, 0, 0);
+        r = new Robot(0, -30, 0);
       
         r.show(scene);
 
-      
+        allRobots = []
+        allRobots.push(r)
 
 
         controller = {
-          anaglyph: false
+          anaglyph: false,
+          dance: function() {
+              var music = document.getElementById('music');
+              music.autoplay = true;
+              music.load();
+            
+              for (var robot of allRobots) {
+                  robot.dance()
+              }
+          }
+
         }
 
 
@@ -83,18 +94,21 @@
         var rendering = gui.addFolder( "Rendering" );
         rendering.add( controller, 'anaglyph' );
         rendering.open();
-        var moving = gui.addFolder( "Movement" );
+        moving = gui.addFolder( "Movement" );
+
+        
+
         moving.add( r.head.position, "x", -1000, 1000 ).listen();
         moving.add( r.head.position, "y", -1000, 1000 ).listen();
         moving.add( r.head.position, "z", -1000, 1000 ).listen();
-        moving.add( r, "raise_left_arm" );
-        moving.add( r, "lower_left_arm" );
-        moving.add( r, "kick" );
-        moving.add( r, "dance" );
+        // moving.add( r, "raise_left_arm" );
+        // moving.add( r, "lower_left_arm" );
+        // moving.add( r, "kick" );
+
+        moving.add(controller, "dance")
+
         moving.open();
-
-
-
+        
         controls = new THREE.TrackballControls( camera, renderer.domElement );
 
 
@@ -104,9 +118,7 @@
       };
 
       window.onclick = function(e) {
-
           if (!e.shiftKey) {
-
             e.preventDefault();
             return false;
           }
@@ -123,23 +135,28 @@
           intersects = raycaster.intersectObject(floor);
 
           if (intersects.length > 0) {
-
-            //   r.head.position.set(intersects[0].point.x, 
-            //                       intersects[0].point.y + 60,
-            //                       intersects[0].point.z)
-            r2 = new Robot(intersects[0].point.x, intersects[0].point.y + 60, intersects[0].point.z)
+            r2 = new Robot(intersects[0].point.x, intersects[0].point.y + 70, intersects[0].point.z)
             r2.show(scene)
-
+            allRobots.push(r2)
+            animate()
           }
 
       };
+
+    //   function everybody_dance_now() {
+    //       for (var robot of allRobots) {
+    //           robots.dance()
+    //       }
+    //   }
 
       function animate() {
 
         requestAnimationFrame( animate );
 
-        r.onAnimate();
-
+        for (var robot of allRobots){
+            robot.onAnimate();
+        }
+        
         controls.update();
 
         if (controller.anaglyph) {
@@ -149,12 +166,13 @@
             renderer.setClearAlpha(0);
             renderer.render( scene, camera );
         }
-        
-
       };
 
     </script>
   </head>
   <body>
+    <div style="visibility:hidden">
+        <audio id="music" src="./дурной вкус - пластинки.mp3"></audio>
+    </div>
   </body>
 </html>
