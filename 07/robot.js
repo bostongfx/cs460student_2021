@@ -1,17 +1,19 @@
 Robot = function(x, y, z) {
+
+  const colors = ['green', 'blue', 'yellow', 'purple', 'orange']
   
   // head, neck, torso
-  var [geometry, material, bones] = HELPER.cylinderSkeletonMesh(3, 5, 'red')
+  var [geometry, material, bones] = HELPER.cylinderSkeletonMesh(3, 5, colors[Math.floor(Math.random() * colors.length)])
   var mesh = new THREE.SkinnedMesh(geometry, material)
   var skeleton = new THREE.Skeleton(bones)
   mesh.add(bones[0])
   mesh.bind(skeleton)
 
+
   this.root = bones[0]
   this.root.position.set(x, y, z)
   
   this.head = bones[1] // new THREE.Bone();
-  this.head.position.set( x, y, z );
 
   this.neck = bones[2] //new THREE.Bone();
   this.neck.position.y = -10;

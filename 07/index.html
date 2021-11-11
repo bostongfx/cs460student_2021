@@ -68,7 +68,10 @@
         scene.add( floor );
 
         r = new Robot(0, 0, 0);
+      
         r.show(scene);
+
+      
 
 
         controller = {
@@ -121,9 +124,11 @@
 
           if (intersects.length > 0) {
 
-              r.head.position.set(intersects[0].point.x, 
-                                  intersects[0].point.y + 60,
-                                  intersects[0].point.z)
+            //   r.head.position.set(intersects[0].point.x, 
+            //                       intersects[0].point.y + 60,
+            //                       intersects[0].point.z)
+            r2 = new Robot(intersects[0].point.x, intersects[0].point.y + 60, intersects[0].point.z)
+            r2.show(scene)
 
           }
 
