@@ -1,0 +1,336 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      html, body { 
+        background-color:#000;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden !important;  
+
+        background-image: url(sky.jpg);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+      }
+    </style>
+
+    <script src="https://threejs.org/build/three.min.js" type="text/javascript"></script>
+    <script src="https://threejs.org/examples/js/controls/TrackballControls.js" type="text/javascript"></script>
+    <script src="https://threejs.org/examples/js/effects/AnaglyphEffect.js" type="text/javascript"></script>
+    <script src="robot.js" type="text/javascript"></script>
+    <script src="https://threejs.org/examples/js/libs/dat.gui.min.js" type="text/javascript"></script>
+
+
+    <script>
+
+      var scene, camera, renderer, ambientLight, light, controls;
+      var floor;
+
+      window.onload = function() {
+
+        scene = new THREE.Scene();
+
+        var fov = 60;
+        var ratio = window.innerWidth / window.innerHeight;
+        var zNear = 1;
+        var zFar = 10000;
+        camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+        camera.position.set( 0, 380, 850);
+
+        renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+        // For anaglyph rendering
+        effect = new THREE.AnaglyphEffect( renderer );
+        effect.setSize( window.innerWidth, window.innerHeight );
+        
+        ambientLight = new THREE.AmbientLight();
+        scene.add( ambientLight );
+
+        light = new THREE.DirectionalLight( 0xffffff, 5.0 );
+        light.position.set( 10, 100, 10 );
+        scene.add( light );
+
+
+        var floorTexture = new THREE.TextureLoader().load( 'board.jpg' );
+        var floorGeometry = new THREE.PlaneBufferGeometry( 1000, 1000 );
+        var floorMaterial = new THREE.MeshBasicMaterial( {
+          map: floorTexture,
+          side: THREE.DoubleSide
+        } );
+        floor = new THREE.Mesh( floorGeometry, floorMaterial );
+        floor.position.y = -100;
+        floor.rotateX(Math.PI/2);
+        scene.add( floor );
+
+        // video texture here
+        // avenger
+        let video = document.getElementById('video');
+        var videoTexture = new THREE.VideoTexture(video);
+        var videoGeometry = new THREE.PlaneBufferGeometry( 1920*1.5, 1080*1.5 );
+        var videoMaterial = new THREE.MeshBasicMaterial( {
+          map: videoTexture,
+          // side: THREE.DoubleSide
+        } );
+        video_background = new THREE.Mesh( videoGeometry, videoMaterial );
+        video_background.position.y = 500;
+        video_background.position.z = -200;
+        // video_background.rotateY(Math.PI);
+
+        // black panther
+        let video2 = document.getElementById('video2');
+        var videoTexture2 = new THREE.VideoTexture(video2);
+        var videoGeometry2 = new THREE.PlaneBufferGeometry( 1920, 1080 );
+        var videoMaterial2 = new THREE.MeshBasicMaterial( {
+          map: videoTexture2,
+          // side: THREE.DoubleSide
+        } );
+        video_background2 = new THREE.Mesh( videoGeometry2, videoMaterial2 );
+        video_background2.position.y = 300;
+        video_background2.position.z = -200;
+        // video_background2.rotateX(Math.PI);
+
+
+        video_background2.visible = false;
+        video_background.visible = false;
+
+
+
+        controls = new THREE.TrackballControls( camera, renderer.domElement );
+
+
+        // ROBOT GOES HERE!
+        r = new Robot(0, 257, 0); // any position works
+        r.show(scene);       
+
+        robot_store = [r];
+
+        //////////////////////////////////////////////////////////////////////
+        // dat.GUI //////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////
+
+        var background_music = document.getElementById('background_music');
+
+        controller = {
+          anaglyph: false,
+          visibility_robot: true,
+          visibility_skeleton: false,  
+          all_robots: true,        
+          "Raise Left Arm": function(){
+            for (var rb in robot_store) {
+              robot_store[rb].raise_left_arm();
+            }
+            floor.visible = true;
+            background_music.play();
+            if (video_background2.visible == true || video_background.visible == true) background_music.volume = 0;
+            else background_music.volume = 1;
+          },
+          "Lower Left Arm": function(){
+            for (var rb in robot_store) {
+              robot_store[rb].lower_left_arm();
+            }
+            floor.visible = true;
+            background_music.play();
+            if (video_background2.visible == true || video_background.visible == true) background_music.volume = 0;
+            else background_music.volume = 1;
+          },
+          "Kick": function(){
+            for (var rb in robot_store) {
+              robot_store[rb].kick();
+            }
+            floor.visible = true;
+            background_music.play();
+            if (video_background2.visible == true || video_background.visible == true) background_music.volume = 0;
+            else background_music.volume = 1;
+          },
+          "Dance": function(){
+            for (var rb in robot_store) {
+              robot_store[rb].dance();
+            }
+            floor.visible = true;
+            background_music.play();
+            if (video_background2.visible == true || video_background.visible == true) background_music.volume = 0;
+            else background_music.volume = 1;
+          },
+          "Walk": function(){
+            for (var rb in robot_store) {
+              robot_store[rb].walk();
+            }
+            floor.visible = true;
+            background_music.play();
+            if (video_background2.visible == true || video_background.visible == true) background_music.volume = 0;
+            else background_music.volume = 1;
+          },
+          "Run": function(){
+            for (var rb in robot_store) {
+              robot_store[rb].run();
+            }
+            video2.play();
+            scene.add( video_background2 );
+            video.pause();
+            video_background.visible = false;
+            video_background2.visible = true;
+            floor.visible = true;
+            background_music.pause();
+          },
+          "Assemble": function(){
+            r2 = new Robot(400,257,0);
+            r3 = new Robot(-400,257,0);
+            r4 = new Robot(400,257,500);
+            r5 = new Robot(-400,257,500);
+            r6 = new Robot(0,257,500);
+            r7 = new Robot(-200,257,250);
+            r8 = new Robot(200,257,250);
+            r9 = new Robot(0,257,500);
+            robot_store.push(r2);
+            robot_store.push(r3);
+            robot_store.push(r4);
+            robot_store.push(r5);
+            robot_store.push(r6);
+            robot_store.push(r7);
+            robot_store.push(r8);
+            robot_store.push(r9);
+            r2.show(scene);
+            r3.show(scene);
+            r4.show(scene);
+            r5.show(scene);
+            r6.show(scene);
+            r7.show(scene);
+            r8.show(scene);
+            // r9.show(scene);
+            for (var rb in robot_store) {
+              robot_store[rb].run();
+            }
+            video.play();
+            scene.add( video_background );
+            video2.pause();
+            video_background2.visible = false;
+            video_background.visible = true;
+            floor.visible = false;
+            background_music.pause();
+
+            // while (camera.position.z <= 1600 ) {
+            //   setTimeout(function(){ 
+            //     camera.position.z += 10;
+            //     camera.position.y += 10;
+            //   }, 100); 
+            // }
+            // camera.position.set(0, 400, 1600);
+          },
+          "Reset": function(){
+            window.location.reload();
+          }
+        }
+
+        var gui = new dat.GUI();
+        var reset = gui.addFolder( "Reset" );
+        reset.add( controller, "Reset").name('Click here to reset');
+        reset.open();
+        var rendering = gui.addFolder( "Rendering" );
+        rendering.add( controller, 'anaglyph' );
+        rendering.add( controller, 'visibility_robot' ).name('Show Robot');
+        rendering.add( controller, 'visibility_skeleton' ).name('Show Skeleton');
+        rendering.open();
+
+        // movement
+        var moving = gui.addFolder( "Movement" );
+        moving.add( r.head.position, "x", -1000, 1000 ).listen();
+        moving.add( r.head.position, "y", -1000, 1000 ).listen();
+        moving.add( r.head.position, "z", -3000, 1500 ).listen();
+        moving.add( controller, "Raise Left Arm");
+        moving.add( controller, "Lower Left Arm");
+        moving.add( controller, "Kick");
+        moving.add( controller, "Walk");
+        moving.add( controller, "Run");
+        moving.add( controller, "Dance");
+        moving.add( controller, "Assemble").name("Assemble !!!");
+        moving.open();
+
+        // control all robots
+        var rendering = gui.addFolder( "All Robots" );
+        rendering.add( controller, 'all_robots' ).name('Active');
+        rendering.open();
+
+        
+        // place a robot on the floor plane if the user clicks while holding shift.
+        renderer.domElement.onclick = function(e) {
+
+          if (!e.shiftKey) {
+            e.preventDefault();
+            return false;
+          }
+
+          pixel_coords = new THREE.Vector2( e.clientX, e.clientY );
+          vp_coords = new THREE.Vector2( ( pixel_coords.x / window.innerWidth ) * 2 - 1,
+                                        -( pixel_coords.y / window.innerHeight ) * 2 + 1);
+
+          vp_coords_near = new THREE.Vector3( vp_coords.x, vp_coords.y, 0);
+
+          raycaster = new THREE.Raycaster();
+          raycaster.setFromCamera(vp_coords_near, camera);
+          intersects = raycaster.intersectObject(floor);
+
+          r1 = new Robot(intersects[0].point.x, 
+                         intersects[0].point.y + 360, 
+                         intersects[0].point.z);
+          robot_store.push(r1);
+          r1.show(scene);
+
+        }; 
+
+
+        animate();
+
+
+      };
+
+      function animate() {
+
+        requestAnimationFrame( animate );
+
+        // TODO
+        if (controller.all_robots) {
+          for (var rb in robot_store) {
+            robot_store[rb].onAnimate();
+
+            robot_store[rb].showSkeleton(controller.visibility_skeleton);
+            robot_store[rb].showRobot(controller.visibility_robot);
+          }
+        } else {
+          r.onAnimate();
+
+          r.showSkeleton(controller.visibility_skeleton);
+          r.showRobot(controller.visibility_robot);
+        }
+        
+        
+
+        controls.update();
+        // renderer.render( scene, camera );
+        if(controller.anaglyph){
+          renderer.setClearAlpha(1);
+          effect.render( scene, camera );
+        }
+        else {
+          renderer.setClearAlpha(0);
+          renderer.render( scene, camera );
+        }
+
+      };
+
+    </script>
+  </head>
+  <body>
+    <video id="video" style="display:none">
+      <source src="AvengersAssemble.mp4" type='video/mp4; "'>
+    </video>
+    <video id="video2" style="display:none">
+      <source src="PrayForMe.mp4" type='video/mp4; "'>
+    </video>
+    <audio id="background_music">
+      <source src="LoyaltyFreakMusic.mp3" />
+    </audio>
+  </body>
+</html>
