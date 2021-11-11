@@ -29,6 +29,34 @@
       var scene, camera, renderer, effect, ambientLight, light, controls;
       var floor;
 
+      controller = {
+          anaglyph: false,
+          dance: function() {
+            /*var music = document.getElementById('music');
+            music.autoplay = true;
+            music.load();*/
+
+            for (var r in allRobots) {
+              allRobots[r].dance();
+            }
+          },
+          raise_left_arm: function() {
+            for (var r in allRobots) {
+              allRobots[r].raise_left_arm();
+            }
+          },
+          lower_left_arm: function() {
+            for (var r in allRobots) {
+              allRobots[r].lower_left_arm();
+            }
+          },
+          kick: function() {
+            for (var r in allRobots) {
+              allRobots[r].kick();
+            }
+          }
+        }
+
       window.onload = function() {
 
 
@@ -67,13 +95,23 @@
         floor.rotateX(-30);
         scene.add( floor );
 
+        allRobots = [];
         r = new Robot(0, -55, 0);
         r.show(scene);
+        allRobots.push(r);
 
+        // controller = {
+        //   anaglyph: false,
+        //   dance: function() {
+        //     /*var music = document.getElementById('music');
+        //     music.autoplay = true;
+        //     music.load();*/
 
-        controller = {
-          anaglyph: false
-        }
+        //     for (var r in allRobots) {
+        //       allRobots[r].dance();
+        //     }
+        //   }
+        // }
 
 
         var gui = new dat.GUI();
@@ -84,10 +122,10 @@
         moving.add( r.head.position, "x", -1000, 1000 ).listen();
         moving.add( r.head.position, "y", -1000, 1000 ).listen();
         moving.add( r.head.position, "z", -1000, 1000 ).listen();
-        moving.add( r, "raise_left_arm" );
-        moving.add( r, "lower_left_arm" );
-        moving.add( r, "kick" );
-        moving.add( r, "dance" );
+        moving.add( controller, "raise_left_arm" );
+        moving.add( controller, "lower_left_arm" );
+        moving.add( controller, "kick" );
+        moving.add( controller, "dance" );
         moving.open();
 
 
@@ -122,16 +160,15 @@
           raycaster.setFromCamera(vp_coords_near, camera);
           intersects = raycaster.intersectObject(floor);
 
-          r2 = new Robot(vp_coords.x, vp_coords.y, 0);
-          r2.show(scene);
+          //r2 = new Robot(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
+          //r2.show(scene);
 
-          /*if (intersects.length > 0) {
+          if (intersects.length > 0) {
 
-              r.head.position.set(intersects[0].point.x, 
-                                  intersects[0].point.y + 60,
-                                  intersects[0].point.z)
-
-          }*/
+            r2 = new Robot(intersects[0].point.x, intersects[0].point.y + 60, intersects[0].point.z);
+            r2.show(scene);
+            allRobots.push(r2);
+          }
           // r2.root.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z);
 
       };
@@ -140,7 +177,9 @@
 
         requestAnimationFrame( animate );
 
-        r.onAnimate();
+        for (var r in allRobots) {
+          allRobots[r].onAnimate();
+        }
 
         controls.update();
 

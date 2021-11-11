@@ -1,10 +1,18 @@
 Robot = function(x, y, z) {
 
     // head, neck, torso
-    var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'blue');
+    var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'purple');
     var geometry = fromHelper[0];
     var material = fromHelper[1];
     var bones = fromHelper[2];
+
+    // var face = new THREE.SphereGeometry(10, 10, 100);
+    // var texture = new THREE.TextureLoader();
+    // var material = new THREE.MeshPhongMaterial( {
+    //   map: texture
+    // });
+    // var ball = new THREE.Mesh(face, material);
+    // this.head.add(ball);
 
     var mesh = new THREE.SkinnedMesh(geometry, material);
     var skeleton = new THREE.Skeleton(bones);
@@ -30,7 +38,7 @@ Robot = function(x, y, z) {
     this.body_mesh = mesh;
 
     // left arm and hand
-    var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'blue');
+    var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'purple');
     var geometry = fromHelper[0];
     var material = fromHelper[1];
     var bones = fromHelper[2];
@@ -61,7 +69,7 @@ Robot = function(x, y, z) {
   
    
     // left leg and foot
-    var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'blue');
+    var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'purple');
     var geometry = fromHelper[0];
     var material = fromHelper[1];
     var bones = fromHelper[2];
@@ -92,7 +100,7 @@ Robot = function(x, y, z) {
   
   
     // right arm and hand
-    var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'blue');
+    var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'purple');
     var geometry = fromHelper[0];
     var material = fromHelper[1];
     var bones = fromHelper[2];
@@ -123,7 +131,7 @@ Robot = function(x, y, z) {
   
   
     // right leg and foot
-    var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'blue');
+    var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'purple');
     var geometry = fromHelper[0];
     var material = fromHelper[1];
     var bones = fromHelper[2];
