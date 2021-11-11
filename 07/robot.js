@@ -24,11 +24,11 @@ Robot = function(x, y, z) {
   this.torso = bones[3];
   this.torso.position.y = -30;
 
-  this.bodyMesh = mesh;
+  this.body_mesh = mesh;
 
   // LEFT ARM SET UP
 
-  var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'green');
+  var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'blue');
   var geometry = fromHelper[0];
   var material = fromHelper[1];
   var bones = fromHelper[2];
@@ -43,14 +43,14 @@ Robot = function(x, y, z) {
   // LEFT UPPER ARM
   
   this.left_upper_arm = bones[1];
-  this.left_upper_arm.position.y = -5;
+  this.left_upper_arm.position.y = -8;
   this.left_upper_arm.position.x = 5;
 
   // LEFT LOWER ARM
 
   this.left_lower_arm = bones[2];
-  this.left_lower_arm.position.y = -5;
-  this.left_lower_arm.position.x = 3;
+  this.left_lower_arm.position.y = -8;
+  this.left_lower_arm.position.x = 5;
 
   // LEFT HAND
 
@@ -62,7 +62,7 @@ Robot = function(x, y, z) {
 
   // RIGHT ARM SET UP
 
-  var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'red');
+  var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'blue');
   var geometry = fromHelper[0];
   var material = fromHelper[1];
   var bones = fromHelper[2];
@@ -77,14 +77,14 @@ Robot = function(x, y, z) {
   // RIGHT UPPER ARM
 
   this.right_upper_arm = bones[1];
-  this.right_upper_arm.position.y = -5;
+  this.right_upper_arm.position.y = -8;
   this.right_upper_arm.position.x = -5;
 
   // RIGHTER LOWER ARM
 
   this.right_lower_arm = bones[2];
-  this.right_lower_arm.position.y = -5;
-  this.right_lower_arm.position.x = -3;
+  this.right_lower_arm.position.y = -8;
+  this.right_lower_arm.position.x = -5;
 
   // RIGHT HAND
 
@@ -96,7 +96,7 @@ Robot = function(x, y, z) {
 
   // LEFT LEG SET UP
 
-  var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'yellow');
+  var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'blue');
   var geometry = fromHelper[0];
   var material = fromHelper[1];
   var bones = fromHelper[2];
@@ -130,7 +130,7 @@ Robot = function(x, y, z) {
 
   // RIGHT LEG SET UP
 
-  var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'pink');
+  var fromHelper = HELPER.cylinderSkeletonMesh(3, 5, 'blue');
   var geometry = fromHelper[0];
   var material = fromHelper[1];
   var bones = fromHelper[2];
@@ -198,7 +198,9 @@ Robot.prototype.kick = function() {
 Robot.prototype.onAnimate = function() {
   if (this.movement == 'raise_left_arm') {
 
-    q = new THREE.Quaternion(Math.sin(Math.PI/2), 0, 0, Math.cos(Math.PI/2));
+    var T = Math.PI;
+
+    q = new THREE.Quaternion(Math.sin(-Math.PI/2), 0, 0, Math.cos(-Math.PI/2));
 
     this.left_upper_arm.quaternion.slerp(q, 0.1);
 
@@ -210,7 +212,7 @@ Robot.prototype.onAnimate = function() {
 
   } else if (this.movement == 'raise_right_arm') {
     
-    q = new THREE.Quaternion(Math.sin(Math.PI/2), 0, 0, Math.cos(Math.PI/2));
+    q = new THREE.Quaternion(Math.sin(-Math.PI/2), 0, 0, Math.cos(-Math.PI/2));
 
     this.right_upper_arm.quaternion.slerp(q, 0.1);
 
@@ -228,7 +230,7 @@ Robot.prototype.onAnimate = function() {
 
     } else {
 
-      q = new THREE.Quaternion(Math.sin(Math.PI/4), 0, 0, Math.cos(Math.PI/4));
+      q = new THREE.Quaternion(Math.sin(-Math.PI/4), 0, 0, Math.cos(-Math.PI/4));
 
     }
 
