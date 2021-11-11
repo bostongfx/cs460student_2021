@@ -3,146 +3,166 @@
       // Rendering the Robo
       Robot = function(x, y, z) {
         console.log('new robo', this)
+        var fromhelper = HELPER.cylinderSkeletonMesh(2, 3, 'red');
+        var geometry = fromhelper[0];
+        var material = fromhelper[1];
+        var bones = fromhelper[2];
+        var mesh = new THREE.SkinnedMesh(geometry, material);
+        var skeleton = new THREE.Skeleton(bones);
+        mesh.add(bones[0]);
+        mesh.bind(skeleton);
           // Robo's Head
-        this.head = new THREE.Bone();
+        this.head = bones[0];
         this.head.position.x = x;
         this.head.position.y = y;
         this.head.position.z = z;
           // Robo's Neck
-        this.neck = new THREE.Bone();
+        this.neck = bones[1];
         this.neck.position.y = -5;
         this.head.add(this.neck);
           // Robo's Torso
-        this.torso = new THREE.Bone();
+        this.torso = bones[2];
         this.torso.position.y = -15;
         this.neck.add(this.torso);
+        this.body = mesh;
           // Robo's Arms
           // Robo's Right Arm
-        this.armup_right = new THREE.Bone();
+        var fromhelper = HELPER.cylinderSkeletonMesh(2, 3, 'red');
+        var geometry = fromhelper[0];
+        var material = fromhelper[1];
+        var bones = fromhelper[2];
+        var mesh = new THREE.SkinnedMesh(geometry, material);
+        var skeleton = new THREE.Skeleton(bones);
+        mesh.add(bones[0]);
+        mesh.bind(skeleton);
+        this.armup_right = bones[0];
         this.armup_right.position.y = -5;
         this.armup_right.position.x = 5;
         this.neck.add(this.armup_right);
-        this.armlow_right = new THREE.Bone();
+        this.armlow_right = bones[1];
         this.armlow_right.position.y = -10;
         this.armlow_right.position.x = 10;
         this.armup_right.add(this.armlow_right);
-        this.rhand = new THREE.Bone();
+        this.rhand = bones[2];
         this.rhand.position.y = -15;
         this.rhand.position.x = 10;
-        this.armlow_right.add(this.rhand);
+        this.armlow_right.add(this.rhand)
+        this.rarm = mesh;
           // Robo's Left Arm
-        this.armup_left = new THREE.Bone();
+        var fromhelper = HELPER.cylinderSkeletonMesh(2, 3, 'red');
+        var geometry = fromhelper[0];
+        var material = fromhelper[1];
+        var bones = fromhelper[2];
+        var mesh = new THREE.SkinnedMesh(geometry, material);
+        var skeleton = new THREE.Skeleton(bones);
+        mesh.add(bones[0]);
+        mesh.bind(skeleton);
+        this.armup_left = bones[0];
         this.armup_left.position.y = -5;
         this.armup_left.position.x = -5;
         this.neck.add(this.armup_left);
-        this.armlow_left = new THREE.Bone();
+        this.armlow_left = bones[1];
         this.armlow_left.position.y = -10;
         this.armlow_left.position.x = -10;
         this.armup_left.add(this.armlow_left);
-        this.lhand = new THREE.Bone();
+        this.lhand = bones[2];
         this.lhand.position.y = -15;
         this.lhand.position.x = -10;
         this.armlow_left.add(this.lhand);
+        this.larm = mesh;
           // Robo's Legs
           // Robos Left Leg
-        this.legup_left = new THREE.Bone();
+        var fromhelper = HELPER.cylinderSkeletonMesh(2, 3, 'red');
+        var geometry = fromhelper[0];
+        var material = fromhelper[1];
+        var bones = fromhelper[2];
+        var mesh = new THREE.SkinnedMesh(geometry, material);
+        var skeleton = new THREE.Skeleton(bones);
+        mesh.add(bones[0]);
+        mesh.bind(skeleton);
+        this.legup_left = bones[0];
         this.legup_left.position.y = -17;
         this.legup_left.position.x = -5;
         this.torso.add(this.legup_left);
-        this.leglow_left = new THREE.Bone();
+        this.leglow_left = bones[1];
         this.leglow_left.position.y = -20;
         this.leglow_left.position.x = -10;
         this.legup_left.add(this.leglow_left);
-        this.lfoot = new THREE.Bone();
+        this.lfoot = bones[2];
         this.lfoot.position.y = -22;
         this.lfoot.position.x = -10;
         this.leglow_left.add(this.lfoot);
+        this.lleg = mesh;
           // Robo's Right Leg
-        this.legup_right = new THREE.Bone();
+        var fromhelper = HELPER.cylinderSkeletonMesh(2, 3, 'red');
+        var geometry = fromhelper[0];
+        var material = fromhelper[1];
+        var bones = fromhelper[2];
+        var mesh = new THREE.SkinnedMesh(geometry, material);
+        var skeleton = new THREE.Skeleton(bones);
+        mesh.add(bones[0]);
+        mesh.bind(skeleton);
+        this.legup_right = bones[0];
         this.legup_right.position.y = -17;
         this.legup_right.position.x = 5;
         this.torso.add(this.legup_right);
-        this.leglow_right = new THREE.Bone();
+        this.leglow_right = bones[1];
         this.leglow_right.position.y = -20;
         this.leglow_right.position.x = 10;
         this.legup_right.add(this.leglow_right);
-        this.rfoot = new THREE.Bone();
+        this.rfoot = bones[2];
         this.rfoot.position.y = -22;
         this.rfoot.position.x = 10;
         this.leglow_right.add(this.rfoot);
+        this.rleg = mesh;
         
         Robot.prototype.show = function(scene) {
+          
           var rGroup = new THREE.Group();
           rGroup.add(this.head);
-          var helper = new THREE.SkeletonHelper(rGroup);helper.material.linewidth = 3;
+          var sh = new THREE.SkeletonHelper(rGroup);
+          sh.material.linewidth = 3;
           scene.add(rGroup);
-          scene.add(helper);
+          scene.add(sh);
           this.movement = '';
-          Robot.prototype.raiseLeftArm = function() {
-            this.movement = 'raise_left_arm' }
-          Robot.prototype.lowerLeftArm = function() {
-            this.movement = 'lower_left_arm' }
-          Robot.prototype.raiseRightArm = function() {
-            this.movement = 'raise_right_arm' }
-          Robot.prototype.lowerRightArm = function() {
-            this.movement = 'lower_right_arm' }
-          Robot.prototype.kick = function() {
-            this.movement = 'kick' }
+          scene.add(this.body);
+          scene.add(this.rarm);
+          scene.add(this.larm);
+          scene.add(this.lleg);
+          scene.add(this.rleg);
+          Robot.prototype.dance = function() {
+            this.movement = 'dance';
+          }
           
           
           Robot.prototype.onAnimate = function() {
           
-            if (this.movement === 'raise_left_arm'){
-              var T = Math.PI;
-              this.armup_left.quaternion
-                .slerp(
-                  new THREE.Quaternion
-                    (Math.sin(T/2), 0, 0, Math.cos(T/2)), 
-                    0.1
-                )
-            } else if (this.movement === 'lower_left_arm') {
-              this.armup_left.quaternion
-                .slerp(
-                  new THREE.Quaternion
-                  (0, 0, 0, 1), 
-                  0.1
-                )
-            } else if (this.movement === 'raise_right_arm'){
-              var T = Math.PI;
-              this.armup_right.quaternion
-                .slerp(
-                  new THREE.Quaternion
-                  (Math.sin(T/2), 0, 0, Math.cos(T/2)), 
-                  0.1
-                )
-            } else if (this.movement === 'lower_right_arm') {
-              this.armup_right.quaternion
-                .slerp(
-                  new THREE.Quaternion
-                  (0, 0, 0, 1), 
-                  0.1
-                )
-            } else if (this.movement == 'kick') {
-              if (this.armup_right.quaternion.w < 0.72) {
-                this.movement = 'kick done';
-              } else {
-                var T = -Math.PI/2;
-                this.legup_right.quaternion
-                  .slerp(
-                    new THREE.Quaternion
-                    (Math.sin(T/2), 0, 0, Math.cos(T/2) ), 
-                    0.1
-                  );                               
-              }
+             if (this.movement = 'dance') {
+              if (typeof this.dancing == 'undefined') {
+                this.dancing = setInterval(function() {
+                  var headshake = Math.random();
+                  if (Math.random() < .3) {
+                    headshake *= -1;
+                  }
+                  var neckshake = Math.random();
+                  if (Math.random() < .3) {
+                    neckshake *= -1;
+                  }
+                  var hipshake = Math.random();
+                  if (Math.random() < .3) {
+                    hipshake *= -1;
+                  }
+                  this.head.position.x += headshake;
+                  this.neck.position.x += neckshake;
+                  this.torso.position.x += hipshake;
 
-            } else if (this.movement == 'kick done') {
-              this.legup_right.quaternion
-                .slerp(
-                  new THREE.Quaternion
-                  (0, 0, 0, 1), 
-                  0.1
-                );
+                }.bind(this), 500);
                 }
               }
             }
+          }
         }
+      
+  
+              
+           
