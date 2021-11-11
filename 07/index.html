@@ -87,7 +87,21 @@
 
             for (var r in ALL_ROBOTS) {
               ALL_ROBOTS[r].dance();
-
+            }
+          }, 
+          raise_left_arm: function() {
+            for (var r in ALL_ROBOTS) {
+              ALL_ROBOTS[r].raise_left_arm();
+            }
+          },
+          lower_left_arm: function() {
+            for (var r in ALL_ROBOTS) {
+              ALL_ROBOTS[r].lower_left_arm();
+            }
+          }, 
+          kick: function() {
+            for (var r in ALL_ROBOTS) {
+              ALL_ROBOTS[r].kick();
             }
           }
         }
@@ -101,9 +115,9 @@
         moving.add( r.head.position, "x", -1000, 1000 ).listen();
         moving.add( r.head.position, "y", -1000, 1000 ).listen();
         moving.add( r.head.position, "z", -1000, 1000 ).listen();
-        moving.add( r, "raise_left_arm" );
-        moving.add( r, "lower_left_arm" );
-        moving.add( r, "kick" );
+        moving.add( controller, "raise_left_arm" );
+        moving.add( controller, "lower_left_arm" );
+        moving.add( controller, "kick" );
         moving.add( controller, "dance" );
         moving.open();
 
