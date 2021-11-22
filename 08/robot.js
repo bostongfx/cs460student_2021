@@ -138,14 +138,16 @@ Robot.prototype.raise_left_arm = function() { this.movement = 'raise left arm'; 
 Robot.prototype.lower_left_arm = function() { this.movement = 'lower left arm'; };
 Robot.prototype.kick = function() { this.movement = 'kick'; };
 Robot.prototype.dance = function() { this.movement = 'dance'; };
+Robot.prototype.walk = function() { this.movement = 'walk'; };
+
+const quaternions = {
+  "identity" : new THREE.Quaternion(0, 0, 0, 1),
+  "raise_left_arm" : new THREE.Quaternion(Math.sin(-Math.PI/4), 0, 0, Math.cos(-Math.PI/4)),
+  "move_leg" : new THREE.Quaternion(Math.sin(-Math.PI/8), 0, 0, Math.cos(-Math.PI/8))
+
+}
 
 Robot.prototype.onAnimate = function() {
-
-  const quaternions = {
-    "identity" : new THREE.Quaternion(0, 0, 0, 1),
-    "raise_left_arm" : new THREE.Quaternion(Math.sin(-Math.PI/2), 0, 0, Math.cos(-Math.PI/2)),
-    "stop": new THREE.Quaternion(Math.sin(-Math.PI / 2), 0, 0, Math.cos(-Math.PI / 2)),
-  }
 
   if (this.movement == 'raise left arm') {
 
@@ -160,14 +162,26 @@ Robot.prototype.onAnimate = function() {
       this.movement = 'kick done';
   
     } else {
-      this.right_upperleg.quaternion.slerp(quaternions.stop, 0.1 );
+      this.right_upperleg.quaternion.slerp(quaternions.raise_left_arm, 0.1);
     }
   
   } else if (this.movement == 'kick done') {
-  
-    // reset leg back to identity
-    this.right_upperleg.quaternion.slerp( quaternions.identity, 0.1 );
-  
+    this.right_upperleg.quaternion.slerp( quaternions.identity, 0.1);
+    
+  } else if (this.movement === 'walk') {
+
+    if (this.left_upperleg.quaternion.w < 0.93) this.movement = 'walk2';
+
+    this.left_upperleg.quaternion.slerp(quaternions.move_leg, 0.5)
+    this.right_upperleg.quaternion.slerp(quaternions.identity, 0.5)
+    
+  } else if (this.movement === 'walk2') {
+
+    if (this.right_upperleg.quaternion.w < 0.93) this.movement = 'walk';
+
+    this.right_upperleg.quaternion.slerp(quaternions.move_leg, 0.5)
+    this.left_upperleg.quaternion.slerp(quaternions.identity, 0.5)
+
   } else if (this.movement == 'dance') {
 
     if (typeof this.dancer === 'undefined') {

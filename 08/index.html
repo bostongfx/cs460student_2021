@@ -77,6 +77,11 @@
 
         controller = {
           anaglyph: false,
+          walk: function() {
+            for (var robot of allRobots){
+              robot.walk()
+            }
+          },
           dance: function() {
               var music = document.getElementById('music');
               music.autoplay = true;
@@ -96,16 +101,15 @@
         rendering.open();
         moving = gui.addFolder( "Movement" );
 
-        
-
         moving.add( r.head.position, "x", -1000, 1000 ).listen();
         moving.add( r.head.position, "y", -1000, 1000 ).listen();
         moving.add( r.head.position, "z", -1000, 1000 ).listen();
-        // moving.add( r, "raise_left_arm" );
-        // moving.add( r, "lower_left_arm" );
-        // moving.add( r, "kick" );
+        moving.add( r, "raise_left_arm" );
+        moving.add( r, "lower_left_arm" );
+        moving.add( r, "kick" );
 
         moving.add(controller, "dance")
+        moving.add(controller, "walk")
 
         moving.open();
         
@@ -143,11 +147,6 @@
 
       };
 
-    //   function everybody_dance_now() {
-    //       for (var robot of allRobots) {
-    //           robots.dance()
-    //       }
-    //   }
 
       function animate() {
 
