@@ -139,7 +139,15 @@
             i = robot_array[i];
             i.walk();
           }
+        },
+        'stop walking': function () {
+          for (var i in robot_array) {
+            // robot_array[i].walk();
+            i = robot_array[i];
+            i.stopWalking();
+          }
         }
+
       }
       animation.add(animates, 'raise left arm');
       animation.add(animates, 'lower left arm');
@@ -147,6 +155,7 @@
       animation.add(animates, 'dance');
       animation.add(animates, 'stop dancing');
       animation.add(animates, 'walk');
+      animation.add(animates, 'stop walking');
       animation.open();
 
       controls = new THREE.TrackballControls(camera, renderer.domElement);

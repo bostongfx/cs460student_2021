@@ -216,6 +216,10 @@ Robot.prototype.stopDancing = function () {
 Robot.prototype.walk = function () {
     this.movement = 'walk'
 }
+// personal project
+Robot.prototype.stopWalking = function () {
+    this.movement = 'stop walking'
+}
 // on step prototpye
 Robot.prototype.onStep = function () {
     this.root.translateZ(10); // local coordinate system
@@ -363,6 +367,17 @@ Robot.prototype.onAnimate = function () {
                 }
 
             }.bind(this), 500);
+
+        }
+        // stop walking 
+        else if (this.movement = 'stop walking') {
+
+            this.left_upper_leg.quaternion.slerp(new THREE.Quaternion(0, 0, 0, 1), 0.1);
+
+            this.left_upper_leg.quaternion.slerp(new THREE.Quaternion(0, 0, 0, 1), 0.1);
+
+            this.movement = 'kick done';
+
 
         }
 
