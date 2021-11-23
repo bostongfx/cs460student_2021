@@ -185,7 +185,7 @@
         // Armadillo mesh
         armadillo_mesh_global = new THREE.Mesh();
         var loader = new THREE.PLYLoader();
-        loader.load('Armadillo.ply', function (geometry) {
+        loader.load('armadillo.ply', function (geometry) {
           geometry.computeVertexNormals();
           var armadillo_material = new THREE.MeshStandardMaterial({color: 'black'});
           var armadillo_mesh = new THREE.Mesh( geometry , armadillo_material);
