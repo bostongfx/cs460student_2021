@@ -372,9 +372,9 @@ Robot.prototype.onAnimate = function () {
         // stop walking 
         else if (this.movement = 'stop walking') {
 
-            this.left_upper_leg.quaternion.slerp(new THREE.Quaternion(0, 0, 0, 1), 0.1);
+            // this.left_upper_leg.quaternion.slerp(new THREE.Quaternion(0, 0, 0, 1), 0.1);
 
-            this.left_upper_leg.quaternion.slerp(new THREE.Quaternion(0, 0, 0, 1), 0.1);
+            // this.left_upper_leg.quaternion.slerp(new THREE.Quaternion(0, 0, 0, 1), 0.1);
 
             this.movement = 'kick done';
 
