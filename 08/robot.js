@@ -14,12 +14,13 @@ Robot = function(x, y, z) {
   this.root.position.set(x, y, z)
   
   this.head = bones[1] // new THREE.Bone();
- 
+  this.head.position.y = 10
+
 
   this.neck = bones[2] //new THREE.Bone();
   this.neck.position.y = -10;
 
- // this.head.add(this.neck);
+
 
   this.torso = bones[3] //new THREE.Bone();
   this.torso.position.y = -30;
@@ -139,12 +140,38 @@ Robot.prototype.lower_left_arm = function() { this.movement = 'lower left arm'; 
 Robot.prototype.kick = function() { this.movement = 'kick'; };
 Robot.prototype.dance = function() { this.movement = 'dance'; };
 Robot.prototype.walk = function() { this.movement = 'walk'; };
+Robot.prototype.onStep = function() { 
+
+  const boardLength = 1000
+  const maxDistance = 50
+  const speed = 5
+
+  this.root.translateZ(speed)
+  
+  if (this.root.position.z > (boardLength / 2) || this.root.position.x > (boardLength / 2)) {
+    this.root.rotateY(180)
+  }
+
+  if (this.root.position.z < (boardLength / -2) || this.root.position.x < (boardLength / -2)) {
+    this.root.rotateY(-180)
+  }
+
+  for (const r of allRobots) {
+    if (r.root.position === this.root.position) {
+      continue
+    }
+
+    if (r.root.position.distanceTo(this.root.position) < maxDistance) {
+      this.root.rotateY(Math.random() * Math.PI * 2)
+    }
+  }
+
+}
 
 const quaternions = {
   "identity" : new THREE.Quaternion(0, 0, 0, 1),
   "raise_left_arm" : new THREE.Quaternion(Math.sin(-Math.PI/4), 0, 0, Math.cos(-Math.PI/4)),
   "move_leg" : new THREE.Quaternion(Math.sin(-Math.PI/8), 0, 0, Math.cos(-Math.PI/8))
-
 }
 
 Robot.prototype.onAnimate = function() {
@@ -154,13 +181,15 @@ Robot.prototype.onAnimate = function() {
     this.left_upperarm.quaternion.slerp(quaternions.raise_left_arm, 0.1);
 
   } else  if (this.movement == 'lower left arm') {
+
     this.left_upperarm.quaternion.slerp(quaternions.identity, 0.1);
+
   } else if (this.movement == 'kick') {
-    // check if slerp reached almost the end
+
     if (this.right_upperleg.quaternion.w < 0.72) {
-      // signal that the kick is done and the leg should move back
+
       this.movement = 'kick done';
-  
+
     } else {
       this.right_upperleg.quaternion.slerp(quaternions.raise_left_arm, 0.1);
     }
@@ -172,8 +201,9 @@ Robot.prototype.onAnimate = function() {
 
     if (this.left_upperleg.quaternion.w < 0.93) this.movement = 'walk2';
 
-    this.left_upperleg.quaternion.slerp(quaternions.move_leg, 0.5)
-    this.right_upperleg.quaternion.slerp(quaternions.identity, 0.5)
+      this.left_upperleg.quaternion.slerp(quaternions.move_leg, 0.5)
+      this.right_upperleg.quaternion.slerp(quaternions.identity, 0.5)
+      this.onStep()
     
   } else if (this.movement === 'walk2') {
 
@@ -181,6 +211,7 @@ Robot.prototype.onAnimate = function() {
 
     this.right_upperleg.quaternion.slerp(quaternions.move_leg, 0.5)
     this.left_upperleg.quaternion.slerp(quaternions.identity, 0.5)
+    this.onStep()
 
   } else if (this.movement == 'dance') {
 

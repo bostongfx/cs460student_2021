@@ -64,7 +64,7 @@
         } );
         floor = new THREE.Mesh( floorGeometry, floorMaterial );
         floor.position.y = -100;
-        floor.rotateX(-30);
+        floor.rotateX(Math.PI/2);
         scene.add( floor );
 
         r = new Robot(0, -30, 0);
@@ -142,7 +142,7 @@
             r2 = new Robot(intersects[0].point.x, intersects[0].point.y + 70, intersects[0].point.z)
             r2.show(scene)
             allRobots.push(r2)
-            animate()
+         
           }
 
       };
