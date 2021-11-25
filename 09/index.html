@@ -18,7 +18,7 @@
       import { TrackballControls } from 'https://threejs.org/examples/jsm/controls/TrackballControls.js';
       import { PLYLoader } from 'https://threejs.org/examples/jsm/loaders/PLYLoader.js';
 
-      let scene, camera, renderer, effect, ambientLight, directionalLight, light, mesh, toonMaterial, controls, controller;
+      let scene, camera, renderer, effect, ambientLight, directionalLight, light, mesh, mesh2, toonMaterial, phongMaterial, controls, controller;
 
       window.onload = function() {
 
@@ -32,7 +32,7 @@
         renderer.setSize( window.innerWidth, window.innerHeight );
         document.body.appendChild( renderer.domElement );
         
-        ambientLight = new THREE.AmbientLight();
+        ambientLight = new THREE.AmbientLight(0x0000FF);
         scene.add( ambientLight );
 
         directionalLight = new THREE.DirectionalLight( 0xffffff, 5.0 );
@@ -41,7 +41,13 @@
 
 
         // TODO Part 3 (add 2 pointlights)
+        var light1 = new THREE.PointLight( 0x00ff00, 1, 100 );
+        light1.position.set(10, 100, 100);
+        scene.add(light1);
 
+        var light2 = new THREE.PointLight( 0xffff00, 1, 100 );
+        light2.position.set(10, 100, 100);
+        scene.add(light2);
 
 
         var loader = new PLYLoader();
@@ -50,26 +56,45 @@
           geometry.computeVertexNormals();
 
           toonMaterial = new THREE.MeshToonMaterial( {
-             color: 0x21ce70
+             color: 0xCE2170
           } );
 
           mesh = new THREE.Mesh( geometry, toonMaterial );
-          
+          mesh.position.x = -350;
+          mesh.position.y = -200;
+          mesh.rotateY(-.5);
           scene.add( mesh );
 
         } );
 
         // TODO Part 1, load another mesh
         // TODO Part 2, use a different material for this mesh
+        var loader2 = new PLYLoader();
+        loader2.load('dolphins.ply', function (geometry) {
 
+          geometry.computeVertexNormals();
 
+          phongMaterial = new THREE.MeshPhongMaterial( {
+          //toonMaterial = new THREE.MeshStandardMaterial( {
+             color: 0x00FFFF
+          } );
+
+          mesh2 = new THREE.Mesh( geometry, phongMaterial );
+          mesh2.position.x = 150;
+          mesh2.position.y = -70;
+          mesh2.rotateX(-1);
+          //mesh2.rotateY(20);
+          scene.add( mesh2 );
+
+        } );
 
         controller = {
-          'color': 0xffffff // we can use this single color
+          'color': 0xffffff,// we can use this single color
                             // container for all colors in the scene 
                             // if we modify the onChange callback (see below)
 
           // TODO Bonus Part 1
+          'material': [ 'toon', 'standard', 'phong' ]
           // TODO Bonus Part 2
         }
 
@@ -87,9 +112,63 @@
         directionalFolder.open();
 
         // TODO Part 4 (control the color and position of point lights)
+        var light1Folder = gui.addFolder('Point Light 1');
+        light1Folder.addColor(controller, 'color').onChange( function(value) { light1.color.setHex(value); });
+        light1Folder.add(light1.position, 'x', -100, 100);
+        light1Folder.add(light1.position, 'y', -100, 100);
+        light1Folder.add(light1.position, 'z', -100, 100);
+        light1Folder.open();
+
+        var light2Folder = gui.addFolder('Point Light 2');
+        light2Folder.addColor(controller, 'color').onChange( function(value) { light2.color.setHex(value); });
+        light2Folder.add(light2.position, 'x', -100, 100);
+        light2Folder.add(light2.position, 'y', -100, 100);
+        light2Folder.add(light2.position, 'z', -100, 100);
+        light2Folder.open();
 
         // TODO Part 5 (control the color of both materials in the scene)
-
+        var armadilloColorFolder = gui.addFolder('Armadillo');
+        armadilloColorFolder.addColor(controller, 'color').onChange( function(value) { toonMaterial.color.setHex(value); });
+        var dolphinsColorFolder = gui.addFolder('Dolphins');
+        dolphinsColorFolder.addColor(controller, 'color').onChange( function(value) { phongMaterial.color.setHex(value); });
+        
+        // BONUS PART 1
+        armadilloColorFolder.add(controller, 'material', [ 'toon', 'standard', 'phong' ] ).onChange( function(value) {
+          if (value == 'phong') {
+            var phong = new THREE.MeshPhongMaterial({
+              color: 0xCE2170
+            });
+            mesh.material = phong;
+          } else if (value == 'toon') {
+            var toon = new THREE.MeshToonMaterial({
+              color: 0xCE2170
+            });
+            mesh.material = toon;
+          } else if (value == 'standard') {
+            var standard = new THREE.MeshStandardMaterial({
+              color: 0xCE2170
+            });
+            mesh.material = standard;
+          }
+        });
+        dolphinsColorFolder.add(controller, 'material', [ 'toon', 'standard', 'phong' ] ).onChange( function(value) {
+          if (value == 'phong') {
+            var phong = new THREE.MeshPhongMaterial({
+              color: 0x00FFFF
+            });
+            mesh2.material = phong;
+          } else if (value == 'toon') {
+            var toon = new THREE.MeshToonMaterial({
+              color: 0x00FFFF
+            });
+            mesh2.material = toon;
+          } else if (value == 'standard') {
+            var standard = new THREE.MeshStandardMaterial({
+              color: 0x00FFFF
+            });
+            mesh2.material = standard;
+          }
+        });
         gui.open();
 
 
