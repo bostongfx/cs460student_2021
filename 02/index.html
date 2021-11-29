@@ -28,71 +28,83 @@
         r.init()
         // adding default dimensions and lengths here so its easier to change later
         // I always use const as much as possible in JS because it helps reduce errors later
-        const gridDimension = 9
-        const sideLength = 5
-        const gap = 1
+        // const gridDimension = 9
+        // const sideLength = 5
+        // const gap = 1
 
-        const colors = {
-          black: [0,0,0],
-          green: [0,1,0],
-          red: [1,0,0],
-          yellow: [1,1,0],
-          cyan: [0,1,1]
-        }
-        // this is the least tedious way I could think to do this, but it works pretty well
-        let pixelBlueprint = [
-          [colors.black, colors.black, colors.black, colors.black, colors.green, colors.black, colors.black, colors.black, colors.black],
-          [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
-          [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
-          [colors.black, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.black],
-          [colors.black, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.black],
-          [colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green],
-          [colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green],
-          [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
-          [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
-        ]
+        // const colors = {
+        //   black: [0,0,0],
+        //   green: [0,1,0],
+        //   red: [1,0,0],
+        //   yellow: [1,1,0],
+        //   cyan: [0,1,1]
+        // }
+        // // this is the least tedious way I could think to do this, but it works pretty well
+        // let pixelBlueprint = [
+        //   [colors.black, colors.black, colors.black, colors.black, colors.green, colors.black, colors.black, colors.black, colors.black],
+        //   [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
+        //   [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
+        //   [colors.black, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.black],
+        //   [colors.black, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.black],
+        //   [colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green],
+        //   [colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green, colors.green],
+        //   [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
+        //   [colors.black, colors.black, colors.black, colors.green, colors.green, colors.green, colors.black, colors.black, colors.black],
+        // ]
 
-        const addCubes = () => {
-          for (let i = 0; i < gridDimension; i++) {
-            for (let j = 0; j < gridDimension; j++) {
-              const c = new X.cube()
-              c.lengthX = c.lengthY = c.lengthZ = sideLength
+        // const addCubes = () => {
+        //   for (let i = 0; i < gridDimension; i++) {
+        //     for (let j = 0; j < gridDimension; j++) {
+        //       const c = new X.cube()
+        //       c.lengthX = c.lengthY = c.lengthZ = sideLength
 
-              // generate coordinates
-              const xCor = j * (sideLength + gap)
-              const yCor = 0
-              const zCor = -(i * (sideLength + gap)) // have to flip this around to make the tree start out on the right side
+        //       // generate coordinates
+        //       const xCor = j * (sideLength + gap)
+        //       const yCor = 0
+        //       const zCor = -(i * (sideLength + gap)) // have to flip this around to make the tree start out on the right side
               
-              c.center = [xCor, yCor, zCor]
-              c.color = pixelBlueprint[i][j]
-              r.add(c)
-            }
-          }
-        }
+        //       c.center = [xCor, yCor, zCor]
+        //       c.color = pixelBlueprint[i][j]
+        //       r.add(c)
+        //     }
+        //   }
+        // }
 
-        const changeTreeLights = () => {
-          const getRandomLight = () => {
-            const christmasLights = [colors.red, colors.yellow, colors.cyan]
-            return christmasLights[Math.floor(Math.random() * christmasLights.length)]
-          }
-          // updates the pixel map with random christmas lights color
-          const randomChristmasLights = (() => {
-            pixelBlueprint[4][2] = getRandomLight()
-            pixelBlueprint[4][6] = getRandomLight()
-            pixelBlueprint[5][1] = getRandomLight()
-            pixelBlueprint[5][3] = getRandomLight()
-            pixelBlueprint[5][5] = getRandomLight()
-            pixelBlueprint[5][7] = getRandomLight()
-            pixelBlueprint[6][0] = getRandomLight()
-            pixelBlueprint[6][4] = getRandomLight()
-            pixelBlueprint[6][8] = getRandomLight()
-          })()
+        // const changeTreeLights = () => {
+        //   const getRandomLight = () => {
+        //     const christmasLights = [colors.red, colors.yellow, colors.cyan]
+        //     return christmasLights[Math.floor(Math.random() * christmasLights.length)]
+        //   }
+        //   // updates the pixel map with random christmas lights color
+        //   const randomChristmasLights = (() => {
+        //     pixelBlueprint[4][2] = getRandomLight()
+        //     pixelBlueprint[4][6] = getRandomLight()
+        //     pixelBlueprint[5][1] = getRandomLight()
+        //     pixelBlueprint[5][3] = getRandomLight()
+        //     pixelBlueprint[5][5] = getRandomLight()
+        //     pixelBlueprint[5][7] = getRandomLight()
+        //     pixelBlueprint[6][0] = getRandomLight()
+        //     pixelBlueprint[6][4] = getRandomLight()
+        //     pixelBlueprint[6][8] = getRandomLight()
+        //   })()
           
-          addCubes()
-        }
+        //   addCubes()
+        // }
+
+        var canvas = document.getElementsByTagName('canvas')[0]
+        var interactor = new X.interactor(canvas)
+        interactor.init()
+ 
+        canvas.addEventListener('click', () => {
+          var [x, y] = interactor.mousePosition
+          var viewPortX = (x / window.innerWidth) * 2 - 1
+          var viewPortY = (y / window.innerHeight) * 2 - 1
+          console.log(`Screen Coordinates: (${x}, ${y})`)
+          console.log(`View Port Coordinates: (${viewPortX}, ${viewPortY})`)
+        })
 
         r.render()
-        setInterval(changeTreeLights, 1000)
+     //   setInterval(changeTreeLights, 1000)
       }
     </script>
   </head>
