@@ -14,11 +14,13 @@
     <script type='module'>
 
       import * as THREE from 'https://threejs.org/build/three.module.js';
-      import { GUI } from 'https://threejs.org/examples/jsm/libs/dat.gui.module.js';
+      import { GUI } from 'https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js';
       import { TrackballControls } from 'https://threejs.org/examples/jsm/controls/TrackballControls.js';
       import { PLYLoader } from 'https://threejs.org/examples/jsm/loaders/PLYLoader.js';
 
+
       let scene, camera, renderer, effect, ambientLight, directionalLight, light, mesh, toonMaterial, controls, controller;
+      let light1, light2, mesh2, toonMaterial2, directionalLight2,  directionalLightsFolder;
 
       window.onload = function() {
 
@@ -41,7 +43,15 @@
 
 
         // TODO Part 3 (add 2 pointlights)
+        // Red light
+        light1 = new THREE.PointLight( 0xff0000, 5, 100 );
+        light1.position.set(-400, 25, -100)
+        scene.add( light1 );
 
+        // Green light
+        light2 = new THREE.PointLight( 0x00ff00, 5, 100 );
+        light2.position.set(400, 25, 100)
+        scene.add( light2 );
 
 
         var loader = new PLYLoader();
@@ -61,16 +71,39 @@
 
         // TODO Part 1, load another mesh
         // TODO Part 2, use a different material for this mesh
+        var loader2 = new PLYLoader();
+        // ply file reference: https://www.artec3d.com/3d-models/fantasy-dragon.
+        loader2.load('Fantasy Dragon.ply', function (geometry) {
 
+          geometry.computeVertexNormals();
+
+          toonMaterial2 = new THREE.MeshStandardMaterial( {
+              color: 0x21ce70
+          } );
+
+        mesh2 = new THREE.Mesh( geometry, toonMaterial2 );
+        mesh2.position.x = 300;
+        mesh2.rotation.x = - Math.PI / 2;
+        scene.add( mesh2 );
+
+        } );
 
 
         controller = {
-          'color': 0xffffff // we can use this single color
+          'color': 0xffffff, // we can use this single color
                             // container for all colors in the scene 
                             // if we modify the onChange callback (see below)
 
           // TODO Bonus Part 1
+          'material':  [ 'toon', 'standard', 'phong' ],
           // TODO Bonus Part 2
+          'add light': function() { 
+            addLight(); 
+          },
+           'remove light': function() { 
+            removeLight(); 
+          }
+        
         }
 
 
@@ -87,8 +120,79 @@
         directionalFolder.open();
 
         // TODO Part 4 (control the color and position of point lights)
+        var pointFolder = gui.addFolder('Right Point Light');
+        pointFolder.addColor(controller, 'color').onChange( function(value) { 
+          light1.color.setHex(value); });
+        pointFolder.add(light1.position, 'x', -100, 100);
+        pointFolder.add(light1.position, 'y', -100, 100);
+        pointFolder.add(light1.position, 'z', -100, 100);
+        pointFolder.open();
+
+        var pointFolder2 = gui.addFolder('Left Point Light');
+        pointFolder.addColor(controller, 'color').onChange( function(value) { 
+          light2.color.setHex(value); });
+        pointFolder.add(light2.position, 'x', -100, 100);
+        pointFolder.add(light2.position, 'y', -100, 100);
+        pointFolder.add(light2.position, 'z', -100, 100);
+        pointFolder.open();
 
         // TODO Part 5 (control the color of both materials in the scene)
+        var leftFolder = gui.addFolder('Left Dragon');
+        leftFolder.addColor(controller, 'color').onChange( function(value) { 
+          mesh2.material.color.setHex(value); });
+        
+
+        // bonus 1
+        leftFolder.add(controller, 'material', [ 'toon', 'standard', 'phong' ]).onChange(function(value){
+          if(value == 'toon'){
+            mesh2.material = new THREE.MeshToonMaterial({color: 0x21ce70});
+          } else if (value == 'standard') {
+            mesh2.material = new THREE.MeshStandardMaterial({color: 0x21ce70});
+          } else if (value == 'phong') {
+            mesh2.material = new THREE.MeshPhongMaterial({color: 0x21ce70});
+          } 
+        });
+        leftFolder.open();
+
+
+        var rightFolder = gui.addFolder('Right Armadillo');
+        rightFolder.addColor(controller, 'color').onChange( function(value) { 
+          mesh.material.color.setHex(value); });
+
+        // bonus 1
+        rightFolder.add(controller, 'material', [ 'toon', 'standard', 'phong' ]).onChange(function(value){
+          if(value == 'toon'){
+            mesh.material = new THREE.MeshToonMaterial({color: 0x21ce70});
+          } else if (value == 'standard') {
+            mesh.material = new THREE.MeshStandardMaterial({color: 0x21ce70});
+          } else if (value == 'phong') {
+            mesh.material = new THREE.MeshPhongMaterial({color: 0x21ce70});
+          } 
+        });
+
+        rightFolder.open();
+
+        // bonus 2
+
+        function addLight(){
+            directionalLight2 = new THREE.DirectionalLight( 0xffffff, 5.0 );
+            directionalLight2.position.set( 50, 100, -100 );
+            scene.add( directionalLight2 );
+            
+            directionalLightsFolder = gui.addFolder('directionalLight 2');
+            directionalLightsFolder.addColor(controller, 'color').onChange( function(value) { directionalLight2.color.setHex(value); });
+            directionalLightsFolder.add(directionalLight2.position, 'x', -100, 100);
+            directionalLightsFolder.add(directionalLight2.position, 'y', -100, 100);
+            directionalLightsFolder.add(directionalLight2.position, 'z', -100, 100);
+            directionalLightsFolder.open();
+        }
+        gui.add(controller, 'add light');
+        function removeLight(){
+           scene.remove( directionalLight2 );
+           gui.removeFolder(directionalLightsFolder);
+        }
+        gui.add(controller, 'remove light');
+
 
         gui.open();
 
