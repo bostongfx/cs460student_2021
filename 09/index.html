@@ -129,12 +129,12 @@
         pointFolder.open();
 
         var pointFolder2 = gui.addFolder('Left Point Light');
-        pointFolder.addColor(controller, 'color').onChange( function(value) { 
+        pointFolder2.addColor(controller, 'color').onChange( function(value) {
           light2.color.setHex(value); });
-        pointFolder.add(light2.position, 'x', -100, 100);
-        pointFolder.add(light2.position, 'y', -100, 100);
-        pointFolder.add(light2.position, 'z', -100, 100);
-        pointFolder.open();
+        pointFolder2.add(light2.position, 'x', -100, 100);
+        pointFolder2.add(light2.position, 'y', -100, 100);
+        pointFolder2.add(light2.position, 'z', -100, 100);
+        pointFolder2.open();
 
         // TODO Part 5 (control the color of both materials in the scene)
         var leftFolder = gui.addFolder('Left Dragon');
