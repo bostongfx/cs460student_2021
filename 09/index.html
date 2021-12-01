@@ -3,7 +3,7 @@
     <meta charset="UTF-8" />
     <style>
       html, body { 
-        background-color:#000;
+        background-color:#cccccc;
         margin: 0;
         padding: 0;
         height: 100%;
@@ -18,7 +18,10 @@
       import { TrackballControls } from 'https://threejs.org/examples/jsm/controls/TrackballControls.js';
       import { PLYLoader } from 'https://threejs.org/examples/jsm/loaders/PLYLoader.js';
 
-      let scene, camera, renderer, effect, ambientLight, directionalLight, light, mesh, toonMaterial, controls, controller;
+      let scene, camera, renderer, effect, ambientLight, light,  controls, controller;
+      let mesh1, mesh2, material1, material2;
+      let pointLight1, pointLight2;
+      let lights;
 
       window.onload = function() {
 
@@ -31,69 +34,191 @@
         renderer = new THREE.WebGLRenderer({ });
         renderer.setSize( window.innerWidth, window.innerHeight );
         document.body.appendChild( renderer.domElement );
-        
-        ambientLight = new THREE.AmbientLight();
-        scene.add( ambientLight );
-
-        directionalLight = new THREE.DirectionalLight( 0xffffff, 5.0 );
-        directionalLight.position.set( 10, 100, -100 );
-        scene.add( directionalLight );
 
 
         // TODO Part 3 (add 2 pointlights)
+        pointLight1 = new THREE.PointLight( 0xffffff, 0.8 );
+        pointLight1.position.set(-200, 50, 100)
+        scene.add( pointLight1 );
 
+        pointLight2 = new THREE.PointLight( 0xffffff, 0.8 );
+        pointLight2.position.set(200, 50, 100)
+        scene.add( pointLight2 );
 
 
         var loader = new PLYLoader();
-        loader.load('armadillo.ply', function (geometry) {
 
-          geometry.computeVertexNormals();
-
-          toonMaterial = new THREE.MeshToonMaterial( {
-             color: 0x21ce70
-          } );
-
-          mesh = new THREE.Mesh( geometry, toonMaterial );
-          
-          scene.add( mesh );
-
-        } );
 
         // TODO Part 1, load another mesh
         // TODO Part 2, use a different material for this mesh
+        loader.load('armadillo.ply', function (geometry) {
+
+          geometry.computeVertexNormals();
+          material1 = new THREE.MeshPhongMaterial({
+            color: [0.5, 0.5, 0.5],
+            shininess: 60
+          });
+          material2 = new THREE.MeshPhysicalMaterial( {
+            color: [0.5, 0.5, 0.5],
+            metalness: 0.5,
+            roughness: 0.8
+          } );
+
+          mesh1 = new THREE.Mesh( geometry, material1 );
+          mesh1.position.set(-150, 0, 0);
+          mesh1.rotateY(0.8);
+
+          mesh2 = new THREE.Mesh( geometry, material2 );
+          mesh1.position.set(150, 0, 0);
+          mesh2.rotateY(-0.8);
+          
+          scene.add( mesh1 );
+          scene.add( mesh2 );
+
+        } );
+
 
 
 
         controller = {
-          'color': 0xffffff // we can use this single color
+          'color': 0xffffff, // we can use this single color
                             // container for all colors in the scene 
                             // if we modify the onChange callback (see below)
 
           // TODO Bonus Part 1
+          'material':  [ 'toon', 'standard', 'phong' ],
+
           // TODO Bonus Part 2
+          'add light': function() {
+            addLight();
+          },
+
+          'remove light': function() {
+            rmLight();
+          }
+
+
         }
 
 
         var gui = new GUI();
+
+        ambientLight = new THREE.AmbientLight(0xa4a4a4, 0.8);
+        scene.add( ambientLight );
         var ambientFolder = gui.addFolder('Ambient Light');
         ambientFolder.addColor(controller, 'color').onChange( function(value) { ambientLight.color.setHex(value); });
         ambientFolder.open();
 
-        var directionalFolder = gui.addFolder('Directional Light');
-        directionalFolder.addColor(controller, 'color').onChange( function(value) { directionalLight.color.setHex(value); });
-        directionalFolder.add(directionalLight.position, 'x', -100, 100);
-        directionalFolder.add(directionalLight.position, 'y', -100, 100);
-        directionalFolder.add(directionalLight.position, 'z', -100, 100);
-        directionalFolder.open();
+
+        lights = new Array();
+
+        var newLight1 = new THREE.DirectionalLight( 0xffffff, 3.0 );
+        newLight1.position.set( -100, 100, 50  );
+        lights.push(newLight1);
+        scene.add(newLight1);
+        console.log(lights);
+        
+        /*function addLight() {
+          var newLight2 = new THREE.DirectionalLight( 0xffffff, 3.0 );
+          newLight2.position.set( 100, 100, 50);
+          lights.push(newLight2);
+          scene.add(newLight2);
+          console.log(lights);
+        }
+        gui.add(controller, 'add light');
+
+        function rmLight() {
+          if (lights.length > 1) {
+            lights.pop();
+          }
+          console.log(lights.length);
+        }
+        gui.add(controller, 'remove light');*/
+
+
+        var firstLight = lights[0];
+        var firstFolder = gui.addFolder('First Light');
+        firstFolder.addColor(controller, 'color').onChange( function(value) { firstLight.color.setHex(value); });
+        firstFolder.add(firstLight, 'intensity', 0, 6);
+        firstFolder.add(firstLight.position, 'x', -100, 100);
+        firstFolder.add(firstLight.position, 'y', -100, 100);
+        firstFolder.add(firstLight.position, 'z', -100, 100);
+        firstFolder.open();
+
+        /*var lastLight = lights[lights.length - 1];
+        var directionalFolder = gui.addFolder('last Light');
+        directionalFolder.addColor(controller, 'color').onChange( function(value) { lastLight.color.setHex(value); });
+        directionalFolder.add(lastLight, 'intensity', 0, 6);
+        directionalFolder.add(lastLight.position, 'x', -100, 100);
+        directionalFolder.add(lastLight.position, 'y', -100, 100);
+        directionalFolder.add(lastLight.position, 'z', -100, 100);
+        directionalFolder.open();*/
+
 
         // TODO Part 4 (control the color and position of point lights)
+        var point1Folder = gui.addFolder('Point Light 1');
+        controller.color = pointLight1.color.getHex();
+        point1Folder.addColor(controller, 'color').onChange( function(value) { 
+          pointLight1.color.setHex(value); 
+        });
+        point1Folder.add(pointLight1, 'intensity', 0, 6);
+        point1Folder.add(pointLight1.position, 'x', -200, 200);
+        point1Folder.add(pointLight1.position, 'y', -200, 200);
+        point1Folder.add(pointLight1.position, 'z', -200, 200);
+
+        var point2Folder = gui.addFolder('Point Light 2');
+        controller.color = pointLight2.color.getHex();
+        point2Folder.addColor(controller, 'color').onChange( function(value) { 
+          pointLight2.color.setHex(value); 
+        });
+        point2Folder.add(pointLight2, 'intensity', 0, 6);
+        point2Folder.add(pointLight2.position, 'x', -200, 200);
+        point2Folder.add(pointLight2.position, 'y', -200, 200);
+        point2Folder.add(pointLight2.position, 'z', -200, 200);
+
+
+
 
         // TODO Part 5 (control the color of both materials in the scene)
+        var mesh1Folder = gui.addFolder('Armadillo 1');
+        controller.color = 0xcccccc;
+        mesh1Folder.addColor(controller, 'color').onChange( function(value) { mesh1.material.color.setHex(value); });
+        mesh1Folder.add(controller, 'material', [ 'toon', 'standard', 'phong' ]).onChange(function(value){
+          switch (value) {
+            case 'standard':
+              mesh1.material = new THREE.MeshStandardMaterial({color: 0xcecece});
+              break;
+            case 'phong':
+              mesh1.material = new THREE.MeshPhongMaterial({color: 0xcecece});
+              break;
+            case 'toon':
+              mesh1.material = new THREE.MeshToonMaterial({color: 0xcecece});
+              break;}
+        });
+        mesh1Folder.open();
+
+        var mesh2Folder = gui.addFolder('Armadillo 2');
+        mesh2Folder.addColor(controller, 'color').onChange( function(value) { mesh2.material.color.setHex(value); });
+        mesh2Folder.add(controller, 'material', [ 'toon', 'standard', 'phong' ]).onChange(function(value){
+          switch (value) {
+            case 'standard':
+              mesh2.material = new THREE.MeshStandardMaterial({color: 0xcecece});
+              break;
+            case 'phong':
+              mesh2.material = new THREE.MeshPhongMaterial({color: 0xcecece});
+              break;
+            case 'toon':
+              mesh2.material = new THREE.MeshToonMaterial({color: 0xcecece});
+              break;}
+        });
+        mesh2Folder.open();
+
+
+        
+
+
 
         gui.open();
-
-
-
 
         controls = new TrackballControls( camera, renderer.domElement );
 
