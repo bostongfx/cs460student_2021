@@ -175,9 +175,10 @@ Robot.prototype.onStep = function(all_robots) {
     this.root.rotateY(Math.PI);
   }
 
-  for (var i in all_robots) {
+  for (var r in all_robots) {
 
-    if (this.root.position.distanceTo(all_robots[i].root.position) <= 10 && !this.root.position.equals(all_robots[i].root.position)) {
+    robot = all_robots[r];
+    if (this.root.position.distanceTo(robot.root.position) < 50 && !this.root.position.equals(robot.root.position)) {
       this.root.rotateY(Math.PI);
     }
   }
