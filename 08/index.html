@@ -81,7 +81,7 @@
 
 
         var floorTexture = new THREE.TextureLoader().load( 'grass_ground.jpg' );
-        var floorGeometry = new THREE.PlaneBufferGeometry( 26000, 9000 );
+        var floorGeometry = new THREE.PlaneBufferGeometry( 30000, 9000 );
         // var floorGeometry = new THREE.PlaneBufferGeometry( 2000 * 20, 1681 * 20);
         var floorMaterial = new THREE.MeshBasicMaterial( {
           map: floorTexture,
@@ -95,7 +95,7 @@
         scene.add( floor );
 
         var floorTexture2 = new THREE.TextureLoader().load( 'crack_grass_ground.jpg' );
-        var floorGeometry2 = new THREE.PlaneBufferGeometry( 28000, 9000 );
+        var floorGeometry2 = new THREE.PlaneBufferGeometry( 30000, 9000 );
         // var floorGeometry = new THREE.PlaneBufferGeometry( 2000 * 20, 1681 * 20);
         var floorMaterial2 = new THREE.MeshBasicMaterial( {
           map: floorTexture2,
@@ -109,7 +109,7 @@
         floor2.visible = false;
 
         var floorTexture3 = new THREE.TextureLoader().load( 'crack_grass_ground2.jpg' );
-        var floorGeometry3 = new THREE.PlaneBufferGeometry( 28000, 9000 );
+        var floorGeometry3 = new THREE.PlaneBufferGeometry( 30000, 9000 );
         // var floorGeometry = new THREE.PlaneBufferGeometry( 2000 * 20, 1681 * 20);
         var floorMaterial3 = new THREE.MeshBasicMaterial( {
           map: floorTexture3,
@@ -126,7 +126,7 @@
         // video texture here
         let thunder_video = document.getElementById('thunder_video');
         var videoTexture = new THREE.VideoTexture(thunder_video);
-        var videoGeometry = new THREE.PlaneBufferGeometry( 1920*17, 1080*15 );
+        var videoGeometry = new THREE.PlaneBufferGeometry( 1920*20, 1080*15 );
         var videoMaterial = new THREE.MeshBasicMaterial( {
           map: videoTexture,
           side: THREE.DoubleSide
