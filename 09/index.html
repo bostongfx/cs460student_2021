@@ -18,7 +18,7 @@
       import { TrackballControls } from 'https://threejs.org/examples/jsm/controls/TrackballControls.js';
       import { PLYLoader } from 'https://threejs.org/examples/jsm/loaders/PLYLoader.js';
 
-      let scene, camera, renderer, effect, ambientLight, directionalLight, light, mesh, toonMaterial, controls, controller, toonMaterial_2, light1, light2;
+      let scene, camera, renderer, effect, ambientLight, directionalLight, light, mesh, toonMaterial, controls, controller, toonMaterial_2, pointLight1, pointLight2;
 
       window.onload = function() {
 
@@ -42,13 +42,13 @@
 
         // TODO Part 3 (add 2 pointlights)
 
-        light1 = new THREE.PointLight( 0xff0000, 1, 100 );
-        light1.position.set( 10, 100, 100 );
-        scene.add( light1 );
+        pointLight1 = new THREE.PointLight( 0xffffff, 0.8 );
+        pointLight1.position.set(-200, 50, 100)
+        scene.add( pointLight1 );
 
-        light2 = new THREE.PointLight( 0xff0000, 1, 100 );
-        light2.position.set( 10, 100, 100 );
-        scene.add( light2 );
+        pointLight2 = new THREE.PointLight( 0xffffff, 0.8 );
+        pointLight2.position.set(200, 50, 100)
+        scene.add( pointLight2 );
 
 
         var loader = new PLYLoader();
@@ -113,16 +113,16 @@
 
         var folder1 = gui.addFolder( 'Point Light 1' );
         folder1.addColor( controller, 'color' ).onChange( function(value) { pointLight1.color.setHex( value ); } );
-        folder1.add( light1.position, 'x', -100, 100 );
-        folder1.add( light1.position, 'y', -100, 100 );
-        folder1.add( light1.position, 'z', -100, 100 );
+        folder1.add( pointLight1.position, 'x', -100, 100 );
+        folder1.add( pointLight1.position, 'y', -100, 100 );
+        folder1.add( pointLight1.position, 'z', -100, 100 );
         folder1.open();
 
         var folder2 = gui.addFolder( 'Point Light 2' );
         folder2.addColor( controller, 'color' ).onChange( function(value) { pointLight2.color.setHex( value ); } );
-        folder2.add( light2.position, 'x', -100, 100 );
-        folder2.add( light2.position, 'y', -100, 100 );
-        folder2.add( light2.position, 'z', -100, 100);
+        folder2.add( pointLight2.position, 'x', -100, 100 );
+        folder2.add( pointLight2.position, 'y', -100, 100 );
+        folder2.add( pointLight2.position, 'z', -100, 100);
         folder2.open();
 
         // TODO Part 5 (control the color of both materials in the scene)
