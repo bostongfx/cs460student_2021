@@ -18,7 +18,7 @@
       import { TrackballControls } from 'https://threejs.org/examples/jsm/controls/TrackballControls.js';
       import { PLYLoader } from 'https://threejs.org/examples/jsm/loaders/PLYLoader.js';
 
-      let scene, camera, renderer, effect, ambientLight, directionalLight, light, mesh, toonMaterial, controls, controller;
+      let scene, camera, renderer, effect, ambientLight, directionalLight, light, armmesh, gsmesh, toonMaterial, lambertMaterial, controls, controller;
 
       window.onload = function() {
 
@@ -41,35 +41,53 @@
 
 
         // TODO Part 3 (add 2 pointlights)
+        var lightx = new THREE.PointLight( 0x00ff00, 1, 100 );
+        lightx.position.set(0, 50, 100);
+        scene.add(lightx);
+
+        var lighty = new THREE.PointLight( 0xffff00, 1, 100 );
+        lighty.position.set(0, 50, 100);
+        scene.add(lighty);
 
 
-
-        var loader = new PLYLoader();
-        loader.load('armadillo.ply', function (geometry) {
-
+        var loaderx = new PLYLoader();
+        loaderx.load('armadillo.ply', function (geometry) {
           geometry.computeVertexNormals();
 
           toonMaterial = new THREE.MeshToonMaterial( {
-             color: 0x21ce70
+             color: 0xCE2233
           } );
-
-          mesh = new THREE.Mesh( geometry, toonMaterial );
-          
-          scene.add( mesh );
+          armmesh = new THREE.Mesh( geometry, toonMaterial );
+          armmesh.position.x = -150;
+          armmesh.position.y = -100;
+          armmesh.rotateY(-.25);
+          scene.add( armmesh );
 
         } );
 
         // TODO Part 1, load another mesh
         // TODO Part 2, use a different material for this mesh
+        var loadery = new PLYLoader();
+        loadery.load('Gskull.ply', function (geometry) {
+          geometry.computeVertexNormals();
+          lambertMaterial = new THREE.MeshLambertMaterial( {
+             color: 0x00FFFF
+          } );
+          gsmesh = new THREE.Mesh( geometry, lambertMaterial );
+          gsmesh.position.x = 150;
+          gsmesh.position.y = 100;
+          gsmesh.rotateX(-.75);
+          scene.add( gsmesh );
 
-
+        } );
 
         controller = {
-          'color': 0xffffff // we can use this single color
+          'color': 0xffffff,// we can use this single color
                             // container for all colors in the scene 
                             // if we modify the onChange callback (see below)
 
           // TODO Bonus Part 1
+          'material': [ 'toon', 'standard', 'lambert' ]
           // TODO Bonus Part 2
         }
 
@@ -87,9 +105,63 @@
         directionalFolder.open();
 
         // TODO Part 4 (control the color and position of point lights)
+        var lightxFolder = gui.addFolder('First Point Light');
+        lightxFolder.addColor(controller, 'color').onChange( function(value) { lightx.color.setHex(value); });
+        lightxFolder.add(lightx.position, 'x', -100, 100);
+        lightxFolder.add(lightx.position, 'y', -100, 100);
+        lightxFolder.add(lightx.position, 'z', -100, 100);
+        lightxFolder.open();
+
+        var lightyFolder = gui.addFolder('Second Point Light');
+        lightyFolder.addColor(controller, 'color').onChange( function(value) { lighty.color.setHex(value); });
+        lightyFolder.add(lighty.position, 'x', -100, 100);
+        lightyFolder.add(lighty.position, 'y', -100, 100);
+        lightyFolder.add(lighty.position, 'z', -100, 100);
+        lightyFolder.open();
 
         // TODO Part 5 (control the color of both materials in the scene)
-
+        var acFolder = gui.addFolder('Armadillo');
+        acFolder.addColor(controller, 'color').onChange( function(value) { toonMaterial.color.setHex(value); });
+        var gsFolder = gui.addFolder('Giraffe Skull');
+        gsFolder.addColor(controller, 'color').onChange( function(value) { lambertMaterial.color.setHex(value); });
+        
+        // BONUS PART 1
+        acFolder.add(controller, 'material', [ 'toon', 'standard', 'lambert' ] ).onChange( function(value) {
+          if (value == 'lambert') {
+            var lambert = new THREE.MeshLambertMaterial({
+              color: 0xCE2180
+            });
+            armmesh.material = lambert;
+          } else if (value == 'toon') {
+            var toon = new THREE.MeshToonMaterial({
+              color: 0xCE2157
+            });
+            armmesh.material = toon;
+          } else if (value == 'standard') {
+            var standard = new THREE.MeshStandardMaterial({
+              color: 0xCE2111
+            });
+            armmesh.material = standard;
+          }
+        });
+        gsFolder.add(controller, 'material', [ 'toon', 'standard', 'lambert' ] ).onChange( function(value) {
+          if (value == 'lambert') {
+            var lambert = new THREE.MeshLambertMaterial({
+              color: 0x00FFCC
+            });
+            gsmesh.material = lambert;
+          } else if (value == 'toon') {
+            var toon = new THREE.MeshToonMaterial({
+              color: 0x00FFAA
+            });
+            gsmesh.material = toon;
+          } else if (value == 'standard') {
+            var standard = new THREE.MeshStandardMaterial({
+              color: 0x00FFBB
+            });
+            gsmesh.material = standard;
+          }
+        });
         gui.open();
 
 
