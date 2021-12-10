@@ -94,7 +94,7 @@
                 const worldEdge = (size/2)*(cubeSide + cubeGap);
 
                 for(let x = -worldEdge, i=0; i<size; x+=(cubeSide+cubeGap), i++){
-                    for(let y = -worldEdge, j=0; j<size; y+=(cubeSide+cubeGap), j++){
+                    for(let y = worldEdge, j=0; j<size; y-=(cubeSide+cubeGap), j++){
                         if(theWorld[i][j]){
                             let c = makeCube(x, y);
                             //storeCubeToDelete.push(c);
@@ -174,7 +174,7 @@
 
                 theWorld = newWorld;
 
-                displayWorld();
+                //displayWorld();
 
                 displayInCanvas();
 
