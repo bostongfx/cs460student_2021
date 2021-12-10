@@ -1,0 +1,204 @@
+<html>
+    <head>
+        <style>
+            table {
+                border-collapse: collapse;
+            }
+
+            td {
+                padding: 0; 
+                margin: 0;
+                width: 6px;
+                height: 6px;
+            }
+        </style>
+
+        <script type="text/javascript" src="https://get.goXTK.com/xtk_edge.js"></script>
+
+        <script type="text/javascript">
+            const size = 100;
+            const updateFrequency = 0;
+            const cubeSide = 5;
+            const cubeGap = .2;
+            let theWorld = new Array(size);
+            var canvasRender = null;
+            //var storeCubeToDelete = [];
+
+            function randomInitialization()
+            {
+                for(let i=0; i<size; i++){
+                    for(let j=0; j<size; j++){
+                        theWorld[i][j] = (Math.floor(Math.random()*10)%2) === 0;
+                    }
+                }
+            }
+
+            function createWorld()
+            {
+                for(let i=0; i<size; i++){
+                    theWorld[i] = new Array(size);
+                }
+            }
+
+            function displayWorld()
+            {
+                const place = document.getElementById("mainContent");
+                place.innerHTML = '';
+
+                let table = document.createElement("table");
+                let tblBody = document.createElement("tbody");
+
+                for(let i=0; i<size; i++){
+                    let row = document.createElement("tr");
+
+                    for(let j=0; j<size; j++){
+                        let cell = document.createElement("td");
+
+                        if(theWorld[i][j])
+                            cell.style.backgroundColor = "#00ff00";
+                        else
+                            cell.style.backgroundColor = "#000000";
+
+                        row.appendChild(cell);
+                    }
+                    tblBody.appendChild(row);
+                }
+
+                table.appendChild(tblBody);
+                place.appendChild(table);
+            }
+
+            function makeCube(x, y, color=[0., 0., 0.]){
+                let aCube = new X.cube();
+                aCube.center = [x, y, 0.];
+                aCube.color = color;
+                aCube.lengthX = aCube.lengthY = aCube.lengthZ = cubeSide;
+                return aCube;
+            }
+
+            function displayInCanvas()
+            {
+                canvasRender.destroy();
+                canvasRender = new X.renderer3D();
+                canvasRender.init();
+
+                //if(storeCubeToDelete.length !== 0){
+                    //There is an issue in XTK when add then removing objects
+                    // canvasRender.init();
+                    // for(let i=0; i<storeCubeToDelete.length; i++)
+                    //    canvasRender.remove(storeCubeToDelete[i]);
+
+                    // storeCubeToDelete = [];
+                //}
+
+                const worldEdge = (size/2)*(cubeSide + cubeGap);
+
+                for(let x = -worldEdge, i=0; i<size; x+=(cubeSide+cubeGap), i++){
+                    for(let y = -worldEdge, j=0; j<size; y+=(cubeSide+cubeGap), j++){
+                        if(theWorld[i][j]){
+                            let c = makeCube(x, y);
+                            //storeCubeToDelete.push(c);
+                            canvasRender.add(c);
+                        }
+                    }
+                }
+
+                canvasRender.camera.position = [0, 0, -600];
+                canvasRender.render();
+            }
+
+            function shoudlBeAlive(i, j){
+                let upperRow, lowerRow, left, right;
+
+                upperRow = i - 1;
+                if(upperRow < 0)
+                    upperRow = size - 1;
+
+                left = j - 1;
+                if(left < 0)
+                    left = size - 1;
+
+                lowerRow = i + 1;
+                if(lowerRow == size)
+                    lowerRow = 0;
+
+                right = j + 1;
+                if(right == size)
+                    right = 0;
+
+                let qty = 0;
+                if(theWorld[upperRow][left])
+                    qty++;
+
+                if(theWorld[upperRow][j])
+                    qty++
+
+                if(theWorld[upperRow][right])
+                    qty++;
+
+                if(theWorld[i][left])
+                    qty++;
+
+                if(theWorld[i][right])
+                    qty++;
+
+                if(theWorld[lowerRow][left])
+                    qty++;
+                
+                if(theWorld[lowerRow][j])
+                    qty++;
+
+                if(theWorld[lowerRow][right])
+                    qty++;
+
+                if(theWorld[i][j] && (qty == 2 || qty == 3))
+                    return true;
+                else if(!theWorld[i][j] && qty == 3)
+                    return true;
+
+                return false;
+            }
+
+            function update()
+            {
+                let newWorld = new Array(size);
+                for(let i = 0; i<size; i++){
+                    newWorld[i] = new Array(size);
+                }
+
+                for(let i=0; i<size; i++){
+                    for(let j=0; j<size; j++){
+                        newWorld[i][j] = shoudlBeAlive(i, j);
+                    }
+                }
+
+                theWorld = newWorld;
+
+                displayWorld();
+
+                displayInCanvas();
+
+                setTimeout(update, updateFrequency);
+            }
+        </script>
+        <script type="text/javascript">
+
+            function main(){
+                canvasRender = new X.renderer3D();
+                canvasRender.init();
+
+                createWorld();
+
+                randomInitialization();
+
+                update();
+
+                //debugger;
+                //displayInCanvas();
+            }
+        </script>
+    </head>
+    <body onload='main()'>
+        <div id="mainContent"></div>
+    </body>
+</html>
