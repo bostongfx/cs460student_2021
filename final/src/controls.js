@@ -2,7 +2,7 @@ import * as THREE from 'https://threejs.org/build/three.module.js';
 
 const math = (function() {
   return {
-    rand_range: function(a, b) {
+    rand_quaternionRange: function(a, b) {
       return Math.random() * (b - a) + a;
     },
 
@@ -49,7 +49,7 @@ export const controls = (function() {
 
     _Init(params) {
       this._params = params;
-      this._radius = 2;
+      this._quaternionActionadius = 2;
       this._enabled = false;
       this._move = {
         forward: false,
@@ -75,19 +75,18 @@ export const controls = (function() {
     _onKeyDown(event) {
       switch (event.keyCode) {
         case 87: // w
-          this._move.forward = true;
+          this._move.down = true;
           break;
         case 65: // a
           this._move.left = true;
           break;
         case 83: // s
-          this._move.backward = true;
+          this._move.up = true;
           break;
         case 68: // d
           this._move.right = true;
           break;
         case 75: // k
-          console.log('hoho')
           this._move.rollLeft = true;
           break;
         case 76: // l
@@ -112,13 +111,13 @@ export const controls = (function() {
     _onKeyUp(event) {
       switch(event.keyCode) {
         case 87: // w
-          this._move.forward = false;
+          this._move.down = false;
           break;
         case 65: // a
           this._move.left = false;
           break;
         case 83: // s
-          this._move.backward = false;
+          this._move.up = false;
           break;
         case 68: // d
           this._move.right = false;
@@ -157,49 +156,49 @@ export const controls = (function() {
       frameDecceleration.multiplyScalar(timeInSeconds);
 
       velocity.add(frameDecceleration);
-      velocity.z = -math.clamp(Math.abs(velocity.z), 25.0, 125.0);
+      // velocity.z = -math.clamp(Math.abs(velocity.z), 25.0, 125.0);
 
       const controlObject = this._params.target;
-      const _Q = new THREE.Quaternion();
-      const _A = new THREE.Vector3();
-      const _R = controlObject._model.quaternion.clone();
+      const _quaternion = new THREE.Quaternion();
+      const _angle = new THREE.Vector3();
+      const _quaternionAction = controlObject._model.quaternion.clone();
 
-      if (this._move.forward) {
-        _A.set(1, 0, 0);
-        _Q.setFromAxisAngle(_A, -Math.PI * timeInSeconds * this._acceleration.y);
-        _R.multiply(_Q);
+      if (this._move.down) {
+        _angle.set(1, 0, 0);
+        _quaternion.setFromAxisAngle(_angle, -Math.PI * timeInSeconds * this._acceleration.y);
+        _quaternionAction.multiply(_quaternion);
       }
-      if (this._move.backward) {
-        _A.set(1, 0, 0);
-        _Q.setFromAxisAngle(_A, Math.PI * timeInSeconds * this._acceleration.y);
-        _R.multiply(_Q);
+      if (this._move.up) {
+        _angle.set(1, 0, 0);
+        _quaternion.setFromAxisAngle(_angle, Math.PI * timeInSeconds * this._acceleration.y);
+        _quaternionAction.multiply(_quaternion);
       }
       if (this._move.left) {
-        _A.set(0, 1, 0);
-        _Q.setFromAxisAngle(_A, Math.PI * timeInSeconds * this._acceleration.y);
-        _R.multiply(_Q);
+        _angle.set(0, 1, 0);
+        _quaternion.setFromAxisAngle(_angle, Math.PI * timeInSeconds * this._acceleration.y);
+        _quaternionAction.multiply(_quaternion);
       }
       if (this._move.right) {
-        _A.set(0, 1, 0);
-        _Q.setFromAxisAngle(_A, -Math.PI * timeInSeconds * this._acceleration.y);
-        _R.multiply(_Q);
+        _angle.set(0, 1, 0);
+        _quaternion.setFromAxisAngle(_angle, -Math.PI * timeInSeconds * this._acceleration.y);
+        _quaternionAction.multiply(_quaternion);
       }
       if (this._move.rollLeft) {
-        _A.set(0, 0, -1);
-        _Q.setFromAxisAngle(_A, -Math.PI * timeInSeconds * this._acceleration.y);
-        _R.multiply(_Q);
+        _angle.set(0, 0, -1);
+        _quaternion.setFromAxisAngle(_angle, -Math.PI * timeInSeconds * this._acceleration.y);
+        _quaternionAction.multiply(_quaternion);
       }
       if (this._move.rollRight) {
-        _A.set(0, 0, -1);
-        _Q.setFromAxisAngle(_A, Math.PI * timeInSeconds * this._acceleration.y);
-        _R.multiply(_Q);
+        _angle.set(0, 0, -1);
+        _quaternion.setFromAxisAngle(_angle, Math.PI * timeInSeconds * this._acceleration.y);
+        _quaternionAction.multiply(_quaternion);
       }
       if (this._move.rocket) {
         velocity.z -= this._acceleration.x * timeInSeconds;
         // velocity.z -= 500;
       }
 
-      controlObject._model.quaternion.copy(_R);
+      controlObject._model.quaternion.copy(_quaternionAction);
 
       const oldPosition = new THREE.Vector3();
       oldPosition.copy(controlObject._model.position);
@@ -219,9 +218,9 @@ export const controls = (function() {
 
 
       if (this._move.faster)
-        forward.multiplyScalar(velocity.z * timeInSeconds * 12);
+        forward.multiplyScalar(velocity.z * timeInSeconds * 15);
       else
-        forward.multiplyScalar(velocity.z * timeInSeconds * 4);
+        forward.multiplyScalar(velocity.z * timeInSeconds * 7);
 
 
 

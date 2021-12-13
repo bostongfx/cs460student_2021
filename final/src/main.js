@@ -6,6 +6,8 @@ import {controls} from './controls.js';
 
 let _APP = null;
 let mixer, mixer2, clock, cubes = [];
+var player_spacecraft, earth_model, planet1_model;
+var bbox_earth, bbox_planet1;
 
 class _Graphics {
     constructor(game) {
@@ -89,13 +91,104 @@ class _Graphics {
     Render(timeInSeconds) {
       this._threejs.render(this._scene, this._camera);
       // console.log(123)
-      if ( mixer ) mixer.update( .01 );
+      if ( mixer ) mixer.update( .003 );
       if ( mixer2 ) mixer2.update( .03 );
-      // if (cubes != null) {
-      //   for (var c in cubes) {
-      //     cubes[c].rotation.x = 1;
-      //   }
-      // }
+      if (cubes != null) {
+        for (var c in cubes) {
+          // cubes[c].position.x += 100; // globle variable
+          // cubes[c].rotation.x += .1;
+          // cubes[c].translateZ(200);     // local variable
+
+          // cubes[c].rotation.x += .1;
+
+          if ( (cubes[c].position.x < -30000 || cubes[c].position.x > 30000) ||
+               (cubes[c].position.y < -30000 || cubes[c].position.y > 30000) ||
+               (cubes[c].position.z < -30000 || cubes[c].position.z > 30000) ) {
+
+             // console.log(222)
+            // cubes[c].rotation.x = Math.random()*Math.PI*2;
+            // cubes[c].rotation.x = Math.PI;
+            // cubes[c].rotation.y += .1;
+            // cubes[c].rotation.x += .3;
+
+          //   // if ( (cubes[c].position.x < -32000 || cubes[c].position.x > 32000) ||
+          //   //      (cubes[c].position.y < -32000 || cubes[c].position.y > 32000) ||
+          //   //      (cubes[c].position.z < -32000 || cubes[c].position.z > 32000) )
+          //   // {
+          //   //   cubes[c].rotation.x -= .1;
+          //   // }
+
+          }          
+
+         //  if (player_spacecraft != null){ 
+         //    if ( (cubes[c].position.x < (player_spacecraft.player.Position.x + 500) && cubes[c].position.x > (player_spacecraft.player.Position.x - 500)) &&
+         //         (cubes[c].position.y < (player_spacecraft.player.Position.y + 500) && cubes[c].position.y > (player_spacecraft.player.Position.y - 500)) &&
+         //         (cubes[c].position.z < (player_spacecraft.player.Position.z + 500) && cubes[c].position.z > (player_spacecraft.player.Position.z - 500)) ) {
+
+
+         //        console.log(123)
+         //     } 
+         // }
+
+         if (player_spacecraft != null){ 
+            var bbox_spacecraft = new THREE.Box3().setFromObject(player_spacecraft.player._model);
+            var bbox_cube = new THREE.Box3().setFromObject(cubes[c]);
+            // var bbox_earth = new THREE.Box3().setFromObject(earth_model);
+            // var bbox_planet1 = new THREE.Box3().setFromObject(planet1_model);
+
+
+            // console.log("box1 max x:  " + bbox_spacecraft.max.x)
+            // console.log("box1 min x:  " + bbox_spacecraft.min.x)
+
+            // console.log("box max :  \n" + bbox_spacecraft.max.x + "\n" + bbox_spacecraft.max.y + "\n" + bbox_spacecraft.max.z)
+            // console.log("box min :  \n" + bbox_spacecraft.min.x + "\n" + bbox_spacecraft.min.y + "\n" + bbox_spacecraft.min.z)
+
+            var lengthX = bbox_spacecraft.max.x - bbox_spacecraft.min.x;
+            var lengthY = bbox_spacecraft.max.y - bbox_spacecraft.min.y;
+            var lengthZ = bbox_spacecraft.max.z - bbox_spacecraft.min.z;
+
+            // console.log(lengthX)
+            // console.log(lengthY)
+            // console.log(lengthZ)
+
+            // COLLISION
+            // with cubes
+            if ( (bbox_cube.max.x + lengthX >= bbox_spacecraft.max.x && bbox_cube.min.x - lengthX  <= bbox_spacecraft.min.x) &&
+                 (bbox_cube.max.y + lengthY >= bbox_spacecraft.max.y && bbox_cube.min.y - lengthY  <= bbox_spacecraft.min.y) &&
+                 (bbox_cube.max.z + lengthZ >= bbox_spacecraft.max.z && bbox_cube.min.z - lengthZ  <= bbox_spacecraft.min.z) ) {
+
+                console.log("GAME OVER!!!")
+             } 
+
+             // // with earth
+             // if (bbox_earth != null) {
+             //   if ( (bbox_earth.max.x + lengthX >= bbox_spacecraft.max.x && bbox_earth.min.x - lengthX  <= bbox_spacecraft.min.x) &&
+             //       (bbox_earth.max.y + lengthY >= bbox_spacecraft.max.y && bbox_earth.min.y - lengthY  <= bbox_spacecraft.min.y) &&
+             //       (bbox_earth.max.z + lengthZ >= bbox_spacecraft.max.z && bbox_earth.min.z - lengthZ  <= bbox_spacecraft.min.z) ) {
+
+             //      console.log("GAME OVER!!!")
+             //   } 
+             // }
+
+             // // with planet1
+             // if (bbox_planet1 != null) {
+             //   if ( (bbox_planet1.max.x + lengthX >= bbox_spacecraft.max.x && bbox_planet1.min.x - lengthX  <= bbox_spacecraft.min.x) &&
+             //       (bbox_planet1.max.y + lengthY >= bbox_spacecraft.max.y && bbox_planet1.min.y - lengthY  <= bbox_spacecraft.min.y) &&
+             //       (bbox_planet1.max.z + lengthZ >= bbox_spacecraft.max.z && bbox_planet1.min.z - lengthZ  <= bbox_spacecraft.min.z) ) {
+
+             //      console.log("GAME OVER!!!")
+             //   } 
+             // }
+         }
+
+
+          // cubes[c].position.y += 100;
+          // cubes[c].position.z += 100;
+        }
+      }
+
+      // console.log(PlayerEntity._entities.player._offsets)
+
     }
   }
 
@@ -107,10 +200,7 @@ class Game{
 
       _Initialize() {
         this._graphics = new _Graphics(this);
-        if (!this._graphics.Initialize()) {
-          this._DisplayError('WebGL2 is not available.');
-          return;
-        }
+        this._graphics.Initialize();
 
         this._previousRAF = null;
         this._minFrameTime = 1.0 / 10.0;
@@ -151,6 +241,10 @@ class Game{
         // console.log(timeInSeconds)
 
         this._StepEntities(timeInSeconds);
+
+        // this._StepEntities(1);
+
+
         this._graphics.Render(timeInSeconds);
 
         this._RAF();
@@ -250,8 +344,10 @@ class ProceduralTerrain_Demo extends Game {
     this._userCamera = new THREE.Object3D();
     this._userCamera.position.set(4100, 0, 0);
 
-    this._graphics.Camera.position.set(10340, 880, -2130);
+    this._graphics.Camera.position.set(10000, 1000, -2000);
+    // this._graphics.Camera.quaternion.set(0, 0.8, 0, 0);
     this._graphics.Camera.quaternion.set(-0.032, 0.885, 0.062, 0.46);
+
 
     this._score = 0;
 
@@ -303,6 +399,14 @@ class ProceduralTerrain_Demo extends Game {
       this._entities['player'] = new PlayerEntity(
           {model: group, camera: this._graphics.Camera, game: this,});
 
+
+
+      // player_spacecraft controller
+      player_spacecraft = this._entities
+      // console.log(player_spacecraft)
+
+
+
       this._entities['_controls'] = new controls.ShipControls({
         target: this._entities['player'],
         camera: this._graphics.Camera,
@@ -311,6 +415,9 @@ class ProceduralTerrain_Demo extends Game {
         mixer: mixer
       });
     });
+
+
+    
 
 
     // // floor
@@ -324,27 +431,56 @@ class ProceduralTerrain_Demo extends Game {
     // plane.position.set(1000,0,0);
     // this._graphics.Scene.add(plane);
 
+    // // floor helper
+    // const plane = new THREE.Plane( new THREE.Vector3( 10000, 10000, 10000 ), 10000  );
+    // const helper = new THREE.PlaneHelper( plane, 10000, 0xffffff );
+    // this._graphics.Scene.add( helper );
+
+
+    // gridHelper
+    const size = 1000000;
+    const divisions = 500;
+
+    const gridHelper = new THREE.GridHelper( size, divisions );
+    this._graphics.Scene.add( gridHelper );
+
+
+
     // cubes
     for (var i = 0; i < 60; i++) {
       var cube = new THREE.Mesh(
         new THREE.BoxGeometry(500, 500, 500),
         new THREE.MeshNormalMaterial({
           // color: '0x000000',
+          side: THREE.DoubleSide,
         }));
       cube.rotation.x = -Math.PI / 2;
       var a = Math.random()*60000 - 30000;
       var b = Math.random()*60000 - 30000;
       var c = Math.random()*60000 - 30000;
       cube.position.set(a,b,c);
-      cube.rotation.x = Math.random()*Math.PI*2;
-      cube.rotation.y = Math.random()*Math.PI*2;
-      cube.rotation.z = Math.random()*Math.PI*2;
-      // cubes.push(cube);
+      // cube.rotation.x = Math.random()*Math.PI*2;
+      // cube.rotation.y = Math.random()*Math.PI*2;
+      // cube.rotation.z = Math.random()*Math.PI*2;
+      cubes.push(cube);
       this._graphics.Scene.add(cube);
     }
 
 
-    // Earth
+    // // test cube
+    // var cube = new THREE.Mesh(
+    //     new THREE.BoxGeometry(500, 500, 500),
+    //     new THREE.MeshNormalMaterial({
+    //       // color: '0x000000',
+    //       side: THREE.DoubleSide,
+    //     }));
+    //   cube.rotation.x = -Math.PI / 2;
+    //   cube.position.set(0,0,2000);
+    //   cubes.push(cube);
+    //   this._graphics.Scene.add(cube);
+
+
+    // Planet1
     loader.setPath('./resources/models/planet1/');
     loader.load('scene.gltf', (gltf) => {
       const model = gltf.scene;
@@ -352,6 +488,10 @@ class ProceduralTerrain_Demo extends Game {
       // model.rotation.x = Math.PI/2;
       model.scale.setScalar(10);
       model.position.set(-20000,-2000,-5000)
+
+
+      // planet1_model = gltf;
+      bbox_planet1 = new THREE.Box3().setFromObject(model);
 
 
       // const group = new THREE.Group();
@@ -370,6 +510,7 @@ class ProceduralTerrain_Demo extends Game {
     });
 
 
+    // Earth
     loader.setPath('./resources/models/earth2/');
     loader.load('scene.gltf', (gltf) => {
       const model = gltf.scene;
@@ -378,6 +519,9 @@ class ProceduralTerrain_Demo extends Game {
       model.scale.setScalar(100);
       model.position.set(7000,-5000,20000)
 
+      // earth_model = model;
+
+      bbox_earth = new THREE.Box3().setFromObject(model);
 
       // const group = new THREE.Group();
       // group.add(model);
