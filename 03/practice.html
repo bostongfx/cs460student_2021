@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <style>
+      html, body { 
+        background-color:#000;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden !important;  
+      }
+    </style>
+    <script src="https://threejs.org/build/three.min.js" type="text/javascript"></script>
+    <script src="https://threejs.org/examples/js/controls/TrackballControls.js" type="text/javascript"></script>
+    <script>
+      window.onload = function() {
+
+        // THREE.JS DOCUMENTATION: https://threejs.org/docs/
+
+          // Three.js code goes here
+        // create scene
+        scene = new THREE.Scene();
+
+        // setup the camera
+        var fov = 75;
+        var ratio = window.innerWidth / window.innerHeight;
+        var zNear = 1;
+        var zFar = 10000;
+        camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+        // set camera position (default = 0,0,0)
+        camera.position.set(0,0,100);	
+
+        // add the renderer/canvas
+        renderer = new THREE.WebGLRenderer()
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement); //add the canvas to the body
+        // configure lights
+        ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        light = new THREE.DirectionalLight(0xffffff, 5.0);
+        light.position.set(10,100,10);
+        scene.add(light);
+        // configure objects
+        geometry = new THREE.BoxBufferGeometry(20,20,20);
+        // geometry = new THREE.TorusGeometry( 10, 3, 16, 100 );
+        material = new THREE.MeshStandardMaterial({color: 0xffffff, wireframe:false});
+        cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        // creates an INVISIBLE PLANE (10000 x 10000)
+        geometry = new THREE.PlaneBufferGeometry( 10000, 10000 );
+        material = new THREE.MeshBasicMaterial( {
+          visible: false
+        });
+        invisible_plane = new THREE.Mesh( geometry, material );       
+        scene.add( invisible_plane );
+
+
+        geometry = new THREE.BoxBufferGeometry(20,20,20);
+        // geometry = new THREE.TorusGeometry( 10, 3, 16, 100 );
+        material = new THREE.MeshStandardMaterial({color: 0xffffff, wireframe:false});
+        cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        // setup interaction
+        controls = new THREE.TrackballControls(camera, renderer.domElement);
+
+        animate();
+
+        // onclick callback for canvas
+        renderer.domElement.onclick = function(e) {
+          // screen space
+          // grab x and y coords on the viewport
+          pixel_coords = new THREE.Vector2(e.clientX, e.clientY);
+          // console.log(e.clientX, e.clientY);
+
+          // normalize screen space coordinates to -1..1 in x and y
+          vp_coords = new THREE.Vector2( 
+          ( pixel_coords.x / window.innerWidth ) * 2 - 1, // X
+          - ( pixel_coords.y / window.innerHeight ) * 2 + 1 ); // Y
+          console.log(pixel_coords);
+          console.log(vp_coords);
+
+          // extend vp_coords (normalized screen space coords) by a 3rd 
+          // dimension (adding z)
+          // i.e. convert 2D viewport coords to pseudo 3D
+          vp_coords_3d_near = new THREE.Vector3(vp_coords.x,
+            vp_coords.y, 0); // for zNear
+
+          // set up a ray shooting from the camera to the vp_coords on zNear
+          raycaster = new THREE.Raycaster();
+          raycaster.setFromCamera(vp_coords_3d_near, camera);
+          
+          // calculate the intersection of the ray with invisible plane to
+          // get full 3D coordinates
+          intersects = raycaster.intersectObject( invisible_plane );
+          threed_point = intersects[0].point;
+          cube.position.set(threed_point.x, threed_point.y, threed_point.z);
+        };      
+      };
+
+      function animate() {
+
+        requestAnimationFrame( animate );
+
+        // and here we trigger the rendering
+        controls.update();
+        renderer.render(scene, camera);
+
+      };
+    </script>
+  </head>
+  <body></body>
+</html>
