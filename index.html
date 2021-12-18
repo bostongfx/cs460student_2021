@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <title>CS460 Final</title>
+    <style>
+      body {
+        background-color: black;
+        color: white; /* font color */
+        font-family: sans-serif;
+      }
+
+      #logo {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+      }
+    </style>
+    <script type="text/javascript" src="https://get.goXTK.com/xtk_edge.js"></script>
+  </head>
+  <body>
+<div>
+  <div class="inputoutput">
+    <img id="imageSrc" alt="No Image" />
+    <div class="caption">imageSrc <input type="file" id="fileInput" name="file" /></div>
+  </div>
+  <div class="inputoutput">
+    <canvas id="canvasOutput" ></canvas>
+    <div class="caption">canvasOutput</div>
+  </div>
+</div>
+<script type="text/javascript">
+let imgElement = document.getElementById('imageSrc');
+imgElement.style.display = 'none';
+let inputElement = document.getElementById('fileInput');
+inputElement.addEventListener('change', (e) => {
+  imgElement.src = URL.createObjectURL(e.target.files[0]);
+}, false);
+imgElement.onload = function() {
+  let mat = cv.imread(imgElement);
+  cv.imshow('canvasOutput', mat);
+
+  r = new X.renderer3D();
+  r.init();
+
+  //downsampling width
+  let dsp = 5;
+  //number of planes
+  let np = 3;
+  //distance between pixels
+  let pd = 30;
+
+
+console.log('image width: ' + mat.cols + '\n' +
+            'image height: ' + mat.rows + '\n' +
+            'image size: ' + mat.size().width + '*' + mat.size().height + '\n' +
+            'image depth: ' + mat.depth() + '\n' +
+            'image channels ' + mat.channels() + '\n' +
+            'image type: ' + mat.type() + '\n');
+
+for (var depth = 0; depth < np; depth++) {
+  for (var row = 0; row < mat.rows; row+=dsp) {
+    for (var col = 0; col < mat.cols; col+=dsp) {
+      let avgr = 0;
+      let avgg = 0;
+      let avgb = 0;
+      for (var x = col; x < col + dsp; x++) {
+        for (var y = row; y < row + dsp; y++) {
+
+        
+      
+
+          let pixel = mat.ucharPtr(row, col);
+          let R = pixel[0];
+          let G = pixel[1];
+          let B = pixel[2];
+          let A = pixel[3];
+          avgr += R;
+          avgg += G;
+          avgb += B;
+          
+
+        }
+      }
+      /*
+      console.log('R G B A' + pixel[0] + ' ' + pixel[1] + ' ' + pixel[2] + ' ' + pixel[3] + '\n');
+      */
+      avgr /= dsp * dsp;
+      avgg /= dsp * dsp;
+      avgb /= dsp * dsp;
+      cube = new X.cube();
+      cube.center = [row * (pd/dsp), col * (pd/dsp), depth * (pd/dsp)];
+      cube.color = [avgr / 255, avgg / 255, avgb / 255];
+      r.add(cube);
+    }
+  }
+}
+
+
+  r.render();
+  mat.delete();
+};
+</script>
+<script async src="https://docs.opencv.org/3.4.0/opencv.js" type="text/javascript"></script>
+</body>
+</html>
