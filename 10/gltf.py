@@ -103,4 +103,3 @@ gltf = {
 }
 
 print ( str(gltf).replace("'", '"') ) # we need double quotes instead of single quotes
-

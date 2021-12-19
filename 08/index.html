@@ -1,0 +1,225 @@
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <style>
+  html, body { 
+    background-color:#000;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden !important;  
+
+    background-image: url(sky.jpg);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+</style>
+
+<script src="https://threejs.org/build/three.min.js" type="text/javascript"></script>
+<script src="https://threejs.org/examples/js/controls/TrackballControls.js" type="text/javascript"></script>
+<script src="https://threejs.org/examples/js/effects/AnaglyphEffect.js" type="text/javascript"></script>
+<script src="robot.js" type="text/javascript"></script>
+<script src="https://unpkg.com/dat.gui@0.7.6/build/dat.gui.min.js" type="text/javascript"></script>
+<script src="helper.js" type="text/javascript"></script>
+
+
+<script>
+
+  var scene, camera, renderer, effec, ambientLight, light, controls;
+  var floor;
+
+  window.onload = function() {
+
+    scene = new THREE.Scene();
+
+    var fov = 60;
+    var ratio = window.innerWidth / window.innerHeight;
+    var zNear = 1;
+    var zFar = 10000;
+    camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+    camera.position.set( 0, 0, 500);
+
+    renderer = new THREE.WebGLRenderer({ alpha: true });
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
+
+    effect = new THREE.AnaglyphEffect( renderer )
+    effect.setSize( window.innerWidth, window.innerHeight );
+
+    // ambientLight = new THREE.AmbientLight();
+    // scene.add( ambientLight );
+
+    var box1 = new THREE.BoxGeometry( 5, 16, 8 );
+    light1 = new THREE.PointLight( 0xff0000, 2, 800 );
+    light1.position.set(200, 400, -300)
+    light1.add( new THREE.Mesh( box1, new THREE.MeshBasicMaterial( { color: 0xff0000 } ) ) );
+    scene.add( light1 );
+
+    // hw8 bonus 1: 2 additional light source
+    // reference: https://threejs.org/docs/#api/en/lights/PointLight
+    var box2 = new THREE.BoxGeometry( 5, 16, 8 );
+    light2 = new THREE.PointLight( 0x00ff00, 2, 800 );
+    light2.position.set(-200, 400, -300)
+    light2.add( new THREE.Mesh( box2, new THREE.MeshBasicMaterial( { color: 0x0000ff  } ) ) );
+    scene.add( light2 );
+
+    var box3 = new THREE.BoxGeometry( 5, 16, 8 );
+    light3 = new THREE.PointLight( 0x0000ff, 2, 800 );
+    light3.position.set(0, 500, 300)
+    light3.add( new THREE.Mesh( box3, new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) ) );
+    scene.add( light3 );
+
+
+    var floorTexture = new THREE.TextureLoader().load( 'board.jpg' );
+    var floorGeometry = new THREE.PlaneBufferGeometry( 1000, 1000 );
+    var floorMaterial = new THREE.MeshBasicMaterial( {
+      map: floorTexture,
+      side: THREE.DoubleSide
+    } );
+    floor = new THREE.Mesh( floorGeometry, floorMaterial );
+    floor.position.y = -100;
+    // hw8, makes sure robot don't walk down
+    floor.rotateX(Math.PI /2); 
+    scene.add( floor );
+
+    // bonus 2
+    // video from:
+    // https://www.youtube.com/watch?v=F5tSoaJ93ac&ab_channel=LeagueofLegends
+    // reference from:
+    // https://threejs.org/docs/#api/en/textures/VideoTexture
+    video = document.getElementById( 'video' );
+    texture = new THREE.VideoTexture( video );
+    var planeGeo = new THREE.PlaneBufferGeometry(2000,600); 
+    var planeMat = new THREE.MeshBasicMaterial( {
+      map: texture,
+    } );
+    plane = new THREE.Mesh(planeGeo, planeMat );
+    plane.rotateX(0);
+    plane.position.y = 30
+    plane.position.z = -1000;
+    scene.add( plane );
+
+    // hw8 bonus 2: load a box
+    object = new THREE.TextureLoader().load( 'cover.png' );
+    var geometry = new THREE.BoxGeometry( 100,100,100 );
+    var material = new THREE.MeshBasicMaterial( {map: object} );
+    var box = new THREE.Mesh( geometry, material );
+    box.position.x = 0;
+    box.position.z = 0; 
+    box.position.y = -60;
+    scene.add( box );
+
+    // ROBOT GOES HERE!
+    robots = [];
+    r = new Robot(0, -25, 100);
+    r.show(scene);
+    robots.push(r);
+
+
+    controller = {
+      anaglyph: false,
+      raise_left_arm: function() {
+        for(var r in robots)
+          robots[r].raise_left_arm();
+      },
+      lower_left_arm: function() {
+        for(var r in robots)
+          robots[r].lower_left_arm();
+      },
+      kick : function() {
+        for(var r in robots)
+          robots[r].kick();
+      },
+      dance_video : function() {
+        for(var r in robots)
+          robots[r].dance();
+        // play video when dance
+        video.play();
+      },
+      walk: function(){           
+        for(var r in robots)
+          robots[r].walk();       
+      }     
+    };
+
+    var gui = new dat.GUI();
+    var rendering = gui.addFolder( "Rendering" );
+    rendering.add( controller, 'anaglyph' );
+    rendering.open();
+
+    var moving = gui.addFolder( "Movement" );
+    // moving.add( r.head.position, "x", -1000, 1000 );
+    // moving.add( r.head.position, "y", -1000, 1000 );
+    // moving.add( r.head.position, "z", -1000, 1000 );
+
+    moving.add( controller, "raise_left_arm");
+    moving.add( controller, "lower_left_arm");
+    moving.add( controller, "kick");
+    moving.add( controller, "dance_video");
+    // hw8
+    moving.add( controller, "walk" );
+    moving.open();
+
+    controls = new THREE.TrackballControls( camera, renderer.domElement );
+
+    animate();
+  }
+
+
+  window.onclick = function(e) {
+
+        if (!e.shiftKey) {
+
+          e.preventDefault();
+          return false;
+        }
+
+        pixel_coords = new THREE.Vector2( e.clientX, e.clientY );
+
+        vp_coords = new THREE.Vector2( ( pixel_coords.x / window.innerWidth ) * 2 - 1,
+                                        -( pixel_coords.y / window.innerHeight ) * 2 + 1);
+
+        vp_coords_near = new THREE.Vector3( vp_coords.x, vp_coords.y, 0);
+
+        raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(vp_coords_near, camera);
+        intersects = raycaster.intersectObject(floor);
+
+        if (intersects.length > 0) {
+
+            // r.head.position.set(intersects[0].point.x, 
+            //                     intersects[0].point.y + 60,
+            //                     intersects[0].point.z)
+            r_new = new Robot(intersects[0].point.x, intersects[0].point.y+70, intersects[0].point.z);
+            r_new.show(scene);
+            robots.push(r_new);
+          }
+
+      };
+
+  function animate() {
+
+    requestAnimationFrame( animate );
+    // r.onAnimate();
+    for (var r in robots) {
+      robots[r].onAnimate();
+    }  
+    controls.update();
+
+    if (controller.anaglyph) {
+      renderer.setClearAlpha(1);
+      effect.render(scene, camera);
+
+    } else {
+      renderer.setClearAlpha(0);
+      renderer.render( scene, camera );
+    }
+  };
+
+    </script>
+  </head>
+  <body>
+    <video id="video" loop style="display:none" src="video.mp4">
+    </video>
+  </body>
+  </html>
