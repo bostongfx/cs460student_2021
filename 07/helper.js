@@ -27,6 +27,7 @@ HELPER.cylinderSkeletonMesh = function(howmany, howwide, color) {
     true // openEnded
   );
 
+  
   var position = geometry.attributes.position;
 
   var vertex = new THREE.Vector3();
