@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+            html, body {
+                background-color: #000;
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                overflow: hidden !important;
+                font-family: din_condensed;
+            }
+        </style>
+    <link rel="stylesheet" type="text/css" href="fonts.css"/>
+    <title>CS460 Intro</title>
+</head>
+<body>
+    <script src="three.min.js"></script>
+    <script src="responsivevoice.js"></script>
+    <script>
+        var scene, camera, renderer, rain, angle;
+            angle = 0;
+            fov = 60;
+            ratio = window.innerWidth / window.innerHeight;
+            zNear = 1;
+            zFar = 10000;
+            clicked = false;
+            flag = false;
+            flag2 = false;
+            var speed_reset_flag = false;
+            var u_cube, g_cube;
+            var spin_speed = 0.01;
+
+            accents = [ 
+            // 'French Female',
+                        // 'Deutsch Male',
+                        'US English Female',
+                        // 'Turkish Male',
+                        // 'Swedish Female'
+                        ];
+        
+            // Random accent chosen from the accents list
+            randomAccent = accents[ Math.floor( Math.random()*accents.length ) ];
+
+            start = function() {
+                if ( clicked ) {
+                    return;
+                }
+
+
+                var clicker = document.getElementById('clicker');
+                clicker.style.display = 'none';
+
+                clicked = true;
+                init();
+
+            }
+
+            function init() {
+                loadMusic();
+
+                sceneSetup();
+
+                cameraSetup( fov, ratio, zNear, zFar );
+
+                lightSetup();
+
+                rendererSetup();
+
+                //=======================================================
+
+                var u_loader = new THREE.TextureLoader();
+                var u_geometry = new THREE.BoxGeometry();
+                var u_material = new THREE.MeshLambertMaterial({
+                    map: u_loader.load('../gfx/umass_logo.png')
+                });
+
+                u_cube = new THREE.Mesh( u_geometry, u_material );
+
+                //========================================================
+
+                var g_loader = new THREE.TextureLoader();
+                var g_geometry = new THREE.BoxGeometry();
+                var g_material = new THREE.MeshLambertMaterial({
+                    map: g_loader.load('../gfx/Boston_GFX.png')
+                });
+
+                g_cube = new THREE.Mesh( g_geometry, g_material );
+
+                setTimeout(function() {
+                    scene.add( u_cube );
+                    camera.lookAt(u_cube.position);
+                    flag2 = true;
+                }, 0)
+
+                setTimeout(function() {
+                    removeObject( u_cube );
+                    scene.add( g_cube );
+                    camera.lookAt(g_cube.position);
+                    flag2 = true;
+                    speed_reset_flag = true;
+                }, 10000)
+
+                counter = 0;
+                sign = 1;
+                reducer = null;
+                animate();
+            }
+
+            function loadMusic() {
+                var music = document.getElementById( 'music' );
+                music.autoplay = true;
+                music.play();
+            }
+
+            function sceneSetup() {
+                scene = new THREE.Scene();
+                scene.fog = new THREE.FogExp2( 0x010101, 0.0001 );
+            }
+
+            function cameraSetup( fov, ratio, zNear, zFar ) {
+                camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar );
+                camera.position.set( 0, 0, 3);
+            }
+
+            function lightSetup() {
+                ambient = new THREE.AmbientLight( 0xffffff );
+                scene.add( ambient );
+                directionalLight = new THREE.DirectionalLight( 0xffffff );
+                directionalLight.position.set( 200,0,500 );
+                scene.add( directionalLight );
+            }
+
+            function rendererSetup() {
+                renderer = new THREE.WebGLRenderer();
+                renderer.setClearColor( scene.fog.color );
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                document.body.appendChild( renderer.domElement );
+            }
+
+            /*
+                Info: Remove an object from the scene
+                      given an object name
+            */
+            function removeObject( object ) {
+                scene.remove( object );
+                object.geometry.dispose();
+                object.material.dispose();
+                object = undefined;
+            }
+
+            function getTextFromURL() {
+                var message = "Today..";
+                var param = window.location.search.substring(1);
+
+                if( param != "" ) {
+                    message = document.getElementById( 'title' ).innerHTML = decodeURIComponent( param );
+                }
+
+                document.getElementById( 'title' ).style.display = 'block';
+
+                message = message.replace(/<\/?[^>]+(>|$)/g, "");
+                return message;
+            }
+
+            function animate() {
+               
+                requestAnimationFrame( animate );
+
+                //Probably better to use position instead of rotation
+
+                if(speed_reset_flag == false){
+                    setTimeout(function() {
+                        spin_speed += 0.0002;
+                    }, 500)
+                }
+                else{
+                    if(spin_speed >= 0){
+                        setTimeout(function() {
+                        spin_speed -= 0.0001;
+                    }, 100)
+                    } else {
+                        spin_speed = 0;
+
+                        if (reducer == null) {
+
+                            removeObject(g_cube);
+
+                            reducer = setInterval(function() {
+                                console.log('reducing')
+                                music.volume -= 0.1;
+                                // camera.position.z += 20;
+                                if (music.volume <= 0.1) {
+                                    clearInterval(reducer);
+                                    msg = getTextFromURL();
+                                    responsiveVoice.speak( msg, randomAccent ,{rate:0.8});
+                                }
+                            },300);
+                        }
+                    }
+                    
+                }
+
+                u_cube.rotation.y -= spin_speed;
+                g_cube.rotation.y -= spin_speed;
+
+
+                renderer.render( scene, camera );
+            }
+
+    </script>
+
+    <div id='clicker' style='width:100%;height:100%;'>
+          <span style='position:absolute;top:35%;left:35%;width:10%;cursor: pointer;padding:20px;color:white;font-family: sans-serif;text-align:center' onclick='javascript:start();'><img src='../gfx/CS460_Graphics.png'></span>
+        </div>
+
+        <div id='title' style='display:none;
+                               position:absolute;
+                               color:white;
+                               top:15%;
+                               left:20%;
+                               margin-left:50px;
+                               font-size:440%'>Today..</div>
+        <audio id="music"><source src="badcat.mp3"></audio>
+
+</body>
+</html>
