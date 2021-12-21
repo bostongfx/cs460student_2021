@@ -1,0 +1,145 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      html, body { 
+        background-color:#000;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden !important;  
+      }
+    </style>
+    <script src="https://threejs.org/build/three.min.js" type="text/javascript"></script>
+    <script src="https://threejs.org/examples/js/controls/TrackballControls.js" type="text/javascript"></script>
+    <script>
+      window.onload = function() {
+
+        scene = new THREE.Scene();
+
+        fov = 75;
+        ratio = window.innerWidth / window.innerHeight;
+        zNear = 1;
+        zFar = 10000;
+        // console.log(ratio);
+        camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+        camera.position.set( 0, 0, 100);
+
+        // Add the renderer/canvas to the scene we need this to start 
+        // creating objects,.....
+        renderer = new THREE.WebGLRenderer();
+
+        // Set the Size of the renderer
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+        // Add the canvas to the body    
+        document.body.appendChild( renderer.domElement );
+        
+        ambientLight = new THREE.AmbientLight( 0x404040 );
+        scene.add( ambientLight );
+
+        light = new THREE.DirectionalLight( 0xffffff, 5.0 );
+        light.position.set( 10, 100, 10 );
+        scene.add( light );
+
+
+        // now we add the cube
+        geometry = new THREE.BoxBufferGeometry( 20, 20, 20);
+        material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        cube = new THREE.Mesh( geometry, material);
+        scene.add(cube);
+
+
+        //
+        // The invisible plane
+        // dimensions 10000 * 10000
+        geometry = new THREE.PlaneBufferGeometry( 10000, 10000 );
+        material = new THREE.MeshBasicMaterial( {
+          visible: false
+        });
+
+        invisible_plane = new THREE.Mesh( geometry, material );
+
+        scene.add( invisible_plane );
+        //
+        //
+        //
+
+
+        // Interaction with camera
+        controls = new THREE.TrackballControls( camera, renderer.domElement );
+
+        animate();
+
+
+        //
+        // ACTION!
+        //
+
+        // onclick callback for canvas
+        // e parameter is event
+        renderer.domElement.onclick = function(e) {
+
+          if (!e.shiftKey){
+            e.preventDefault();
+            return false;
+          }
+  
+    pixel_coords = new THREE.Vector2( e.clientX, e.clientY );
+  vp_coords = new THREE.Vector2( 
+    ( pixel_coords.x / window.innerWidth ) * 2 - 1, // X
+    - ( pixel_coords.y / window.innerHeight ) * 2 + 1 ); // Y
+
+    console.log(pixel_coords);
+    console.log(vp_coords);
+ 
+ // extendes the vp coords by a 3rd dimension (adding z)
+   vp_coords_3d_near = new THREE.Vector3(vp_coords.x, vp_coords.y, 0);
+
+   // we set up a ray shooting from the 
+   // camera to the vp coords on ZNear
+   
+   raycaster = new THREE.Raycaster();
+   raycaster.setFromCamera(vp_coords_3d_near, camera);
+
+   intersects = raycaster.intersectObject(invisible_plane);
+
+   // Access the point of x, y, z by using intersects[0].point
+   threed_point = intersects[0].point;
+   
+   geometry = new THREE.BoxBufferGeometry( 20, 20, 20);
+        material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        cube = new THREE.Mesh( geometry, material);
+        scene.add(cube);
+
+   console.log(intersects);
+
+   cube.position.set(threed_point.x, threed_point.y, threed_point.z);
+
+};
+        
+
+        
+
+
+      };
+
+      function animate() {
+
+        
+        // This is a way of calling the function animate over and over again
+        // request AnimationFrame get the best FPS for your computer
+        requestAnimationFrame( animate );
+
+        // if we call animate() is hard code for 60fps, so maybe your computer is 
+        // to slow it can not handle it
+
+        controls.update();
+        renderer.render( scene, camera );
+
+      };
+
+    </script>
+  </head>
+  <body></body>
+</html>
