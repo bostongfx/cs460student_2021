@@ -1,0 +1,9 @@
+Hi. Professor.
+Here is the google drive link for my whole project:
+https://drive.google.com/drive/u/0/folders/1QdGFVL7m5mKi3fjsSPtxcFHmWCw8forx
+
+The whole game scene is in the My Project(3)/Assets/Scene/Paper AirPlane
+VR.unity
+
+The apk is built game file.
+Thank you so much.
