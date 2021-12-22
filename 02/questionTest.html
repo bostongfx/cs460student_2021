@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <title>CS460 Assignment 2</title>
+    <style>
+      body {
+        background-color: black;
+        color: white; /* font color */
+        font-family: sans-serif;
+      }
+
+      #logo {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+      }
+    </style>
+    <script type="text/javascript" src="http://get.goXTK.com/xtk_edge.js"></script>
+
+    <script type="text/javascript">
+      window.onload = function() {
+        r = new X.renderer3D();
+        r.init();
+        r.camera.position = [0, 300, 0];
+
+        c1 = new X.cube();
+        c1.lengthX=140;
+        c1.lengthZ=40;
+        r.add(c1);
+
+        c2 = new X.cube();
+        c2.color = [0,1,1];
+        c2.center = [30,0,30];
+        c2.lengthX=40;
+        r.add(c2);
+
+        c3 = new X.cube();
+        c3.color = [0,1,1];
+        c3.center = [-30,0,30];
+        c3.lengthX=40;
+        r.add(c3);
+
+        c4 = new X.cube();
+        c4.center = [60,0,30];
+        r.add(c4);
+
+        c5 = new X.cube();
+        c5.center = [0,0,30];
+        r.add(c5);
+
+        c6 = new X.cube();
+        c6.center = [-60,0,30];
+        r.add(c6);
+
+        c7 = new X.cube();
+        c7.center = [0,0,50];
+        c7.lengthX=140;
+        c7.lengthZ=20;
+        r.add(c7);
+
+        r.render();
+    }
+
+    </script>
+  </head>
+  
+  <body>
+    <h1>CS460 Assignment 2</h1>
+    <div id="logo"><img style="height:60px" src="gfx/cs460.png"></div>
+  </body>
+</html>

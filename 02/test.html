@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <title>CS460 Assignment 2</title>
+    <style>
+      body {
+        background-color: black;
+        color: white; /* font color */
+        font-family: sans-serif;
+      }
+
+      #logo {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+      }
+    </style>
+    <script type="text/javascript" src="http://get.goXTK.com/xtk_edge.js"></script>
+
+    <script type="text/javascript">
+      window.onload = function() {
+        r = new X.renderer3D();
+        r.init();
+        r.camera.position = [500, 0, 0]
+        
+        
+        r.render();
+    }
+
+    // functions
+    function light(x, y, h, a) {
+        c = new X.cube();
+        c.center = [x*23, y*23, h*23];
+        r.add(c);
+      }
+
+    
+    
+    </script>
+  </head>
+  
+  <body>
+    <h1>CS460 Assignment 2</h1>
+    <div id="logo"><img style="height:60px" src="gfx/cs460.png"></div>
+  </body>
+</html>

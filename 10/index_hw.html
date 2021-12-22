@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>NPR 3D Window grilles: HAPPY TIGER YEAR</title>
+    <style>
+      html, body { 
+        background-color:#cccccc;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden !important;  
+      }
+    </style>
+
+    <script type='module' >
+
+      import * as THREE from 'https://threejs.org/build/three.module.js';
+      import { TrackballControls } from 'https://threejs.org/examples/jsm/controls/TrackballControls.js';
+      import { GLTFLoader } from 'https://threejs.org/examples/jsm/loaders/GLTFLoader.js';
+
+      let scene, camera, renderer, effect, ambientLight, controls, mixer;
+      let mesh1, mesh2, material1, material2;
+
+      window.onload = function() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0xffffff );
+
+        ambientLight = new THREE.AmbientLight();
+        scene.add( ambientLight );
+
+        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
+        camera.position.set( 0, 0, 12);
+
+        renderer = new THREE.WebGLRenderer({ });
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+
+        const loader = new GLTFLoader();
+        loader.load('shuttle.gltf', function (gltf) {
+          console.log(gltf);
+          gltf.scene.position.set(0, -1, 0);
+          scene.add( gltf.scene);
+        } ); 
+
+        controls = new TrackballControls( camera, renderer.domElement );
+        animate();
+      };
+
+
+      function animate() {
+
+        requestAnimationFrame( animate );
+
+        controls.update();
+        renderer.render( scene, camera );
+      };
+
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
