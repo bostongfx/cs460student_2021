@@ -1,6 +1,12 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
-import {GLTFLoader} from 'https://threejs.org/examples/jsm/loaders/GLTFLoader.js';
-import {TWEEN} from 'https://threejs.org/examples/jsm/libs/tween.module.min.js';
+// import * as THREE from 'https://threejs.org/build/three.module.js';
+// import {GLTFLoader} from 'https://threejs.org/examples/jsm/loaders/GLTFLoader.js';
+// import {TWEEN} from 'https://threejs.org/examples/jsm/libs/tween.module.min.js';
+// import * as THREE from '../three.js/build/three.module.js';
+// import {GLTFLoader} from '../three.js/examples/jsm/loaders/GLTFLoader.js';
+// import {TWEEN} from '../three.js/examples/jsm/libs/tween.module.min.js';
+import * as THREE from '../three.js/build/three.module.js';
+import {GLTFLoader} from '../three.js/examples/jsm/loaders/GLTFLoader.js';
+import {TWEEN} from '../three.js/examples/jsm/libs/tween.module.min.js';
 
 import {controller} from './controller.js';
 
