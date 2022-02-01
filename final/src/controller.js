@@ -1,5 +1,5 @@
 // import * as THREE from 'https://threejs.org/build/three.module.js';
-import * as THREE from '../three.js/build/three.module.js';
+import * as THREE from './three.js/build/three.module.js';
 
 export const controller = (function() {
 
