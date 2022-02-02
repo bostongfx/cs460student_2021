@@ -4,9 +4,9 @@
 // import * as THREE from '../three.js/build/three.module.js';
 // import {GLTFLoader} from '../three.js/examples/jsm/loaders/GLTFLoader.js';
 // import {TWEEN} from '../three.js/examples/jsm/libs/tween.module.min.js';
-import * as THREE from '../three.js/build/three.module.js';
-import {GLTFLoader} from '../three.js/examples/jsm/loaders/GLTFLoader.js';
-import {TWEEN} from '../three.js/examples/jsm/libs/tween.module.min.js';
+import * as THREE from '../../three.js/build/three.module.js';
+import {GLTFLoader} from '../../three.js/examples/jsm/loaders/GLTFLoader.js';
+import {TWEEN} from '../../three.js/examples/jsm/libs/tween.module.min.js';
 
 import {controller} from './controller.js';
 
