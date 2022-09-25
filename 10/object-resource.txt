@@ -1,0 +1,2 @@
+https://groups.csail.mit.edu/graphics/classes/6.837/F03/models/
+https://people.sc.fsu.edu/~jburkardt/data/obj/obj.html

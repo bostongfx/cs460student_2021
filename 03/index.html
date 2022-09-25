@@ -1,0 +1,102 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <title>CS460 Assignment 3</title>
+    <style>
+      body {
+        margin: 0%;
+        background-color: black;
+        color: white;
+        font-family: sans-serif;
+      }      
+      h1 {
+        height: 9%;
+        background-color: black;
+      }
+      h2 { 
+        color: white;
+        background-color:orange;
+        font-size:150%;
+        position: absolute;
+        top: 5%;
+        left: 45%;
+        border-radius: 7px;
+      }
+      #logo {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+      }
+      #radio_button {
+        /*position: absolute;
+        top: 12%;
+        left: 37%;*/
+        text-align: center;
+      }
+      #version {
+        position: relative;
+        /*top: 3%;*/
+      }
+      /*.button{
+        padding:0.35em 1.2em;
+        border-radius:12px;
+        text-decoration:none;
+        color:#FFFFFF;
+        background-color: #000000;
+      }
+      .button:hover{
+      color:#000000;
+      background-color:#FFFFFF;
+      }
+      .button1{
+        position: absolute;
+        top: 18%;
+        left: 35%;
+      }
+      .button2{
+        position: absolute;
+        top: 18%;
+        left: 55%;
+      }*/
+
+
+    </style>
+    <script type="text/javascript"></script>
+  </head>
+  <body>    
+    <h1>CS460 Assignment 3</h1>
+    <div id="logo"><img style="height:60px" src="gfx/cs460.png"></div>
+    <h2>Version</h2>
+    <!-- <a href="onclick.html" class="button button1">window.onclick</a>
+    <a href="onmousemove.html" class="button button2"; style="position: absolute; top: 15%, right: 30%">window.onmousemove</a> -->
+    <script type="text/javascript">
+      function version(v) {
+        var version = document.getElementById("version");
+        if (v == "onclick") {          
+          version.src = "onclick.html";
+          }
+        else {
+          version.src = "onmousemove.html";
+        }
+      }
+    </script>    
+
+    <!-- create button to choose the version -->
+    <form id="radio_button">
+      <label>
+        <input type="radio" name="button" value="onclick" onclick="version(this.value);"> window.onclick
+      </label>
+      <label>
+        <input type="radio" name="button" value="onmousemove" onclick="version(this.value);"> window.onmousemove
+      </label>
+    </form>
+    
+    <!-- embed the website of version was chosen -->
+    <!-- we can use <embed></embed> instead iframe -->
+    <iframe id="version" width=100% height=100% frameborder="0" allowfullscreen></iframe>
+
+
+
+  </body>
+</html>

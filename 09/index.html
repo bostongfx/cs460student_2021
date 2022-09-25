@@ -9,16 +9,33 @@
         height: 100%;
         overflow: hidden !important;  
       }
+      #gui2 { position: absolute; top: 2px; left: 2px }
     </style>
+
+
+    <script src="https://threejs.org/build/three.min.js" type="text/javascript"></script>
+    <script src="https://threejs.org/examples/js/controls/TrackballControls.js" type="text/javascript"></script>
+    <script type="text/javascript" src="https://get.goXTK.com/xtk_xdat.gui.js"></script>
+    <script src="https://threejs.org/examples/js/loaders/PLYLoader.js" type="text/javascript"></script>
 
     <script type='module'>
 
-      import * as THREE from 'https://threejs.org/build/three.module.js';
-      import { GUI } from 'https://unpkg.com/dat.gui@0.7.7/build/dat.gui.module.js';
-      import { TrackballControls } from 'https://threejs.org/examples/jsm/controls/TrackballControls.js';
-      import { PLYLoader } from 'https://threejs.org/examples/jsm/loaders/PLYLoader.js';
+      // import * as THREE from 'https://threejs.org/build/three.module.js';
+      // import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.117.1/build/three.module.js';
+      //import * as THREE from '../build1/three.module.js';
+      // import { GUI } from 'https://threejs.org/examples/jsm/libs/dat.gui.module.js';
+      // import { GUI } from 'https://threejs.org/examples/jsm/libs/lil-gui.module.min.js';
+      // import { TrackballControls } from 'https://threejs.org/examples/jsm/controls/TrackballControls.js';
+      // import { PLYLoader } from 'https://threejs.org/examples/jsm/loaders/PLYLoader.js';
+      // import { GLTFLoader } from 'https://threejs.org/examples/jsm/loaders/GLTFLoader.js';
+      //import { GUI } from '../examples/jsm/libs/dat.gui.module.js';
+      //import { GUI } from '/examples/jsm/libs/lil-gui.module.min.js';
+      //import { TrackballControls } from '../examples/jsm/controls/TrackballControls.js';
+      //import { PLYLoader } from '../examples/jsm/loaders/PLYLoader.js';
+      //import { GLTFLoader } from '../examples/jsm/loaders/GLTFLoader.js';
 
-      let scene, camera, renderer, effect, ambientLight, directionalLight, light, mesh, toonMaterial, controls, controller;
+      let scene, camera, renderer, effect, ambientLight, directionalLight, light, mesh, toonMaterial, controls, controller, 
+        mesh1, mesh2, mesh3, mesh4, material;
 
       window.onload = function() {
 
@@ -26,7 +43,7 @@
         scene = new THREE.Scene();
 
         camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.set( 0, 0, -500);
+        camera.position.set( 0, 200, -1000);
 
         renderer = new THREE.WebGLRenderer({ });
         renderer.setSize( window.innerWidth, window.innerHeight );
@@ -36,66 +53,361 @@
         scene.add( ambientLight );
 
         directionalLight = new THREE.DirectionalLight( 0xffffff, 5.0 );
-        directionalLight.position.set( 10, 100, -100 );
+        directionalLight.position.set( 300, 450, -100 );
         scene.add( directionalLight );
+        var directionalLighttHelper1 = new THREE.DirectionalLightHelper(directionalLight, 10);
+        scene.add(directionalLighttHelper1);
 
 
         // TODO Part 3 (add 2 pointlights)
 
+        var pointLight1 = new THREE.PointLight(0xffffff, 1);
+        pointLight1.position.set(550, 400, 100);
+        scene.add(pointLight1);
+        var pointLightHelper1 = new THREE.PointLightHelper(pointLight1, 10);
+        scene.add(pointLightHelper1);
+
+        var pointLight2 = new THREE.PointLight(0xffffff, 1);
+        pointLight2.position.set(-250, -350, -100);
+        scene.add(pointLight2);
+        var pointLightHelper2 = new THREE.PointLightHelper(pointLight2, 10);
+        scene.add(pointLightHelper2);
 
 
-        var loader = new PLYLoader();
-        loader.load('armadillo.ply', function (geometry) {
+        var loader = new THREE.PLYLoader();
+        // loader.load('armadillo.ply', function (geometry) {
+
+        //     geometry.computeVertexNormals();
+
+        //     toonMaterial = new THREE.MeshToonMaterial({
+        //         color: 0x21ce70
+        //     });
+
+        //     mesh1 = new THREE.Mesh(geometry, toonMaterial);
+        //     mesh1.position.set(200, 0, 0);
+
+        //     scene.add(mesh1);
+
+        // });
+
+
+        // // TODO Part 1, load another mesh
+        // // TODO Part 2, use a different material for this mesh
+
+        loader.load('Nike Kyrie 7.ply', function (geometry) {
 
           geometry.computeVertexNormals();
 
-          toonMaterial = new THREE.MeshToonMaterial( {
-             color: 0x21ce70
+          material = new THREE.MeshPhongMaterial( {
+             color: 0x332f05
           } );
 
-          mesh = new THREE.Mesh( geometry, toonMaterial );
-          
-          scene.add( mesh );
+          mesh1 = new THREE.Mesh( geometry, material );
+          mesh1.position.x = 300 + 150;
+          mesh1.position.y = 300;
+          mesh1.rotation.x = -Math.PI/2;
+
+          scene.add( mesh1 );
+
+        } );
+                
+
+        loader.load('Lobster.ply', function (geometry) {
+
+          geometry.computeVertexNormals();
+
+          material = new THREE.MeshPhongMaterial( {
+             color: 0x1e0101
+          } );
+
+          mesh2 = new THREE.Mesh( geometry, material );
+          mesh2.position.x = 300 + 150;
+          mesh2.position.y = -300;
+          mesh2.rotation.x = -Math.PI/2;
+          mesh2.rotation.z = -Math.PI/2;
+
+          scene.add( mesh2 );
 
         } );
 
-        // TODO Part 1, load another mesh
-        // TODO Part 2, use a different material for this mesh
+        loader.load('Fantasy Dragon.ply', function (geometry) {
+
+          geometry.computeVertexNormals();
+
+          material = new THREE.MeshPhongMaterial( {
+             color: 0x190606
+          } );
+
+          mesh3 = new THREE.Mesh( geometry, material );
+          mesh3.position.x = -300 + 150;
+          mesh3.position.y = 300;
+          mesh3.rotation.x = -Math.PI/2;
+          mesh3.rotation.z = Math.PI/2;
+
+          scene.add( mesh3 );
+
+        } );
+
+        loader.load('Panasonic GH4-ply.ply', function (geometry) {
+
+          geometry.computeVertexNormals();
+
+          material = new THREE.MeshPhongMaterial( {
+             color: 0x1c1c1c
+          } );
+
+          mesh4 = new THREE.Mesh( geometry, material );
+          mesh4.position.x = -300 + 150;
+          mesh4.position.y = -300;
+          mesh4.rotation.x = -Math.PI/2;
+          mesh4.rotation.z = Math.PI/2;
+
+          scene.add( mesh4 );
+
+        } );
 
 
 
         controller = {
-          'color': 0xffffff // we can use this single color
+          'color': 0xffffff, // we can use this single color
                             // container for all colors in the scene 
                             // if we modify the onChange callback (see below)
 
           // TODO Bonus Part 1
+          // 'Nike Kyrie 7': 'phong',
+          // 'Lobster': 'phong',
+          // 'Fantasy Dragon': 'phong',
+          // 'Panasonic GH4': 'phong',
+          'material': 'phong',
+          
+          
           // TODO Bonus Part 2
         }
 
 
-        var gui = new GUI();
+        var gui = new dat.GUI();
         var ambientFolder = gui.addFolder('Ambient Light');
         ambientFolder.addColor(controller, 'color').onChange( function(value) { ambientLight.color.setHex(value); });
         ambientFolder.open();
 
         var directionalFolder = gui.addFolder('Directional Light');
         directionalFolder.addColor(controller, 'color').onChange( function(value) { directionalLight.color.setHex(value); });
-        directionalFolder.add(directionalLight.position, 'x', -100, 100);
-        directionalFolder.add(directionalLight.position, 'y', -100, 100);
-        directionalFolder.add(directionalLight.position, 'z', -100, 100);
+        directionalFolder.add(directionalLight, 'intensity', 0, 50);
+        directionalFolder.add(directionalLight.position, 'x', -700, 700);
+        directionalFolder.add(directionalLight.position, 'y', -700, 700);
+        directionalFolder.add(directionalLight.position, 'z', -700, 700);
         directionalFolder.open();
 
         // TODO Part 4 (control the color and position of point lights)
 
+        var pointLight1_folder = gui.addFolder('PointLight 1');
+        controller.color = pointLight1.color.getHex();
+        pointLight1_folder.addColor(controller, 'color')
+            .onChange(
+                function (value) {
+                    pointLight1.color.setHex(value);
+                }
+            );
+        pointLight1_folder.add(pointLight1, 'intensity', 0, 20);
+        pointLight1_folder.add(pointLight1.position, 'x', -700, 700);
+        pointLight1_folder.add(pointLight1.position, 'y', -700, 700);
+        pointLight1_folder.add(pointLight1.position, 'z', -700, 700);
+        pointLight1_folder.open();
+
+        var pointLight2_folder = gui.addFolder('PointLight 2');
+        controller.color = pointLight2.color.getHex();
+        pointLight2_folder.addColor(controller, 'color')
+            .onChange(
+                function (value) {
+                    pointLight2.color.setHex(value);
+                });
+        pointLight2_folder.add(pointLight2, 'intensity', 0, 20);
+        pointLight2_folder.add(pointLight2.position, 'x', -700, 700);
+        pointLight2_folder.add(pointLight2.position, 'y', -700, 700);
+        pointLight2_folder.add(pointLight2.position, 'z', -700, 700);
+        pointLight2_folder.open();
+
+
         // TODO Part 5 (control the color of both materials in the scene)
+
+        var mesh1_folder = gui.addFolder('Nike Kyrie 7');
+        controller.color = 0x332f05;
+        mesh1_folder.addColor(controller, 'color').onChange(function (value) {
+            mesh1.material.color.setHex(value);
+        });
+
+        mesh1_folder.add(controller, 'material', ['toon', 'standard', 'phong', 'normal'])
+            .onChange(function (value) {
+                if (mesh1.material.type == 'MeshNormalMaterial') var color = 0x332f05;
+                else var color = mesh1.material.color.getHex();
+                switch (value) {
+                    case 'toon':
+                        mesh1.material = new THREE.MeshToonMaterial({color: color});
+                        break;
+                    case 'standard':
+                        mesh1.material = new THREE.MeshStandardMaterial({color: color});
+                        break;
+                    case 'phong':
+                        mesh1.material = new THREE.MeshPhongMaterial({color: color});
+                        break;
+                    case 'normal':
+                        mesh1.material = new THREE.MeshNormalMaterial();
+                        break;
+                    default:
+                }
+            });
+        mesh1_folder.open();
+
+        var mesh2_folder = gui.addFolder('Lobster');
+        controller.color = 0x1e0101;
+        mesh2_folder.addColor(controller, 'color').onChange(function (value) {
+            mesh2.material.color.setHex(value);
+        });
+
+        mesh2_folder.add(controller, 'material', ['toon', 'standard', 'phong', 'normal'])
+            .onChange(function (value) {
+                if (mesh2.material.type == 'MeshNormalMaterial') var color = 0x1e0101;
+                else var color = mesh2.material.color.getHex();
+                switch (value) {
+                    case 'toon':
+                        mesh2.material = new THREE.MeshToonMaterial({color: color});
+                        break;
+                    case 'standard':
+                        mesh2.material = new THREE.MeshStandardMaterial({color: color});
+                        break;
+                    case 'phong':
+                        mesh2.material = new THREE.MeshPhongMaterial({color: color});
+                        break;
+                    case 'normal':
+                        mesh2.material = new THREE.MeshNormalMaterial();
+                        break;
+                    default:
+                }
+            });
+        mesh2_folder.open();
+
+        var mesh3_folder = gui.addFolder('Fantasy Dragon');
+        controller.color = 0x190606;
+        mesh3_folder.addColor(controller, 'color').onChange(function (value) {
+            mesh3.material.color.setHex(value);
+        });
+
+        mesh3_folder.add(controller, 'material', ['toon', 'standard', 'phong', 'normal'])
+            .onChange(function (value) {
+                if (mesh3.material.type == 'MeshNormalMaterial') var color = 0x190606;
+                else var color = mesh3.material.color.getHex();
+                switch (value) {
+                    case 'toon':
+                        mesh3.material = new THREE.MeshToonMaterial({color: color});
+                        break;
+                    case 'standard':
+                        mesh3.material = new THREE.MeshStandardMaterial({color: color});
+                        break;
+                    case 'phong':
+                        mesh3.material = new THREE.MeshPhongMaterial({color: color});
+                        break;
+                    case 'normal':
+                        mesh3.material = new THREE.MeshNormalMaterial();
+                        break;
+                    default:
+                }
+            });
+        mesh3_folder.open();
+
+        var mesh4_folder = gui.addFolder('Panasonic GH4');
+        controller.color = 0x1c1c1c;
+        mesh4_folder.addColor(controller, 'color').onChange(function (value) {
+            mesh4.material.color.setHex(value);
+        });
+
+        mesh4_folder.add(controller, 'material', ['toon', 'standard', 'phong', 'normal'])
+            .onChange(function (value) {
+                if (mesh4.material.type == 'MeshNormalMaterial') var color = 0x1c1c1c;
+                else var color = mesh4.material.color.getHex();
+                switch (value) {
+                    case 'toon':
+                        mesh4.material = new THREE.MeshToonMaterial({color: color});
+                        break;
+                    case 'standard':
+                        mesh4.material = new THREE.MeshStandardMaterial({color: color});
+                        break;
+                    case 'phong':
+                        mesh4.material = new THREE.MeshPhongMaterial({color: color});
+                        break;
+                    case 'normal':
+                        mesh4.material = new THREE.MeshNormalMaterial();
+                        break;
+                    default:
+                }
+            });
+        mesh4_folder.open();
+
 
         gui.open();
 
 
+        var controller2 = new function() {
+            this.rotationX = 0;
+            this.rotationY = 0;
+            this.rotationZ = 0;
+        };
+        var gui2 = new dat.GUI();
+        gui2.domElement.id = 'gui2';
+        var mesh1_rotation = gui2.addFolder('Nike Kyrie 7');
+        mesh1_rotation.add(controller2, 'rotationX', -Math.PI, Math.PI).onChange( function() {
+           mesh1.rotation.x = controller2.rotationX;
+        });
+        mesh1_rotation.add(controller2, 'rotationY', -Math.PI, Math.PI).onChange( function() {
+           mesh1.rotation.y = controller2.rotationY;
+        });
+        mesh1_rotation.add(controller2, 'rotationZ', -Math.PI, Math.PI).onChange( function() {
+           mesh1.rotation.z = controller2.rotationZ;
+        });
+        mesh1_rotation.open();
+
+        var mesh2_rotation = gui2.addFolder('Lobster');
+        mesh2_rotation.add(controller2, 'rotationX', -Math.PI, Math.PI).onChange( function() {
+           mesh2.rotation.x = controller2.rotationX;
+        });
+        mesh2_rotation.add(controller2, 'rotationY', -Math.PI, Math.PI).onChange( function() {
+           mesh2.rotation.y = controller2.rotationY;
+        });
+        mesh2_rotation.add(controller2, 'rotationZ', -Math.PI, Math.PI).onChange( function() {
+           mesh2.rotation.z = controller2.rotationZ;
+        });
+        mesh2_rotation.open();
+
+        var mesh3_rotation = gui2.addFolder('Fantasy Dragon');
+        mesh3_rotation.add(controller2, 'rotationX', -Math.PI, Math.PI).onChange( function() {
+           mesh3.rotation.x = controller2.rotationX;
+        });
+        mesh3_rotation.add(controller2, 'rotationY', -Math.PI, Math.PI).onChange( function() {
+           mesh3.rotation.y = controller2.rotationY;
+        });
+        mesh3_rotation.add(controller2, 'rotationZ', -Math.PI, Math.PI).onChange( function() {
+           mesh3.rotation.z = controller2.rotationZ;
+        });
+        mesh3_rotation.open();
+
+        var mesh4_rotation = gui2.addFolder('Panasonic GH4');
+        mesh4_rotation.add(controller2, 'rotationX', -Math.PI, Math.PI).onChange( function() {
+           mesh4.rotation.x = controller2.rotationX;
+        });
+        mesh4_rotation.add(controller2, 'rotationY', -Math.PI, Math.PI).onChange( function() {
+           mesh4.rotation.y = controller2.rotationY;
+        });
+        mesh4_rotation.add(controller2, 'rotationZ', -Math.PI, Math.PI).onChange( function() {
+           mesh4.rotation.z = controller2.rotationZ;
+        });
+        mesh4_rotation.open();
+
+        gui2.open();
 
 
-        controls = new TrackballControls( camera, renderer.domElement );
+
+
+
+        controls = new THREE.TrackballControls( camera, renderer.domElement );
 
         animate();
 

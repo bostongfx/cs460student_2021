@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CS460 Assignment 5</title>
+  <script type="text/javascript" src="https://get.goXTK.com/xtk_edge.js"></script>
+  <script type="text/javascript" src="https://get.goXTK.com/xtk_xdat.gui.js"></script>
+  <script src="https://threejs.org/build/three.min.js" type="text/javascript"></script>
+  <script src="https://threejs.org/examples/js/controls/TrackballControls.js" type="text/javascript"></script>
+
+  <style>
+  html, body {
+    background-color: #000;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden !important;
+  }
+
+  h1 {
+    color: white;
+    height: 5%;
+    background-color: black;
+  }
+  #logo {
+    position: absolute;
+    left: 0px;
+    top: 10px;
+  }
+
+  #r1 {
+    width: 50%;
+    height: 100%;
+    float: left;
+    background-color: darkgrey;
+  }
+
+  #r2 {
+    width: 50%;
+    height: 100%;
+    float: right;
+    /*background-color: grey;*/
+  }
+
+  #gui { 
+    position: absolute; 
+    top: 90px; 
+    right: -15px; 
+  }
+</style>
+
+<script type="text/javascript">
+  window.onload = function () {
+
+      //******************************** XTK scene **********************************
+      // init canvas
+      var r1 = new X.renderer3D();
+
+      r1.container = 'r1'; // 'r1' is the id r1 what container in left side
+      r1.init();
+      // init cube then add into the canvas
+      var cx1 = new X.cube();  
+      r1.add(cx1);   
+      r1.render();
+      r1.camera.position = [ 0, 0, -150];
+
+      //****************************** THREE.js scene *******************************
+      
+      var r2 = document.getElementById('r2'); // get the div container!!!
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color('grey');
+
+      fov = 75;
+      // use the container's clientWidth and clientHeight
+      // rather than window.innerWidth and window.innerHeight
+      ratio = r2.clientWidth / r2.clientHeight; 
+      zNear = 1;
+      zFar = 10000;
+
+      camera = new THREE.PerspectiveCamera(fov, ratio, zNear, zFar);
+      camera.position.set( 0, 0, 120);
+
+      renderer = new THREE.WebGLRenderer({antialias:true});
+      renderer.setSize( r2.clientWidth, r2.clientHeight ); // again use the container
+      r2.appendChild( renderer.domElement ); // and append the domElement to the container
+      
+      ambientLight = new THREE.AmbientLight( 0x666666 );
+      scene.add( ambientLight );
+
+      // // HemisphereLight( skyColor : Integer, groundColor : Integer, intensity : Float )
+      // hemisphereLight = new THREE.HemisphereLight( 0xffffff, 0x111111, 0.5 );
+      // scene.add( hemisphereLight );
+
+      light = new THREE.DirectionalLight( 0xffffff, 5.0 );
+      light.position.set( 10, 100, 10 );
+      scene.add( light );
+
+      var geometry = new THREE.BoxBufferGeometry( 20, 20, 20);
+      var material = new THREE.MeshStandardMaterial({color: 0xffffff});
+      var ct1 = new THREE.Mesh( geometry, material);
+      scene.add(ct1);
+
+      // pass the container to the camera
+      controls = new THREE.TrackballControls( camera, r2 ); 
+
+      //******************************** dat.GUI *********************************
+
+      // cx: cube in XTK
+      // ct: cube in THREE.js
+      var controller = {
+        'threejs_color': 0xffffff,
+
+        'rotateX': function() {
+          cx1.transform.rotateX(20);
+          ct1.rotateX(20);
+        },
+        'rotateY': function() {
+          cx1.transform.rotateY(20);
+          ct1.rotateY(20);
+        },
+        'rotateZ': function() {
+          cx1.transform.rotateZ(20);
+          ct1.rotateZ(20);
+        },
+        'add new': function() {
+          var cx2 = new X.cube();
+          cx2.center = [40, 40, 40];
+          r1.add(cx2);
+
+          var ct2 = new THREE.Mesh( geometry, material);
+          ct2.position.set(-40, 40, 40);
+          scene.add(ct2);
+        }
+      };
+
+      var gui = new dat.GUI( { autoplace: false });
+      // gui.domElement.id = 'gui';
+
+
+      // dat.GUI for XTK
+      var xtkUI = gui.addFolder('XTK Cube');
+      xtkUI.add(cx1, "visible");
+      xtkUI.add(cx1, "opacity", 0, 1);
+      xtkUI.addColor(cx1, "color");
+      xtkUI.add(cx1, 'lengthX', 0, 100).onChange(
+                function () {
+                    cx1.modified();
+                }
+            );
+      xtkUI.add(cx1, 'lengthY', 0, 100).onChange(
+                function () {
+                    cx1.modified();
+                }
+            );
+      xtkUI.add(cx1, 'lengthZ', 0, 100).onChange(
+                function () {
+                    cx1.modified();
+                }
+            );
+      xtkUI.open();
+
+      // dat.GUI for Three.js
+      var threejsUI = gui.addFolder('Three.js Cube');
+      threejsUI.add(ct1, 'visible');
+      threejsUI.add(ct1.material, 'opacity', 0, 1).onChange( function() {
+        ct1.material.transparent = true;
+      });
+      threejsUI.addColor(controller, 'threejs_color').onChange( function() {
+        ct1.material.color.set( controller.threejs_color );
+      });
+      threejsUI.add(ct1.rotation, 'x', 0, Math.PI * 2).name('Rotation X');
+      threejsUI.add(ct1.rotation, 'y', 0, Math.PI * 2).name('Rotation Y');
+      threejsUI.add(ct1.rotation, 'z', 0, Math.PI * 2).name('Rotation Z');
+      threejsUI.add(ct1.scale, 'x', 0, 5).name('Scale X');
+      threejsUI.add(ct1.scale, 'y', 0, 5).name('Scale Y');
+      threejsUI.add(ct1.scale, 'z', 0, 5).name('Scale Z');
+      threejsUI.add(ct1.position, 'x', -50, 50).name('Position X');
+      threejsUI.add(ct1.position, 'y', -50, 50).name('Position Y');
+      threejsUI.add(ct1.position, 'z', -50, 50).name('Position Z');
+
+      threejsUI.open();
+
+      // dat.GUI for both XTK and Three.js
+      var both = gui.addFolder('Both Cubes');
+      both.add(controller, 'rotateX');
+      both.add(controller, 'rotateY');
+      both.add(controller, 'rotateZ');
+      both.add(controller, 'add new');
+      both.open();
+
+      animate();
+    }
+
+    function animate() {
+      requestAnimationFrame( animate );
+      controls.update();
+      renderer.render( scene, camera );
+
+    };
+
+
+
+  </script>
+
+</head>
+<body>
+  <h1>&nbsp &nbsp &nbsp &nbsp CS460 Assignment 5</h1>
+  <div id="logo"><img style="height:60px" src="gfx/cs460.png"></div>
+  <div id="r1"></div>
+  <div id="r2"></div>
+
+</body>
+</html>

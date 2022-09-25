@@ -1,0 +1,5 @@
+1. get image songoku by pixel
+   link image: https://www.pinterest.com/pin/374150681513275364/
+2. use the image as background in Excel
+3. numbering for pixel cells
+4. convert it to array
