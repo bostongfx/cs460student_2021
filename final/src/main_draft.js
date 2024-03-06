@@ -1,11 +1,11 @@
-import * as THREE from 'https://threejs.org/build/three.module.js';
-// import { GUI } from 'https://threejs.org/examples/jsm/libs/dat.gui.module.js';
-import { GUI } from 'https://threejs.org/examples/jsm/libs/lil-gui.module.min.js';
-import { TrackballControls } from 'https://threejs.org/examples/jsm/controls/TrackballControls.js';
-// import { PLYLoader } from 'https://threejs.org/examples/jsm/loaders/PLYLoader.js';
-// import { GLTFLoader } from 'https://threejs.org/examples/jsm/loaders/GLTFLoader.js';
-// import { FirstPersonControls } from 'https://threejs.org/examples/js/controls/FirstPersonControls.js';
-import { PointerLockControls } from 'https://threejs.org/examples/jsm/controls/PointerLockControls.js'
+import * as THREE from '../final/three.js/build/three.module.js';
+// import { GUI } from '../final/three.js/examples/jsm/libs/dat.gui.module.js';
+import { GUI } from '../final/three.js/examples/jsm/libs/lil-gui.module.min.js';
+import { TrackballControls } from '../final/three.js/examples/jsm/controls/TrackballControls.js';
+// import { PLYLoader } from '../final/three.js/examples/jsm/loaders/PLYLoader.js';
+// import { GLTFLoader } from '../final/three.js/examples/jsm/loaders/GLTFLoader.js';
+// import { FirstPersonControls } from '../final/three.js/examples/js/controls/FirstPersonControls.js';
+import { PointerLockControls } from '../final/three.js/examples/jsm/controls/PointerLockControls.js'
 
 
 let scene, camera, renderer, ambientLight, directionalLight, controls, controller;

@@ -10,7 +10,7 @@
     padding: 0;
     height: 100%;
     overflow: hidden !important;  
-    background-image: url(https://cs460.org/gfx/bg.gif);
+    background-image: url(gfx/bg.gif);
     background-repeat: no-repeat;
     background-size: 100% 100%;
   }
@@ -978,6 +978,7 @@
           document.body.style.backgroundImage = "url('gfx/gameover.gif')";
           document.getElementById('playagain').style.display = 'block';
           document.getElementById('alert').style.display = 'none'; 
+          document.getElementById('c').style.display = 'none'; 
           check_gameover = true;
           var explosion2 = document.getElementById('explosion2');
           explosion2.currentTime = 0;
